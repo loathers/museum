@@ -17,11 +17,12 @@ model Player {
 }
 
 model Item {
-  id         Int          @id
-  name       String
-  plural     String?
-  picture    String
-  collection Collection[]
+  id          Int          @id
+  name        String
+  plural      String?
+  picture     String
+  description String
+  collection  Collection[]
 }
 
 model Collection {
