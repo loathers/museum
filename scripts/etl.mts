@@ -3,12 +3,15 @@ import progress from "cli-progress";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 
-const chunkify = <T>(items: T[], size: number) =>
-  Array.from({ length: Math.ceil(items.length / size) }, (_: T, i: number) =>
+function chunkify<T>(items: T[], size: number) {
+  return Array.from({ length: Math.ceil(items.length / size) }, (_: T, i: number) =>
     items.slice(i * size, (i + 1) * size)
   );
+}
 
-const notNull = <T>(value: T | null): value is T => value !== null;
+function notNull<T>(value: T | null): value is T {
+  return value !== null;
+}
 
 // Load environment from .env
 dotenv.config();
@@ -43,11 +46,11 @@ async function load(file: string) {
 
   bar.start(contentLength, 0);
 
-  const chunks = [];
+  const chunks = [] as Buffer[];
 
   for await (const chunk of reader) {
     bar.increment(chunk.length);
-    chunks.push(chunk);
+    chunks.push(chunk as Buffer);
   }
 
   const allChunks = new Uint8Array(
@@ -65,7 +68,7 @@ async function load(file: string) {
 
   return text
     .substring(text.indexOf("\n")) // Remove first line (header)
-    .replaceAll("\n\\n", "\n") // Remove actual newlines from item descriptions
+    .replace(/\n\\n/g, "\n") // Remove actual newlines from item descriptions
     .trim(); // Remove training whitespace
 }
 
@@ -225,7 +228,7 @@ async function updateCollections() {
 async function main() {
   await updateItems();
   await updatePlayers();
-  // await updateCollections();
+  await updateCollections();
 }
 
 main();
