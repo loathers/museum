@@ -24,46 +24,32 @@ export default function Ranking({ collections }: Props) {
   const [first, second, third, ...rest] = collections;
   return (
     <div style={container}>
-      {first && (
-        <div style={{ gridArea: "first" }}>
-          <Rank rank={1} collection={first} />
-        </div>
+      {[
+        { data: first, gridArea: "first" },
+        { data: second, gridArea: "second" },
+        { data: third, gridArea: "third" },
+      ].map(
+        ({ data, gridArea }, i) =>
+          data && (
+            <div style={{ gridArea }} key={i + 1}>
+              <Rank collection={data} rank={i + 1} />
+            </div>
+          )
       )}
-      {second && (
-        <div style={{ gridArea: "second" }}>
-          <Rank rank={2} collection={second} />
-        </div>
-      )}
-      {third && (
-        <div style={{ gridArea: "third" }}>
-          <Rank rank={3} collection={third} />
-        </div>
-      )}
-      {rest.length > 0 && (
-        <>
-          <div style={{ gridArea: "a" }}>
+      {rest.length > 0 &&
+        ["a", "b", "c"].map((gridArea, index) => (
+          <div style={{ gridArea }} key={index}>
             {rest
-              .filter((_, i) => i % 3 === 0)
+              .filter((_c, i) => i % 3 === index)
               .map((c, i) => (
-                <Rank key={c.player.id} rank={i * 3 + 4} collection={c} />
+                <Rank
+                  key={c.player.id}
+                  rank={i * 3 + 4 + index}
+                  collection={c}
+                />
               ))}
           </div>
-          <div style={{ gridArea: "b" }}>
-            {rest
-              .filter((_, i) => i % 3 === 1)
-              .map((c, i) => (
-                <Rank key={c.player.id} rank={i * 3 + 5} collection={c} />
-              ))}
-          </div>
-          <div style={{ gridArea: "c" }}>
-            {rest
-              .filter((_, i) => i % 3 === 2)
-              .map((c, i) => (
-                <Rank key={c.player.id} rank={i * 3 + 6} collection={c} />
-              ))}
-          </div>
-        </>
-      )}
+        ))}
     </div>
   );
 }
