@@ -1,11 +1,15 @@
+import Rank from "./Rank";
+
+export type Collection = {
+  quantity: number;
+  player: {
+    id: number;
+    name: string;
+  };
+};
+
 type Props = {
-    collections: {
-        quantity: number;
-        player: {
-            id: number;
-            name: string;
-        };
-    }[];
+  collections: Collection[];
 };
 
 const container: React.CSSProperties = {
