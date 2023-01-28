@@ -21,11 +21,7 @@ export default function Ranking({ collections }: Props) {
     return (
         <div style={container}>
             {[
-                {
-                    data: first,
-                    gridArea: "first",
-                    icon: "🥇",
-                },
+                { data: first, gridArea: "first", icon: "🥇" },
                 { data: second, gridArea: "second", icon: "🥈" },
                 { data: third, gridArea: "third", icon: "🥉" },
             ].map(
