@@ -42,7 +42,7 @@ export default function Index() {
     >
       <h1>Welcome to the Museum</h1>
       <p>
-        For now, visit <code>/items/&lt;your item id&gt;</code>.
+        For now, visit <code>/item/&lt;your item id&gt;</code>.
       </p>
       <p>
         For example, you can see how{" "}
