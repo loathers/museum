@@ -1,6 +1,7 @@
 import { prisma } from "~/lib/prisma.server";
 import { json, LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import Ranking from "~/components/Ranking";
 
 export async function loader({ params }: LoaderArgs) {
   const id = Number(params.id);
@@ -28,6 +29,7 @@ export async function loader({ params }: LoaderArgs) {
         orderBy: {
           quantity: "desc",
         },
+        take: 999,
       },
     },
   });
@@ -64,13 +66,7 @@ export default function Item() {
           dangerouslySetInnerHTML={{ __html: data.description }}
         />
       </div>
-      <ul>
-        {data.collection.map((c, i) => (
-          <li>
-            #{i + 1} {c.player.name} {c.quantity}
-          </li>
-        ))}
-      </ul>
+      <Ranking collections={data.collection} />
     </div>
   );
 }
