@@ -60,6 +60,7 @@ export default function Item() {
       >
         <img
           src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${data.picture}.gif`}
+          alt={data.name}
         />
         <p
           style={{ maxWidth: 700 }}
