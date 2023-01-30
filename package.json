@@ -7,7 +7,7 @@
     "dev": "remix dev",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "format": "prettier --write --no-error-on-unmatched-pattern {app,scripts}/**/*.{ts,tsx}; prisma format",
+    "format": "prettier --write --no-error-on-unmatched-pattern {app,scripts}/**/*.{ts,tsx,mts}; prisma format",
     "etl": "node --no-warnings --loader ts-node/esm/transpile-only scripts/etl.mts"
   },
   "dependencies": {
