@@ -31,6 +31,7 @@ model Collection {
   itemId   Int
   item     Item   @relation(fields: [itemId], references: [id])
   quantity Int
+  rank     Int    @default(0)
 
   @@unique([playerId, itemId])
 }

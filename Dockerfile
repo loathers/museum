@@ -1,8 +1,8 @@
 # base node image
-FROM node:16-bullseye-slim as base
+FROM node:19-bullseye-slim as base
 
 # Install openssl for Prisma
-RUN apt-get update && apt-get install -y openssl
+RUN apt-get update && apt-get install -y build-essential openssl python3
 
 # Install all node_modules, including dev dependencies
 FROM base as deps
@@ -43,20 +43,22 @@ RUN yarn run build
 # Finally, build the production image with minimal footprint
 FROM base
 
+ARG DATABASE_URL
+
 ENV NODE_ENV=production
+
+EXPOSE 8080
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY --from=production-deps /app/node_modules /app/node_modules
 
-# Uncomment if using Prisma
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
-
 COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
 ADD . .
 
 RUN npx prisma generate
 
-CMD ["yarn", "run", "start"]
+CMD ["yarn", "run", "start:prod"]
