@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { prisma } from "~/lib/prisma.server";
-import { plural } from "~/utils";
+import { englishJoin, plural } from "~/utils";
 
 export async function loader() {
   const items = await prisma.item.count();
@@ -13,19 +13,23 @@ export async function loader() {
       plural: true,
       id: true,
       collection: {
-        take: 1,
-        orderBy: { quantity: "desc" },
+        where: { rank: 1 },
+        orderBy: { player: { id: "desc" } },
         include: { player: true },
       },
     },
   });
 
-  const player = result.collection[0].player;
+  if (!result?.collection.length) {
+    return null;
+  }
+
+  const players = result.collection.map((c) => c.player);
 
   return {
     id: result.id,
     plural: plural(result),
-    player,
+    players,
   };
 }
 
@@ -44,14 +48,23 @@ export default function Index() {
       <p>
         For now, visit <code>/item/&lt;your item id&gt;</code>.
       </p>
-      <p>
-        For example, you can see how{" "}
-        <Link to={`/item/${collection.id}`} prefetch="intent">
-          <b title={`#${collection.player.id}`}>{collection.player.name}</b> has
-          the most <b>{collection.plural}</b>
-        </Link>
-        .
-      </p>
+      {collection && (
+        <p>
+          For example, you can see how{" "}
+          <Link to={`/item/${collection.id}`} prefetch="intent">
+            {englishJoin(
+              collection.players.map((p) => (
+                <b key={p.id} title={`#${p.id}`}>
+                  {p.name}
+                </b>
+              ))
+            )}{" "}
+            {collection.players.length === 1 ? "has" : "jointly have"} the most{" "}
+            <b>{collection.plural}</b>
+          </Link>
+          .
+        </p>
+      )}
     </div>
   );
 }

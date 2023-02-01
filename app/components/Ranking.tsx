@@ -2,6 +2,7 @@ import Rank from "./Rank";
 
 export type Collection = {
   quantity: number;
+  rank: number;
   player: {
     id: number;
     name: string;
@@ -14,40 +15,56 @@ type Props = {
 
 const container: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr 1fr",
-  gridTemplateRows: "min-content min-content min-content 1fr",
-  gap: "20px 0px",
-  gridTemplateAreas: `"first first first" "second second second" "third third third" "a b c"`,
+  gap: "20px 20px",
+  gridTemplateColumns: "repeat(1, 1fr)",
 };
 
+function rankStyle(rank: number): React.CSSProperties {
+  switch (rank) {
+    case 1:
+      return {
+        background: "#fad25a",
+        padding: 10,
+      };
+    case 2:
+      return {
+        background: "#cbcace",
+        padding: 10,
+      };
+    case 3:
+      return {
+        background: "#cea972",
+        padding: 10,
+      };
+    default:
+      return {};
+  }
+}
+
+function groupToMap<K, V>(
+  array: V[],
+  callbackFn: (element: V, index?: number, array?: V[]) => K
+) {
+  const map = new Map<K, V[]>();
+  for (let i = 0; i < array.length; i++) {
+    const key = callbackFn(array[i], i, array);
+    if (!map.has(key)) map.set(key, [] as V[]);
+    map.get(key)!.push(array[i]);
+  }
+  return map;
+}
+
 export default function Ranking({ collections }: Props) {
-  const [first, second, third, ...rest] = collections;
+  const grouped = groupToMap(collections, (c) => c.rank);
+  const keys = [...grouped.keys()].sort((a, b) => a - b);
+
   return (
     <div style={container}>
-      {[
-        { data: first, gridArea: "first" },
-        { data: second, gridArea: "second" },
-        { data: third, gridArea: "third" },
-      ].map(
-        ({ data, gridArea }, i) =>
-          data && (
-            <div style={{ gridArea }} key={i + 1}>
-              <Rank collection={data} rank={i + 1} />
-            </div>
-          )
-      )}
-      {rest.length > 0 &&
-        ["a", "b", "c"].map((gridArea, index) => (
-          <div style={{ gridArea }} key={index}>
-            {rest
-              .filter((_c, i) => i % 3 === index)
-              .map((c, i) => (
-                <Rank
-                  key={c.player.id}
-                  rank={i * 3 + 4 + index}
-                  collection={c}
-                />
-              ))}
+      {keys
+        .map((k) => grouped.get(k)!)
+        .map((c) => (
+          <div key={c[0].rank} style={rankStyle(c[0].rank)}>
+            <Rank collection={c} />
           </div>
         ))}
     </div>

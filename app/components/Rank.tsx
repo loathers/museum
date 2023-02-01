@@ -1,8 +1,8 @@
-import { Collection } from "./Ranking";
+import { englishJoin } from "~/utils";
+import type { Collection } from "./Ranking";
 
 type Props = {
-  rank: number;
-  collection: Collection;
+  collection: Collection[];
 };
 
 function getRankSymbol(rank: number) {
@@ -18,11 +18,18 @@ function getRankSymbol(rank: number) {
   }
 }
 
-export default function Rank({ collection, rank }: Props) {
+export default function Rank({ collection }: Props) {
   return (
-    <div key={collection.player.id}>
-      {getRankSymbol(rank)} {collection.player.name} (
-      {collection.quantity.toLocaleString()})
+    <div>
+      {getRankSymbol(collection[0].rank)}{" "}
+      {englishJoin(
+        collection.map((c) => (
+          <i key={c.player.id} title={`${c.player.name} #${c.player.id}`}>
+            {c.player.name}
+          </i>
+        ))
+      )}{" "}
+      ({collection[0].quantity.toLocaleString()})
     </div>
   );
 }
