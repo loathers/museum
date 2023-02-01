@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
+import fs from "fs/promises";
 import fetch from "node-fetch";
-import { chunkify, notNull } from "./utils.mjs";
+import path from "path";
 
 // Load environment from .env
 dotenv.config();
@@ -138,8 +139,6 @@ const ignorePlayer = [6, 589227, 690946, 830230, 1374389, 3056907];
 const ignoreItem = [745, 1223, 5904, 11027];
 
 async function updateCollections() {
-  await prisma.$executeRaw`SELECT 1`;
-
   // Load the items from KoL source
   const raw = await load("collections.txt");
 
@@ -149,19 +148,7 @@ async function updateCollections() {
     return false;
   }
 
-  const keys = ["playerId", "itemId", "quantity"] as const;
-
-  const collections = raw
-    .split("\n")
-    .map((l) => {
-      const parts = l.split("\t");
-      const playerId = Number(parts[0]);
-      const itemId = Number(parts[1]);
-      if (ignorePlayer.includes(playerId)) return null;
-      if (ignoreItem.includes(itemId)) return null;
-      return [playerId, itemId, Number(parts[2])] as const;
-    })
-    .filter(notNull);
+  const total = (raw.match(/\n/g)?.length || 0) + 1;
 
   // 250 seems to be the greatest chunk size that is 100% stable,
   // at least with the single db deployment I have at time of writing.
@@ -175,106 +162,88 @@ async function updateCollections() {
     progress.Presets.shades_classic
   );
 
-  bar.start(collections.length, 0);
+  bar.start(total, 0);
 
-  const chunks = chunkify(collections, chunkSize);
+  let chunk = [] as [playerId: number, itemId: number, quantity: number][];
+  let cursor = 0;
 
-  for (let i = 0; i < chunks.length; ) {
-    try {
-      const values = chunks[i].map((c) => `(${c.join(",")})`).join(",");
+  const keys = ["playerId", "itemId", "quantity"] as const;
+  const keysString = keys.map((k) => `"${k}"`).join(",");
 
-      // This query is still problematic because of the fk constraints on Player and Item.
-      // The incoming data quality isn't amazing and often there will be collections for
-      // non-existent players and non-public items. For now I have a manual list of
-      // skippable player and item ids.
-      //
-      // For players: I want to rewrite this to use a CTE and only insert for players
-      // that exist in the db already (a la https://stackoverflow.com/a/68540209)
-      //
-      // For items: I want to insert an item row manually for any missing. I think it would
-      // be acceptable to generate a report of missing items to be done manually. Such rows
-      // can be marked as seed data via Prisma which will ensure they are available for any
-      // instances.
-      //
-      // Once I've done the new query 'm thinking that I can just compare rows-added actual to
-      // rows-added expected and only perform slow comparisons when that number is not the same.
-      await prisma.$executeRawUnsafe(`
-        INSERT INTO "Collection" (${keys.map((k) => `"${k}"`).join(",")})
-        VALUES ${values}
-        ON CONFLICT ("playerId", "itemId")
-        DO UPDATE SET quantity = EXCLUDED.quantity
-      `);
+  let i = 0;
 
-      bar.update(++i * chunkSize);
-    } catch (e) {
-      // "Server stopped responding". This happens on my local machine a lot but I don't think it will
-      // happen when we run this in the proper environment.
-      if (e.code === "P1017") {
-        await new Promise((r) => setTimeout(r, 2000));
-        continue;
-      }
-      throw e;
+  while (cursor >= 0) {
+    const next = raw.indexOf("\n", cursor);
+
+    if (next > 0) {
+      const line = raw.substring(cursor, next);
+      cursor = next + 1;
+
+      const parts = line.split("\t");
+      const playerId = Number(parts[0]);
+      const itemId = Number(parts[1]);
+      if (ignorePlayer.includes(playerId)) continue;
+      if (ignoreItem.includes(itemId)) continue;
+
+      chunk.push([playerId, itemId, Number(parts[2])]);
+    } else {
+      cursor = -1;
     }
+
+    if (chunk.length < chunkSize && cursor >= 0) continue;
+
+    i += chunk.length;
+    const values = chunk.map((c) => `(${c.join(",")})`).join(",");
+    chunk = [];
+
+    // This query is still problematic because of the fk constraints on Player and Item.
+    // The incoming data quality isn't amazing and often there will be collections for
+    // non-existent players and non-public items. For now I have a manual list of
+    // skippable player and item ids.
+    //
+    // For players: I want to rewrite this to use a CTE and only insert for players
+    // that exist in the db already (a la https://stackoverflow.com/a/68540209)
+    //
+    // For items: I want to insert an item row manually for any missing. I think it would
+    // be acceptable to generate a report of missing items to be done manually. Such rows
+    // can be marked as seed data via Prisma which will ensure they are available for any
+    // instances.
+    //
+    // Once I've done the new query 'm thinking that I can just compare rows-added actual to
+    // rows-added expected and only perform slow comparisons when that number is not the same.
+
+    await prisma.$executeRawUnsafe(`
+      INSERT INTO "Collection" (${keysString})
+      VALUES ${values}
+      ON CONFLICT ("playerId", "itemId")
+      DO UPDATE SET quantity = EXCLUDED.quantity
+    `);
+
+    bar.update(i);
   }
+
+  bar.update(total);
 
   bar.stop();
 }
 
 async function rankCollections() {
-  await Promise.all([
-    async function () {
-      const total = await prisma.collection.count();
-
-      const bar = new progress.SingleBar(
-        {
-          format: `Ranking collections [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
-          hideCursor: true,
-        },
-        progress.Presets.shades_classic
-      );
-
-      bar.start(total, 0);
-
-      while (bar.getProgress() < total) {
-        const result = (await prisma.$queryRaw`
-          SELECT COUNT(*) as count
-          FROM "Collection"
-          WHERE xmax = (
-            SELECT backend_xid
-            FROM pg_stat_activity
-            WHERE state = 'active' AND REGEXP_REPLACE(query, '^[\n ]+', '', 'g') LIKE 'UPDATE%'
-            ORDER BY query_start DESC
-			      LIMIT 1
-          )
-        `) as { count: number }[];
-
-        const count = Number(result[0].count);
-
-        if (count === 0 && bar.getProgress() > 0) {
-          bar.update(total);
-        } else {
-          bar.update(count);
-        }
-      }
-
-      bar.stop();
-    },
-    prisma.$executeRaw`
-      UPDATE "Collection"
-      SET "rank" = ranking.rank_number
-      FROM (
-        SELECT "itemId", 
-          "playerId", 
-          "quantity", 
-          RANK () OVER (PARTITION BY "itemId" ORDER BY quantity DESC) rank_number
-        FROM "Collection"
-      ) as ranking
-      WHERE "Collection"."playerId" = ranking."playerId" AND "Collection"."itemId" = ranking."itemId"
-    `,
-  ]);
+  await prisma.$executeRaw`
+    UPDATE "Collection"
+    SET "rank" = ranking.rank_number
+    FROM (
+      SELECT "itemId", 
+        "playerId", 
+        "quantity", 
+        RANK () OVER (PARTITION BY "itemId" ORDER BY quantity DESC) rank_number
+      FROM "Collection"
+    ) as ranking
+    WHERE "Collection"."playerId" = ranking."playerId" AND "Collection"."itemId" = ranking."itemId"
+  `;
 }
 
 async function main() {
+  await prisma.$queryRaw`SELECT 1`;
   await updateItems();
   await updatePlayers();
   await updateCollections();
