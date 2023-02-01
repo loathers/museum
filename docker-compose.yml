@@ -14,10 +14,6 @@ services:
       timeout: 3s
 
   web:
-    build:
-      context: .
-      args:
-        - DATABASE_URL=postgres://postgres:postgres@db:5432
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432
     ports:
