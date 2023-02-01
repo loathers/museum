@@ -1,5 +1,6 @@
 import { prisma } from "~/lib/prisma.server";
-import { json, LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Ranking from "~/components/Ranking";
 
@@ -19,6 +20,7 @@ export async function loader({ params }: LoaderArgs) {
       collection: {
         select: {
           quantity: true,
+          rank: true,
           player: {
             select: {
               name: true,
@@ -26,9 +28,7 @@ export async function loader({ params }: LoaderArgs) {
             },
           },
         },
-        orderBy: {
-          quantity: "desc",
-        },
+        orderBy: [{ rank: "asc" }, { playerId: "asc" }],
         take: 999,
       },
     },
@@ -48,9 +48,11 @@ export default function Item() {
         fontFamily: "system-ui, sans-serif",
         lineHeight: "1.4",
         textAlign: "center",
+        maxWidth: 780,
+        padding: "0 20px",
+        margin: "0 auto",
       }}
     >
-      <h2>{data.name}</h2>
       <div
         style={{
           display: "flex",
@@ -60,12 +62,24 @@ export default function Item() {
       >
         <img
           src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${data.picture}.gif`}
+          alt={data.name}
+          style={{ marginRight: "0.7em" }}
         />
-        <p
-          style={{ maxWidth: 700 }}
-          dangerouslySetInnerHTML={{ __html: data.description }}
-        />
+
+        <h2>{data.name}</h2>
       </div>
+
+      <blockquote
+        style={{
+          margin: "0 auto",
+          marginBottom: 20,
+          background: "#eee",
+          padding: "10px 20px",
+        }}
+      >
+        <p dangerouslySetInnerHTML={{ __html: data.description }} />
+      </blockquote>
+
       <Ranking collections={data.collection} />
     </div>
   );

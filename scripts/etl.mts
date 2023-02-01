@@ -2,16 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-
-function chunkify<T>(items: T[], size: number) {
-  return Array.from({ length: Math.ceil(items.length / size) }, (_: T, i: number) =>
-    items.slice(i * size, (i + 1) * size)
-  );
-}
-
-function notNull<T>(value: T | null): value is T {
-  return value !== null;
-}
+import { chunkify, notNull } from "./utils.mjs";
 
 // Load environment from .env
 dotenv.config();
@@ -143,9 +134,7 @@ async function updatePlayers() {
   );
 }
 
-const ignorePlayer = [
-  6, 589227, 690946, 830230, 1374389, 3056907,
-];
+const ignorePlayer = [6, 589227, 690946, 830230, 1374389, 3056907];
 const ignoreItem = [745, 1223, 5904, 11027];
 
 async function updateCollections() {
@@ -178,9 +167,6 @@ async function updateCollections() {
   // at least with the single db deployment I have at time of writing.
   const chunkSize = 250;
 
-  // Sometimes I change this in development
-  let i = 0;
-
   const bar = new progress.SingleBar(
     {
       format: `Importing collections [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
@@ -189,46 +175,110 @@ async function updateCollections() {
     progress.Presets.shades_classic
   );
 
-  bar.start(collections.length, i * chunkSize);
+  bar.start(collections.length, 0);
 
-  for (const collectionsChunk of chunkify(
-    collections.slice(i * chunkSize),
-    chunkSize
-  )) {
-    const values = collectionsChunk.map((c) => `(${c.join(",")})`).join(",");
+  const chunks = chunkify(collections, chunkSize);
 
-    // This query is still problematic because of the fk constraints on Player and Item.
-    // The incoming data quality isn't amazing and often there will be collections for
-    // non-existent players and non-public items. For now I have a manual list of
-    // skippable player and item ids.
-    //
-    // For players: I want to rewrite this to use a CTE and only insert for players
-    // that exist in the db already (a la https://stackoverflow.com/a/68540209)
-    //
-    // For items: I want to insert an item row manually for any missing. I think it would
-    // be acceptable to generate a report of missing items to be done manually. Such rows
-    // can be marked as seed data via Prisma which will ensure they are available for any
-    // instances.
-    //
-    // Once I've done the new query 'm thinking that I can just compare rows-added actual to
-    // rows-added expected and only perform slow comparisons when that number is not the same.
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO "Collection" (${keys.map((k) => `"${k}"`).join(",")})
-      VALUES ${values}
-      ON CONFLICT ("playerId", "itemId")
-      DO UPDATE SET quantity = EXCLUDED.quantity
-    `);
+  for (let i = 0; i < chunks.length; ) {
+    try {
+      const values = chunks[i].map((c) => `(${c.join(",")})`).join(",");
 
-    bar.increment(chunkSize);
+      // This query is still problematic because of the fk constraints on Player and Item.
+      // The incoming data quality isn't amazing and often there will be collections for
+      // non-existent players and non-public items. For now I have a manual list of
+      // skippable player and item ids.
+      //
+      // For players: I want to rewrite this to use a CTE and only insert for players
+      // that exist in the db already (a la https://stackoverflow.com/a/68540209)
+      //
+      // For items: I want to insert an item row manually for any missing. I think it would
+      // be acceptable to generate a report of missing items to be done manually. Such rows
+      // can be marked as seed data via Prisma which will ensure they are available for any
+      // instances.
+      //
+      // Once I've done the new query 'm thinking that I can just compare rows-added actual to
+      // rows-added expected and only perform slow comparisons when that number is not the same.
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO "Collection" (${keys.map((k) => `"${k}"`).join(",")})
+        VALUES ${values}
+        ON CONFLICT ("playerId", "itemId")
+        DO UPDATE SET quantity = EXCLUDED.quantity
+      `);
+
+      bar.update(++i * chunkSize);
+    } catch (e) {
+      // "Server stopped responding". This happens on my local machine a lot but I don't think it will
+      // happen when we run this in the proper environment.
+      if (e.code === "P1017") {
+        await new Promise((r) => setTimeout(r, 2000));
+        continue;
+      }
+      throw e;
+    }
   }
 
   bar.stop();
+}
+
+async function rankCollections() {
+  await Promise.all([
+    async function () {
+      const total = await prisma.collection.count();
+
+      const bar = new progress.SingleBar(
+        {
+          format: `Ranking collections [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
+          hideCursor: true,
+        },
+        progress.Presets.shades_classic
+      );
+
+      bar.start(total, 0);
+
+      while (bar.getProgress() < total) {
+        const result = (await prisma.$queryRaw`
+          SELECT COUNT(*) as count
+          FROM "Collection"
+          WHERE xmax = (
+            SELECT backend_xid
+            FROM pg_stat_activity
+            WHERE state = 'active' AND REGEXP_REPLACE(query, '^[\n ]+', '', 'g') LIKE 'UPDATE%'
+            ORDER BY query_start DESC
+			      LIMIT 1
+          )
+        `) as { count: number }[];
+
+        const count = Number(result[0].count);
+
+        if (count === 0 && bar.getProgress() > 0) {
+          bar.update(total);
+        } else {
+          bar.update(count);
+        }
+      }
+
+      bar.stop();
+    },
+    prisma.$executeRaw`
+      UPDATE "Collection"
+      SET "rank" = ranking.rank_number
+      FROM (
+        SELECT "itemId", 
+          "playerId", 
+          "quantity", 
+          RANK () OVER (PARTITION BY "itemId" ORDER BY quantity DESC) rank_number
+        FROM "Collection"
+      ) as ranking
+      WHERE "Collection"."playerId" = ranking."playerId" AND "Collection"."itemId" = ranking."itemId"
+    `,
+  ]);
 }
 
 async function main() {
   await updateItems();
   await updatePlayers();
   await updateCollections();
+  await rankCollections();
 }
 
 main();

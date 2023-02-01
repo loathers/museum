@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  db:
+    image: "postgres:15"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready -U postgres || exit 1
+      interval: 5s
+      timeout: 3s
+
+  web:
+    image: "loathers-museum"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432
+    ports:
+      - 8080:3000
+    depends_on:
+      db:
+        condition: service_healthy
