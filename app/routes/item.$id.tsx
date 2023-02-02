@@ -1,5 +1,5 @@
 import { prisma } from "~/lib/prisma.server";
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Ranking from "~/components/Ranking";
@@ -38,6 +38,12 @@ export async function loader({ params }: LoaderArgs) {
 
   return item;
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return {
+    title: `Museum :: ${data.name}`,
+  };
+};
 
 export default function Item() {
   const data = useLoaderData<typeof loader>();

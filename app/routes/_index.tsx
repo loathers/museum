@@ -1,3 +1,4 @@
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";
@@ -43,6 +44,22 @@ export async function loader() {
     items,
   };
 }
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "icon",
+      href: "/favicon.gif",
+      type: "image/gif",
+    },
+  ];
+};
+
+export const meta: MetaFunction = () => {
+  return {
+    title: "Museum :: Welcome to the musuem",
+  };
+};
 
 export default function Index() {
   const { collection, items } = useLoaderData<typeof loader>();
