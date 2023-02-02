@@ -3,9 +3,6 @@ version: "3.9"
 services:
   web:
     image: "ghcr.io/loathers/museum:main"
-    labels:
-      ofelia.job-local.etl.schedule: "0 5 * * *"
-      ofelia.job-local.etl.command: "KOL_HTTP_USERNAME=${KOL_HTTP_USERNAME} KOL_HTTP_PASSWORD=${KOL_HTTP_PASSWORD} yarn run etl"
 
   ofelia:
     image: mcuadros/ofelia:latest
@@ -14,3 +11,7 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-exec.etl.container: "web"
+      ofelia.job-exec.etl.schedule: "0 5 * * *"
+      ofelia.job-exec.etl.command: "KOL_HTTP_USERNAME=${KOL_HTTP_USERNAME} KOL_HTTP_PASSWORD=${KOL_HTTP_PASSWORD} yarn run etl"
