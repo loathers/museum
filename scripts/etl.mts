@@ -118,7 +118,7 @@ async function markAmbiguousItems() {
   process.stdout.clearLine(0);
   process.stdout.cursorTo(0);
   process.stdout.write("\x1B[?25h");
-  console.log(` Marked ${results} ambiguous item names`);
+  console.log(`Marked ${results} ambiguous item names`);
 }
 
 async function updatePlayers() {
@@ -267,7 +267,7 @@ async function rankCollections() {
   process.stdout.clearLine(0);
   process.stdout.cursorTo(0);
   process.stdout.write("\x1B[?25h");
-  console.log(` Ranked ${results} collections`);
+  console.log(`Ranked ${results} collections`);
 }
 
 async function main() {
