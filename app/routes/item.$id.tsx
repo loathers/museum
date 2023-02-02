@@ -1,7 +1,7 @@
 import { prisma } from "~/lib/prisma.server";
 import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import Ranking from "~/components/Ranking";
 
 export async function loader({ params }: LoaderArgs) {
@@ -73,6 +73,18 @@ export default function Item() {
         />
 
         <h2>{data.name}</h2>
+      </div>
+      <div style={{ marginBottom: 20 }}>
+        <Link to="/">[← back]</Link>
+        <a href={`https://kol.coldfront.net/thekolwiki/index.php/${data.name}`}>
+          [
+          <img
+            src="/coldfront.png"
+            alt="Wiki link"
+            style={{ width: "1em", verticalAlign: "middle" }}
+          />{" "}
+          wiki]
+        </a>
       </div>
 
       <blockquote
