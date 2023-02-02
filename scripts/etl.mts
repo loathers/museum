@@ -101,6 +101,26 @@ async function updateItems() {
   );
 }
 
+async function markAmbiguousItems() {
+  process.stdout.write(`Marking ambiguous item names`);
+  process.stdout.write("\x1B[?25l");
+
+  const results = await prisma.$executeRaw`
+    UPDATE "Item"
+    SET "ambiguous" = TRUE
+    WHERE "name" IN (
+      SELECT "name" FROM "Item"
+      GROUP BY "name"
+      HAVING COUNT(*) > 1
+    )
+  `;
+
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  process.stdout.write("\x1B[?25h");
+  console.log(` Marked ${results} ambiguous item names`);
+}
+
 async function updatePlayers() {
   // Load the items from KoL source
   const raw = await load("player.txt");
@@ -245,6 +265,7 @@ async function rankCollections() {
 async function main() {
   await prisma.$queryRaw`SELECT 1`;
   await updateItems();
+  await markAmbiguousItems();
   await updatePlayers();
   await updateCollections();
   await rankCollections();

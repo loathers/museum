@@ -1,10 +1,10 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
 
-export async function loader() {
-  const items = await prisma.item.count();
-  const skip = Math.floor(Math.random() * items);
+async function getCollection(itemCount: number) {
+  const skip = Math.floor(Math.random() * itemCount);
   const [result] = await prisma.item.findMany({
     take: 1,
     skip,
@@ -33,8 +33,20 @@ export async function loader() {
   };
 }
 
+export async function loader() {
+  const items = await prisma.item.findMany({
+    orderBy: [{ name: "asc" }, { id: "asc" }],
+  });
+
+  return {
+    collection: await getCollection(items.length),
+    items,
+  };
+}
+
 export default function Index() {
-  const collection = useLoaderData<typeof loader>();
+  const { collection, items } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -45,9 +57,11 @@ export default function Index() {
       }}
     >
       <h1>Welcome to the Museum</h1>
-      <p>
-        For now, visit <code>/item/&lt;your item id&gt;</code>.
-      </p>
+      <ItemSelect
+        label="Check the leaderboard for an item:"
+        items={items}
+        onChange={(item) => item && navigate(`/item/${item.id}`)}
+      />
       {collection && (
         <p>
           For example, you can see how{" "}
