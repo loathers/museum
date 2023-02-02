@@ -248,7 +248,10 @@ async function updateCollections() {
 }
 
 async function rankCollections() {
-  await prisma.$executeRaw`
+  process.stdout.write(`Ranking collections`);
+  process.stdout.write("\x1B[?25l");
+
+  const results = await prisma.$executeRaw`
     UPDATE "Collection"
     SET "rank" = ranking.rank_number
     FROM (
@@ -260,6 +263,11 @@ async function rankCollections() {
     ) as ranking
     WHERE "Collection"."playerId" = ranking."playerId" AND "Collection"."itemId" = ranking."itemId"
   `;
+
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  process.stdout.write("\x1B[?25h");
+  console.log(` Ranked ${results} collections`);
 }
 
 async function main() {
