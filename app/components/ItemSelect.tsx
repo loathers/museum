@@ -1,6 +1,7 @@
 import type { Item } from "@prisma/client";
 import { useCombobox } from "downshift";
 import { useState } from "react";
+import ItemName, { itemToString } from "./ItemName";
 
 type Props = {
   label: string;
@@ -22,11 +23,6 @@ export const menuStyles = {
 };
 
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
-
-function itemToString(item: Item | null, disambiguate?: boolean) {
-  if (!item) return "";
-  return `${item.ambiguous && disambiguate ? `[${item.id}]` : ""}${item.name}`;
-}
 
 export default function ItemSelect({ items, label, onChange }: Props) {
   const [inputItems, setInputItems] = useState([] as Item[]);
@@ -82,7 +78,7 @@ export default function ItemSelect({ items, label, onChange }: Props) {
                 key={`${item}${index}`}
                 {...getItemProps({ item, index })}
               >
-                {itemToString(item, true)}
+                <ItemName item={item} disambiguate />
               </li>
             ))}
         </ul>
