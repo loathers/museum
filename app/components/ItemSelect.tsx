@@ -1,7 +1,8 @@
 import type { Item } from "@prisma/client";
 import { useCombobox } from "downshift";
 import { useState } from "react";
-import ItemName, { itemToString } from "./ItemName";
+import { itemToString } from "~/utils";
+import ItemName from "./ItemName";
 
 type Props = {
   label: string;

@@ -4,7 +4,17 @@ import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import ItemName from "~/components/ItemName";
 
-const sortToOrderByQuery = (sort: string | null) => {
+const normalizeSort = (sort: string | null) => {
+  switch (sort) {
+    case "rank":
+    case "quantity":
+      return sort;
+    default:
+      return "name";
+  }
+};
+
+const sortToOrderByQuery = (sort: ReturnType<typeof normalizeSort>) => {
   switch (sort) {
     case "rank":
       return { rank: "asc" as const };
@@ -23,7 +33,7 @@ export async function loader({ params, request }: LoaderArgs) {
     throw json("Player not found with that id", { status: 404 });
 
   const url = new URL(request.url);
-  const sort = url.searchParams.get("sort");
+  const sort = normalizeSort(url.searchParams.get("sort"));
 
   const orderBy = sortToOrderByQuery(sort);
 
@@ -45,17 +55,30 @@ export async function loader({ params, request }: LoaderArgs) {
 
   if (!player) throw json("Player not found with that id", { status: 404 });
 
-  return player;
+  return { player, sort };
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data: { player } }) => {
   return {
-    title: `Museum :: ${data.name}`,
+    title: `Museum :: ${player.name}`,
   };
 };
 
+const container: React.CSSProperties = {
+  display: "grid",
+  gap: "20px 20px",
+  listStyle: "none",
+};
+
+const currentSort: React.CSSProperties = {
+  textDecoration: "none",
+  color: "inherit",
+  pointerEvents: "none",
+  fontWeight: "bold",
+};
+
 export default function Player() {
-  const data = useLoaderData<typeof loader>();
+  const { player, sort } = useLoaderData<typeof loader>();
 
   return (
     <div
@@ -75,22 +98,41 @@ export default function Player() {
           justifyContent: "center",
         }}
       >
-        <h2>{data.name}</h2>
+        <h2>{player.name}</h2>
       </div>
       <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← back]</Link>
-        <Link to={`/player/${data.id}`}>[a-z]</Link>
-        <Link to={`/player/${data.id}?sort=rank`}>[🏅]</Link>
-        <Link to={`/player/${data.id}?sort=quantity`}>[🔢]</Link>
+        <Link to="/">[← home]</Link>
+        <Link
+          title="Sort by item name"
+          style={sort === "name" ? currentSort : undefined}
+          to={`/player/${player.id}`}
+        >
+          [🔡]
+        </Link>
+        <Link
+          title="Sort by collection rank"
+          style={sort === "rank" ? currentSort : undefined}
+          to={`/player/${player.id}?sort=rank`}
+        >
+          [🏅]
+        </Link>
+        <Link
+          title="Sort by quantity of item"
+          style={sort === "quantity" ? currentSort : undefined}
+          to={`/player/${player.id}?sort=quantity`}
+        >
+          [🔢]
+        </Link>
       </div>
 
-      <ul>
-        {data.collection.map((c) => (
+      <ul style={container}>
+        {player.collection.map((c) => (
           <li key={c.item.id}>
+            {c.quantity}{" "}
             <Link to={`/item/${c.item.id}`}>
-              <ItemName item={c.item} disambiguate />
+              <ItemName item={c.item} plural={c.quantity !== 1} disambiguate />
             </Link>{" "}
-            ({c.quantity}, #{c.rank} collector!)
+            (#{c.rank} collection{c.rank <= 11 ? "!" : ""})
           </li>
         ))}
       </ul>
