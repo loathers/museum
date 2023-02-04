@@ -75,7 +75,7 @@ export default function Item() {
         <h2>{data.name}</h2>
       </div>
       <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← back]</Link>
+        <Link to="/">[← home]</Link>
         <a href={`https://kol.coldfront.net/thekolwiki/index.php/${data.name}`}>
           [
           <img
@@ -95,7 +95,11 @@ export default function Item() {
           padding: "10px 20px",
         }}
       >
-        <p dangerouslySetInnerHTML={{ __html: data.description }} />
+        <p
+          dangerouslySetInnerHTML={{
+            __html: data.description.replace(/\\[rn]/g, ""),
+          }}
+        />
       </blockquote>
 
       <Ranking collections={data.collection} />

@@ -1,4 +1,4 @@
-import { LinksFunction, MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";

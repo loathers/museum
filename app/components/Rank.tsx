@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { englishJoin } from "~/utils";
 import type { Collection } from "./Ranking";
 
@@ -24,9 +25,13 @@ export default function Rank({ collection }: Props) {
       {getRankSymbol(collection[0].rank)}{" "}
       {englishJoin(
         collection.map((c) => (
-          <i key={c.player.id} title={`${c.player.name} #${c.player.id}`}>
+          <Link
+            key={c.player.id}
+            title={`${c.player.name} #${c.player.id}`}
+            to={`/player/${c.player.id}`}
+          >
             {c.player.name}
-          </i>
+          </Link>
         ))
       )}{" "}
       ({collection[0].quantity.toLocaleString()})
