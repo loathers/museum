@@ -15,7 +15,8 @@ export default function About() {
       </div>
       <p>
         Museum is made by <Link to="/player/1197090">gausie</Link> from a closed
-        data feed provided by TPTB.
+        data feed provided by TPTB. It is generously hosted by{" "}
+        <Link to="/player/2485157">Joe the Sauceror</Link>.
       </p>
       <p>
         It is inspired by the (currently much more powerful) service provided by
