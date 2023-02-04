@@ -128,7 +128,7 @@ export default function Player() {
       <ul style={container}>
         {player.collection.map((c) => (
           <li key={c.item.id}>
-            {c.quantity}{" "}
+            {c.quantity.toLocaleString()}{" "}
             <Link to={`/item/${c.item.id}`}>
               <ItemName item={c.item} plural={c.quantity !== 1} disambiguate />
             </Link>{" "}
