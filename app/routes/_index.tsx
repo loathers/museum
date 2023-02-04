@@ -1,5 +1,7 @@
+import type { Item } from "@prisma/client";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { useCallback, useState } from "react";
 import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
@@ -65,6 +67,17 @@ export default function Index() {
   const { collection, items } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
+  const browseItem = useCallback(
+    (item?: Item | null) => {
+      if (!item) return;
+      setLoading(true);
+      navigate(`/item/${item.id}`);
+    },
+    [navigate]
+  );
+
   return (
     <div
       style={{
@@ -77,7 +90,8 @@ export default function Index() {
       <ItemSelect
         label="Check the leaderboard for an item:"
         items={items}
-        onChange={(item) => item && navigate(`/item/${item.id}`)}
+        loading={loading}
+        onChange={browseItem}
       />
       {collection && (
         <p>

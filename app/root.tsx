@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -13,6 +13,13 @@ export const meta: MetaFunction = () => ({
   title: "Museum",
   viewport: "width=device-width,initial-scale=1",
 });
+
+export const links: LinksFunction = () => [
+  {
+    rel: "stylesheet",
+    href: "/style.css",
+  },
+];
 
 export default function App() {
   return (

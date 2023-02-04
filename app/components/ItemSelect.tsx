@@ -3,29 +3,31 @@ import { useCombobox } from "downshift";
 import { useState } from "react";
 import { itemToString } from "~/utils";
 import ItemName from "./ItemName";
+import Loading from "./Loading";
 
 type Props = {
   label: string;
   items: Item[];
   onChange: (item?: Item | null) => unknown;
+  loading?: boolean;
 };
 
-export const menuStyles = {
+export const menuStyles = (isOpen: boolean) => ({
   maxHeight: "180px",
   overflowY: "auto",
   width: "300px",
   margin: 0,
-  borderTop: 0,
+  border: isOpen ? "1px solid black" : 0,
   background: "white",
   position: "absolute",
   zIndex: 1000,
   listStyle: "none",
   padding: 0,
-};
+});
 
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
-export default function ItemSelect({ items, label, onChange }: Props) {
+export default function ItemSelect({ items, label, onChange, loading }: Props) {
   const [inputItems, setInputItems] = useState([] as Item[]);
 
   const {
@@ -61,13 +63,24 @@ export default function ItemSelect({ items, label, onChange }: Props) {
           <input {...getInputProps()} />
           <button
             type="button"
-            {...getToggleButtonProps()}
+            {...getToggleButtonProps({
+              disabled: inputItems.length === 0,
+            })}
             aria-label="toggle menu"
           >
-            {isOpen && inputItems.length > 0 ? <>&#8593;</> : <>&#8595;</>}
+            {loading ? (
+              <Loading />
+            ) : isOpen && inputItems.length > 0 ? (
+              <>&#8593;</>
+            ) : (
+              <>&#8595;</>
+            )}
           </button>
         </div>
-        <ul {...getMenuProps()} style={menuStyles}>
+        <ul
+          {...getMenuProps()}
+          style={menuStyles(isOpen && inputItems.length > 0)}
+        >
           {isOpen &&
             inputItems.map((item, index) => (
               <li
