@@ -87,6 +87,9 @@ export default function Index() {
       }}
     >
       <h1>Welcome to the Museum</h1>
+      <div style={{ marginBottom: 20 }}>
+        <Link to="/about">[❓ about]</Link>
+      </div>
       <ItemSelect
         label="Check the leaderboard for an item:"
         items={items}
