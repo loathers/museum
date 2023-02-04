@@ -1,3 +1,4 @@
+import CollectionInsights from "./CollectionInsights";
 import Rank from "./Rank";
 
 export type Collection = {
@@ -60,6 +61,8 @@ export default function Ranking({ collections }: Props) {
 
   return (
     <div style={container}>
+      <CollectionInsights groups={grouped} />
+
       {keys
         .map((k) => grouped.get(k)!)
         .map((c) => (

@@ -6,3 +6,58 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes rainbow {
+  0% {
+    background-image: linear-gradient(
+      270deg,
+      red,
+      purple,
+      brown,
+      black,
+      magenta,
+      teal
+    );
+    background-clip: text;
+    color: transparent;
+  }
+  25% {
+    background-image: linear-gradient(
+      270deg,
+      purple,
+      brown,
+      black,
+      magenta,
+      teal,
+      red
+    );
+    background-clip: text;
+    color: transparent;
+  }
+  50% {
+    background-image: linear-gradient(
+      270deg,
+      brown,
+      black,
+      magenta,
+      teal,
+      purple,
+      red
+    );
+    background-clip: text;
+    color: transparent;
+  }
+  100% {
+    background-image: linear-gradient(
+      270deg,
+      magenta,
+      teal,
+      black,
+      brown,
+      purple,
+      red
+    );
+    background-clip: text;
+    color: transparent;
+  }
+}
