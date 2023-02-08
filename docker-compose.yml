@@ -6,8 +6,6 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - 5432:5432
     healthcheck:
       test: pg_isready -U postgres || exit 1
       interval: 5s
