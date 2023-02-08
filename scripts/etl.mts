@@ -156,7 +156,7 @@ async function updatePlayers() {
 }
 
 const ignorePlayer = [6, 589227, 690946, 830230, 1374389, 3056907];
-const ignoreItem = [745, 1223, 5904, 11027];
+const ignoreItem = [745, 1223, 5904, 6375, 6376, 6377, 10745, 11027];
 
 async function updateCollections() {
   // Load the items from KoL source

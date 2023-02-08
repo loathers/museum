@@ -12,7 +12,9 @@ export async function loader({ params }: LoaderArgs) {
   if (id >= 2 ** 31) throw json("Item not found with that id", { status: 404 });
 
   const item = await prisma.item.findUnique({
-    where: { id },
+    where: {
+      id,
+    },
     select: {
       name: true,
       picture: true,
@@ -35,7 +37,8 @@ export async function loader({ params }: LoaderArgs) {
     },
   });
 
-  if (!item) throw json("Item not found with that id", { status: 404 });
+  if (!item || item.collection.length === 0)
+    throw json("Item not found with that id", { status: 404 });
 
   return item;
 }
