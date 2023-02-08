@@ -10,31 +10,34 @@ import { englishJoin, plural } from "~/utils";
 
 async function getRandomCollection() {
   const count = await prisma.item.count();
-  const skip = Math.floor(Math.random() * count);
-  const [result] = await prisma.item.findMany({
+
+  const [item] = await prisma.item.findMany({
     take: 1,
-    skip,
+    skip: Math.floor(Math.random() * count),
     select: {
       name: true,
       plural: true,
       id: true,
-      collection: {
-        where: { rank: 1 },
-        orderBy: { player: { id: "desc" } },
-        include: { player: true },
-      },
     },
   });
 
-  if (!result?.collection.length) {
-    return null;
-  }
+  if (!item) return null;
 
-  const players = result.collection.map((c) => c.player);
+  const players = await prisma.player.findMany({
+    where: {
+      collection: {
+        some: {
+          rank: 1,
+          item: item,
+        },
+      },
+    },
+    orderBy: { id: "asc" },
+  });
 
   return {
-    id: result.id,
-    plural: plural(result),
+    id: item.id,
+    plural: plural(item),
     players,
   };
 }
