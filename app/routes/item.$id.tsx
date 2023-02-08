@@ -1,8 +1,9 @@
-import { prisma } from "~/lib/prisma.server";
 import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import Ranking from "~/components/Ranking";
+
+import { prisma } from "~/lib/prisma.server";
+import ItemPageRanking from "~/components/ItemPageRanking";
 
 export async function loader({ params }: LoaderArgs) {
   const id = Number(params.id);
@@ -28,7 +29,7 @@ export async function loader({ params }: LoaderArgs) {
             },
           },
         },
-        orderBy: [{ rank: "asc" }, { playerId: "asc" }],
+        orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
         take: 999,
       },
     },
@@ -102,7 +103,7 @@ export default function Item() {
         />
       </blockquote>
 
-      <Ranking collections={data.collection} />
+      <ItemPageRanking collections={data.collection} />
     </div>
   );
 }

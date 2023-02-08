@@ -1,13 +1,13 @@
+import type { Player } from "@prisma/client";
+import { Link } from "@remix-run/react";
+import { englishJoin } from "~/utils";
 import CollectionInsights from "./CollectionInsights";
 import Rank from "./Rank";
 
 export type Collection = {
   quantity: number;
   rank: number;
-  player: {
-    id: number;
-    name: string;
-  };
+  player: Player;
 };
 
 type Props = {
@@ -16,31 +16,9 @@ type Props = {
 
 const container: React.CSSProperties = {
   display: "grid",
-  gap: "20px 20px",
-  gridTemplateColumns: "repeat(1, 1fr)",
+  rowGap: 20,
+  gridTemplateColumns: "repeat(3, 1fr)",
 };
-
-function rankStyle(rank: number): React.CSSProperties {
-  switch (rank) {
-    case 1:
-      return {
-        background: "#fad25a",
-        padding: 10,
-      };
-    case 2:
-      return {
-        background: "#cbcace",
-        padding: 10,
-      };
-    case 3:
-      return {
-        background: "#cea972",
-        padding: 10,
-      };
-    default:
-      return {};
-  }
-}
 
 function groupToMap<K, V>(
   array: V[],
@@ -55,7 +33,7 @@ function groupToMap<K, V>(
   return map;
 }
 
-export default function Ranking({ collections }: Props) {
+export default function ItemPageRanking({ collections }: Props) {
   const grouped = groupToMap(collections, (c) => c.rank);
   const keys = [...grouped.keys()].sort((a, b) => a - b);
 
@@ -63,12 +41,31 @@ export default function Ranking({ collections }: Props) {
     <div style={container}>
       <CollectionInsights groups={grouped} />
 
+      <h4>Rank</h4>
+      <h4>Item</h4>
+      <h4>Quantity</h4>
+
       {keys
         .map((k) => grouped.get(k)!)
         .map((c) => (
-          <div key={c[0].rank} style={rankStyle(c[0].rank)}>
-            <Rank collection={c} />
-          </div>
+          <Rank
+            key={c[0].rank}
+            rank={c[0].rank}
+            quantity={c[0].quantity}
+            joint={c.length > 1}
+          >
+            {englishJoin(
+              c.map(({ player }) => (
+                <Link
+                  key={player.id}
+                  title={`${player.name} #${player.id}`}
+                  to={`/player/${player.id}`}
+                >
+                  {player.name}
+                </Link>
+              ))
+            )}
+          </Rank>
         ))}
     </div>
   );

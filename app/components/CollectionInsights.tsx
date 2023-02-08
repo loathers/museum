@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import type { Collection } from "./Ranking";
+import type { Collection } from "./ItemPageRanking";
 
 type Props = {
   groups: Map<number, Collection[]>;
@@ -16,6 +16,7 @@ export default function CollectionInsights({ groups }: Props) {
     return (
       <div
         style={{
+          gridColumn: "1/4",
           margin: "0 auto",
           marginBottom: 10,
           background: "#eee",
@@ -39,6 +40,7 @@ export default function CollectionInsights({ groups }: Props) {
     return (
       <div
         style={{
+          gridColumn: "1/4",
           margin: "0 auto",
           marginBottom: 10,
           background: "#FFEAED",

@@ -2,7 +2,7 @@ import { prisma } from "~/lib/prisma.server";
 import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import ItemName from "~/components/ItemName";
+import PlayerPageRanking from "~/components/PlayerPageRanking";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -125,17 +125,7 @@ export default function Player() {
         </Link>
       </div>
 
-      <ul style={container}>
-        {player.collection.map((c) => (
-          <li key={c.item.id}>
-            {c.quantity.toLocaleString()}{" "}
-            <Link to={`/item/${c.item.id}`}>
-              <ItemName item={c.item} plural={c.quantity !== 1} disambiguate />
-            </Link>{" "}
-            (#{c.rank} collection{c.rank <= 11 ? "!" : ""})
-          </li>
-        ))}
-      </ul>
+      <PlayerPageRanking collections={player.collection} />
     </div>
   );
 }

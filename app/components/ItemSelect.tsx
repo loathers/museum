@@ -8,7 +8,7 @@ import Loading from "./Loading";
 type Props = {
   label: string;
   items: Item[];
-  onChange: (item?: Item | null) => unknown;
+  onChange?: (item?: Item | null) => unknown;
   loading?: boolean;
 };
 
@@ -52,7 +52,7 @@ export default function ItemSelect({ items, label, onChange, loading }: Props) {
           : []
       );
     },
-    onSelectedItemChange: (p) => onChange(p.selectedItem),
+    onSelectedItemChange: (p) => onChange?.(p.selectedItem),
   });
 
   return (

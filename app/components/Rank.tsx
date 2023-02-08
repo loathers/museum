@@ -1,12 +1,24 @@
-import { Link } from "@remix-run/react";
-import { englishJoin } from "~/utils";
-import type { Collection } from "./Ranking";
-
 type Props = {
-  collection: Collection[];
+  rank: number;
+  quantity: number;
+  joint: boolean;
+  children: React.ReactNode;
 };
 
-function getRankSymbol(rank: number) {
+function bg(rank: number): React.CSSProperties["backgroundColor"] {
+  switch (rank) {
+    case 1:
+      return "#fad25a";
+    case 2:
+      return "#cbcace";
+    case 3:
+      return "#cea972";
+    default:
+      return "transparent";
+  }
+}
+
+const getRankSymbol = (rank: number) => {
   switch (rank) {
     case 1:
       return "🥇";
@@ -17,24 +29,43 @@ function getRankSymbol(rank: number) {
     default:
       return `#${rank}`;
   }
-}
+};
 
-export default function Rank({ collection }: Props) {
+const numberSuffix = (number: number) => {
+  if (number > 3 && number < 21) return "th";
+  switch (number % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+};
+
+const outline = {
+  textShadow:
+    "-2px -2px 0 white, 2px -2px 0 white, -2px 2px white, 2px 2px white",
+};
+
+export default function Rank({ rank, joint, quantity, children }: Props) {
+  const cellStyle = {
+    backgroundColor: bg(rank),
+    padding: rank > 3 ? undefined : 10,
+  };
+
   return (
-    <div>
-      {getRankSymbol(collection[0].rank)}{" "}
-      {englishJoin(
-        collection.map((c) => (
-          <Link
-            key={c.player.id}
-            title={`${c.player.name} #${c.player.id}`}
-            to={`/player/${c.player.id}`}
-          >
-            {c.player.name}
-          </Link>
-        ))
-      )}{" "}
-      ({collection[0].quantity.toLocaleString()})
+    <div style={{ display: "contents" }}>
+      <div
+        style={{ ...cellStyle, ...outline }}
+        title={`${joint ? "Joint " : ""}${rank}${numberSuffix(rank)} place`}
+      >
+        {getRankSymbol(rank)}
+      </div>
+      <div style={cellStyle}>{children}</div>
+      <div style={cellStyle}>({quantity.toLocaleString()})</div>
     </div>
   );
 }

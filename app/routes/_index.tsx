@@ -1,13 +1,16 @@
 import type { Item } from "@prisma/client";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { useCallback, useState } from "react";
+import { defer } from "@remix-run/node";
+import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Suspense, useCallback, useState } from "react";
+
 import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
 
-async function getCollection(itemCount: number) {
-  const skip = Math.floor(Math.random() * itemCount);
+async function getRandomCollection() {
+  const count = await prisma.item.count();
+  const skip = Math.floor(Math.random() * count);
   const [result] = await prisma.item.findMany({
     take: 1,
     skip,
@@ -37,14 +40,14 @@ async function getCollection(itemCount: number) {
 }
 
 export async function loader() {
-  const items = await prisma.item.findMany({
-    orderBy: [{ name: "asc" }, { id: "asc" }],
+  return defer({
+    collection: getRandomCollection(),
+    // Though we're set up for deferring this, prisma currently can't be deferred
+    // https://github.com/remix-run/remix/issues/5153
+    items: await prisma.item.findMany({
+      orderBy: [{ name: "asc" }, { id: "asc" }],
+    }),
   });
-
-  return {
-    collection: await getCollection(items.length),
-    items,
-  };
 }
 
 export const links: LinksFunction = () => {
@@ -90,29 +93,47 @@ export default function Index() {
       <div style={{ marginBottom: 20 }}>
         <Link to="/about">[❓ about]</Link>
       </div>
-      <ItemSelect
-        label="Check the leaderboard for an item:"
-        items={items}
-        loading={loading}
-        onChange={browseItem}
-      />
-      {collection && (
-        <p>
-          For example, you can see how{" "}
-          <Link to={`/item/${collection.id}`} prefetch="intent">
-            {englishJoin(
-              collection.players.map((p) => (
-                <b key={p.id} title={`#${p.id}`}>
-                  {p.name}
-                </b>
-              ))
-            )}{" "}
-            {collection.players.length === 1 ? "has" : "jointly have"} the most{" "}
-            <b>{collection.plural}</b>
-          </Link>
-          .
-        </p>
-      )}
+      <Suspense
+        fallback={
+          <ItemSelect label="Item list loading..." items={[]} loading={true} />
+        }
+      >
+        <Await resolve={items}>
+          {(data) => (
+            <ItemSelect
+              label="Check the leaderboard for an item:"
+              items={data}
+              loading={loading}
+              onChange={browseItem}
+            />
+          )}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<p>Loading a random collection...</p>}>
+        <Await resolve={collection}>
+          {(data) =>
+            data && data.players ? (
+              <p>
+                For example, you can see how{" "}
+                <Link to={`/item/${data.id}`} prefetch="intent">
+                  {englishJoin(
+                    data.players.map((p) => (
+                      <b key={p.id} title={`#${p.id}`}>
+                        {p.name}
+                      </b>
+                    ))
+                  )}{" "}
+                  {data.players.length === 1 ? "has" : "jointly have"} the most{" "}
+                  <b>{data.plural}</b>
+                </Link>
+                .
+              </p>
+            ) : (
+              <div />
+            )
+          }
+        </Await>
+      </Suspense>
     </div>
   );
 }
