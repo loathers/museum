@@ -34,6 +34,8 @@ function groupToMap<K, V>(
 }
 
 export default function ItemPageRanking({ collections }: Props) {
+  if (collections.length === 0) return null;
+
   const grouped = groupToMap(collections, (c) => c.rank);
   const keys = [...grouped.keys()].sort((a, b) => a - b);
 

@@ -40,14 +40,14 @@ export async function loader({ params }: LoaderArgs) {
   return item;
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data: item }) => {
   return {
-    title: `Museum :: ${data.name}`,
+    title: `Museum :: ${item.name}`,
   };
 };
 
 export default function Item() {
-  const data = useLoaderData<typeof loader>();
+  const item = useLoaderData<typeof loader>();
 
   return (
     <div
@@ -68,16 +68,16 @@ export default function Item() {
         }}
       >
         <img
-          src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${data.picture}.gif`}
-          alt={data.name}
+          src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
+          alt={item.name}
           style={{ marginRight: "0.7em" }}
         />
 
-        <h2>{data.name}</h2>
+        <h2>{item.name}</h2>
       </div>
       <div style={{ marginBottom: 20 }}>
         <Link to="/">[← home]</Link>
-        <a href={`https://kol.coldfront.net/thekolwiki/index.php/${data.name}`}>
+        <a href={`https://kol.coldfront.net/thekolwiki/index.php/${item.name}`}>
           [
           <img
             src="/coldfront.png"
@@ -98,12 +98,12 @@ export default function Item() {
       >
         <p
           dangerouslySetInnerHTML={{
-            __html: data.description.replace(/\\[rn]/g, ""),
+            __html: item.description.replace(/\\[rn]/g, ""),
           }}
         />
       </blockquote>
 
-      <ItemPageRanking collections={data.collection} />
+      <ItemPageRanking collections={item.collection} />
     </div>
   );
 }
