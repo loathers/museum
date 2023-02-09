@@ -1,3 +1,5 @@
+import RankSymbol from "./RankSymbol";
+
 type Props = {
   rank: number;
   quantity: number;
@@ -19,38 +21,6 @@ function bg(rank: number): React.CSSProperties["backgroundColor"] {
   }
 }
 
-const getRankSymbol = (rank: number) => {
-  switch (rank) {
-    case 1:
-      return "🥇";
-    case 2:
-      return "🥈";
-    case 3:
-      return "🥉";
-    default:
-      return `#${rank}`;
-  }
-};
-
-const numberSuffix = (number: number) => {
-  if (number > 3 && number < 21) return "th";
-  switch (number % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-};
-
-const outline = {
-  textShadow:
-    "-2px -2px 0 white, 2px -2px 0 white, -2px 2px white, 2px 2px white",
-};
-
 export default function Rank({
   rank,
   joint,
@@ -65,11 +35,8 @@ export default function Rank({
 
   return (
     <div style={{ display: "contents" }}>
-      <div
-        style={{ ...cellStyle, ...outline }}
-        title={`${joint ? "Joint " : ""}${rank}${numberSuffix(rank)} place`}
-      >
-        {getRankSymbol(rank)}
+      <div style={cellStyle}>
+        <RankSymbol rank={rank} joint={joint} />
       </div>
       <div style={cellStyle}>{children}</div>
       <div style={cellStyle}>{quantity.toLocaleString()}</div>
@@ -79,15 +46,18 @@ export default function Rank({
             gridColumn: "3/4",
             fontSize: 10,
             padding: 10,
-            cursor: "pointer",
             filter: "grayscale(1) opacity(0.5)",
           }}
-          title={`${difference.toLocaleString()} (+${(
-            (difference / (quantity - difference)) *
-            100
-          ).toPrecision(3)}%)`}
         >
-          ↕️
+          <span
+            title={`${difference.toLocaleString()} (+${(
+              (difference / (quantity - difference)) *
+              100
+            ).toPrecision(3)}%)`}
+            style={{ cursor: "help" }}
+          >
+            ↕️
+          </span>
         </div>
       )}
     </div>
