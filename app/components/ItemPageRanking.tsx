@@ -16,7 +16,6 @@ type Props = {
 
 const container: React.CSSProperties = {
   display: "grid",
-  rowGap: 20,
   gridTemplateColumns: "repeat(3, 1fr)",
 };
 
@@ -49,10 +48,13 @@ export default function ItemPageRanking({ collections }: Props) {
 
       {keys
         .map((k) => grouped.get(k)!)
-        .map((c) => (
+        .map((c, i, a) => (
           <Rank
             key={c[0].rank}
             rank={c[0].rank}
+            difference={
+              a.length > i + 1 ? c[0].quantity - a[i + 1][0].quantity : null
+            }
             quantity={c[0].quantity}
             joint={c.length > 1}
           >

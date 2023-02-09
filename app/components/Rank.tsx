@@ -1,6 +1,7 @@
 type Props = {
   rank: number;
   quantity: number;
+  difference?: number | null;
   joint: boolean;
   children: React.ReactNode;
 };
@@ -50,7 +51,13 @@ const outline = {
     "-2px -2px 0 white, 2px -2px 0 white, -2px 2px white, 2px 2px white",
 };
 
-export default function Rank({ rank, joint, quantity, children }: Props) {
+export default function Rank({
+  rank,
+  joint,
+  quantity,
+  children,
+  difference,
+}: Props) {
   const cellStyle = {
     backgroundColor: bg(rank),
     padding: rank > 3 ? undefined : 10,
@@ -65,7 +72,24 @@ export default function Rank({ rank, joint, quantity, children }: Props) {
         {getRankSymbol(rank)}
       </div>
       <div style={cellStyle}>{children}</div>
-      <div style={cellStyle}>({quantity.toLocaleString()})</div>
+      <div style={cellStyle}>{quantity.toLocaleString()}</div>
+      {difference && (
+        <div
+          style={{
+            gridColumn: "3/4",
+            fontSize: 10,
+            padding: 10,
+            cursor: "pointer",
+            filter: "grayscale(1) opacity(0.5)",
+          }}
+          title={`${difference.toLocaleString()} (+${(
+            (difference / (quantity - difference)) *
+            100
+          ).toPrecision(3)}%)`}
+        >
+          ↕️
+        </div>
+      )}
     </div>
   );
 }
