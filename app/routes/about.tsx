@@ -58,7 +58,7 @@ export default function About() {
         <RankSymbol rank={gausieRank} />
         {gausieRank === 1
           ? "! Thanks for your generous help!"
-          : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more to move up the leaderboard.`}
+          : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
       </p>
       <p>
         The site is generously hosted by{" "}
