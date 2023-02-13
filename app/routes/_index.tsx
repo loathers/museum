@@ -1,4 +1,4 @@
-import type { Item } from "@prisma/client";
+import type { Item, Player } from "@prisma/client";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
@@ -8,7 +8,9 @@ import ItemSelect from "~/components/ItemSelect";
 import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
 
-async function getRandomCollection() {
+async function getRandomCollection(
+  retrying = false
+): Promise<{ id: number; plural: string; players: Player[] } | null> {
   const count = await prisma.item.count();
 
   const [item] = await prisma.item.findMany({
@@ -34,6 +36,12 @@ async function getRandomCollection() {
     },
     orderBy: { id: "asc" },
   });
+
+  // If we found an item with more than three players in first place, just roll again
+  if (players.length > 3) {
+    if (retrying) return null;
+    return await getRandomCollection(true);
+  }
 
   return {
     id: item.id,
