@@ -55,7 +55,7 @@ export default function CollectionInsights({ groups }: Props) {
           🍾
         </h3>
         Looks like everyone just has one of this item in their display case, so
-        you can probably only get one per account. Nevertheless, well done them.
+        you can probably only get one per account. Nevertheless, well done then.
       </div>
     );
   }
