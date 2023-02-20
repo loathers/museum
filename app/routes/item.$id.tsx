@@ -5,9 +5,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { prisma } from "~/lib/prisma.server";
 import ItemPageRanking from "~/components/ItemPageRanking";
 
-export async function loader({ params }: LoaderArgs) {
-  const id = Number(params.id);
-
+export async function loadCollections(id: number, take = 999) {
   if (!id) throw json("An item id must be specified", { status: 400 });
   if (id >= 2 ** 31) throw json("Item not found with that id", { status: 404 });
 
@@ -32,15 +30,22 @@ export async function loader({ params }: LoaderArgs) {
           },
         },
         orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
-        take: 999,
+        take,
       },
     },
   });
 
-  if (!item || item.collection.length === 0)
+  if (!item || item.collection.length === 0) {
     throw json("Item not found with that id", { status: 404 });
+  }
 
   return item;
+}
+
+export async function loader({ params }: LoaderArgs) {
+  const id = Number(params.id);
+
+  return await loadCollections(id);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data: item }) => {
