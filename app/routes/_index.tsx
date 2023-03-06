@@ -1,4 +1,4 @@
-import type { Item, Player } from "@prisma/client";
+import type { Player } from "@prisma/client";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
@@ -56,6 +56,7 @@ export async function loader() {
     // Though we're set up for deferring this, prisma currently can't be deferred
     // https://github.com/remix-run/remix/issues/5153
     items: await prisma.item.findMany({
+      select: { name: true, id: true, ambiguous: true },
       orderBy: [{ name: "asc" }, { id: "asc" }],
     }),
   });
@@ -84,7 +85,7 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
 
   const browseItem = useCallback(
-    (item?: Item | null) => {
+    (item?: { id: number } | null) => {
       if (!item) return;
       setLoading(true);
       navigate(`/item/${item.id}`);

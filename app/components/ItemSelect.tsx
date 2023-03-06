@@ -1,14 +1,14 @@
-import type { Item } from "@prisma/client";
 import { useCombobox } from "downshift";
 import { useState } from "react";
+import type { SlimItem } from "~/utils";
 import { itemToString } from "~/utils";
 import ItemName from "./ItemName";
 import Loading from "./Loading";
 
 type Props = {
   label: string;
-  items: Item[];
-  onChange?: (item?: Item | null) => unknown;
+  items: SlimItem[];
+  onChange?: (item?: SlimItem | null) => unknown;
   loading?: boolean;
 };
 
@@ -28,7 +28,7 @@ export const menuStyles = (isOpen: boolean) => ({
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
 export default function ItemSelect({ items, label, onChange, loading }: Props) {
-  const [inputItems, setInputItems] = useState([] as Item[]);
+  const [inputItems, setInputItems] = useState([] as SlimItem[]);
 
   const {
     isOpen,

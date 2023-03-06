@@ -1,8 +1,8 @@
-import type { Item } from "@prisma/client";
+import type { SlimItem } from "~/utils";
 import { itemToString } from "~/utils";
 
 type Props = {
-  item: Item;
+  item: SlimItem;
   disambiguate?: boolean;
   plural?: boolean;
 };
