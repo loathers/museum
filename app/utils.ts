@@ -1,6 +1,6 @@
 import { decodeHTML } from "entities";
 
-export const plural = (item: { plural: string | null, name: string }) => {
+export const plural = (item: { plural?: string | null, name: string }) => {
     return item.plural || item.name + "s";
 }
 
@@ -13,7 +13,7 @@ export function englishJoin(elements: React.ReactNode[]) {
   ]);
 }
 
-export type SlimItem = { id: number, name: string, ambiguous: boolean, plural: string | null };
+export type SlimItem = { id: number, name: string, ambiguous: boolean };
 
 export const itemToString = (item: SlimItem | null, disambiguate = false, usePlural = false) =>
   item

@@ -55,12 +55,10 @@ export async function loader() {
     collection: getRandomCollection(),
     // Though we're set up for deferring this, prisma currently can't be deferred
     // https://github.com/remix-run/remix/issues/5153
-    items: (
-      await prisma.item.findMany({
-        select: { name: true, id: true, ambiguous: true },
-        orderBy: [{ name: "asc" }, { id: "asc" }],
-      })
-    ).map((i) => ({ ...i, plural: null })),
+    items: await prisma.item.findMany({
+      select: { name: true, id: true, ambiguous: true },
+      orderBy: [{ name: "asc" }, { id: "asc" }],
+    }),
   });
 }
 
