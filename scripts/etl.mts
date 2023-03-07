@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
 import fs from "fs/promises";
@@ -80,25 +80,32 @@ async function updateItems() {
     };
   });
 
-  const start = Date.now();
-  process.stdout.write(`Importing ${items.length} items`);
-  process.stdout.write("\x1B[?25l");
+  const bar = new progress.SingleBar(
+    {
+      format: `Importing items [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
+      hideCursor: true,
+    },
+    progress.Presets.shades_classic
+  );
+
+  bar.start(items.length, 0);
 
   // Insert them all
-  // This won't update old items. Until `upsertMany` is added, I'll leave it like this
-  const results = await prisma.item.createMany({
-    data: items,
-    skipDuplicates: true,
-  });
+  for (const item of items) {
+    await prisma.item.upsert({
+      where: { id: item.id },
+      update: {
+        name: item.name,
+        plural: item.plural,
+        picture: item.picture,
+        description: item.description,
+      },
+      create: item,
+    });
+    bar.increment();
+  }
 
-  process.stdout.clearLine(0);
-  process.stdout.cursorTo(0);
-  process.stdout.write("\x1B[?25h");
-  console.log(
-    `Imported ${items.length} items (${results.count} added) in ${Math.round(
-      (Date.now() - start) / 1000
-    )}s`
-  );
+  bar.stop();
 }
 
 async function markAmbiguousItems() {
