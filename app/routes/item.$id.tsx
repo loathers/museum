@@ -47,7 +47,7 @@ export async function loader({ params }: LoaderArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data: item }) => {
   return {
-    title: `Museum :: ${item.name}`,
+    title: `Museum :: ${itemToString(item)}`,
   };
 };
 
