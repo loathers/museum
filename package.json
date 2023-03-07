@@ -11,7 +11,7 @@
     "etl": "node --no-warnings --loader ts-node/esm/transpile-only scripts/etl.mts"
   },
   "dependencies": {
-    "@prisma/client": "^4.10.0",
+    "@prisma/client": "^4.11.0",
     "@remix-run/node": "^1.11.1",
     "@remix-run/react": "^1.11.1",
     "@remix-run/serve": "^1.11.1",
@@ -34,7 +34,7 @@
     "@types/react-dom": "^18.0.8",
     "eslint": "^8.27.0",
     "prettier": "^2.8.3",
-    "prisma": "^4.10.0",
+    "prisma": "^4.11.0",
     "typescript": "^4.8.4"
   },
   "engines": {
