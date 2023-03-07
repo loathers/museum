@@ -4,6 +4,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 import { prisma } from "~/lib/prisma.server";
 import ItemPageRanking from "~/components/ItemPageRanking";
+import { itemToString } from "~/utils";
 
 export async function loadCollections(id: number, take = 999) {
   if (!id) throw json("An item id must be specified", { status: 400 });
@@ -13,11 +14,7 @@ export async function loadCollections(id: number, take = 999) {
     where: {
       id,
     },
-    select: {
-      name: true,
-      picture: true,
-      plural: true,
-      description: true,
+    include: {
       collection: {
         select: {
           quantity: true,
@@ -77,15 +74,19 @@ export default function Item() {
       >
         <img
           src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
-          alt={item.name}
+          alt={itemToString(item)}
           style={{ marginRight: "0.7em" }}
         />
 
-        <h2>{item.name}</h2>
+        <h2 dangerouslySetInnerHTML={{ __html: item.name }} />
       </div>
       <div style={{ marginBottom: 20 }}>
         <Link to="/">[← home]</Link>
-        <a href={`https://kol.coldfront.net/thekolwiki/index.php/${item.name}`}>
+        <a
+          href={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
+            item
+          )}`}
+        >
           [
           <img
             src="/coldfront.png"

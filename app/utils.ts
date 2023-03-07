@@ -15,9 +15,10 @@ export function englishJoin(elements: React.ReactNode[]) {
 
 export type SlimItem = { id: number, name: string, ambiguous: boolean };
 
-export const itemToString = (item: SlimItem | null, disambiguate = false, usePlural = false) =>
-  item
+export function itemToString(item: SlimItem | null, disambiguate = false, usePlural = false) {
+  return item
     ? `${item.ambiguous && disambiguate ? `[${item.id}]` : ""}${decodeHTML(
         usePlural ? plural(item) : item.name
-      )}`
+      ).replace(/(<([^>]+)>)/gi, "")}`
     : "";
+}
