@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "production") {
   prisma.$connect();
 } else {
   if (!global.__db) {
-    global.__db = new PrismaClient({
+    const client = new PrismaClient({
       log: [
         {
           emit: "event",
@@ -19,11 +19,12 @@ if (process.env.NODE_ENV === "production") {
         },
       ],
     });
-    global.__db.$connect();
+    client.$connect();
 
-    global.__db.$on("query" as any, async (e) => {
-      if ("query" in e) console.log(`${e.query} ${e.params}`);
+    client.$on("query", async (e) => {
+      console.log(`${e.query} ${e.params}`);
     });
+    global.__db = client;
   }
   prisma = global.__db;
 }
