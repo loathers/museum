@@ -22,8 +22,7 @@ if (process.env.NODE_ENV === "production") {
     global.__db.$connect();
 
     global.__db.$on("query" as any, async (e) => {
-      // @ts-ignore
-      console.log(`${e.query} ${e.params}`);
+      if ("query" in e) console.log(`${e.query} ${e.params}`);
     });
   }
   prisma = global.__db;
