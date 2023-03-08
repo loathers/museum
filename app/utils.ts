@@ -1,4 +1,5 @@
 import { decodeHTML } from "entities";
+import { prisma } from "./lib/prisma.server";
 
 export const plural = (item: { plural?: string | null, name: string }) => {
     return item.plural || item.name + "s";
@@ -21,4 +22,47 @@ export function itemToString(item: SlimItem | null, disambiguate = false, usePlu
         usePlural ? plural(item) : item.name
       ).replace(/(<([^>]+)>)/gi, "")}`
     : "";
+}
+
+export class HTTPError {
+  message: string;
+  status: number;
+
+  constructor(message: string, status = 500) {
+    this.message = message;
+    this.status = status;
+  }
+}
+
+export async function loadCollections(id: number, take = 999) {
+  if (!id) throw new HTTPError("An item id must be specified", 400);
+  if (id >= 2 ** 31) throw new HTTPError("Item not found with that id", 404);
+
+  const item = await prisma.item.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      collection: {
+        select: {
+          quantity: true,
+          rank: true,
+          player: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+        orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
+        take,
+      },
+    },
+  });
+
+  if (!item || item.collection.length === 0) {
+    throw new HTTPError("Item not found with that id", 404);
+  }
+
+  return item;
 }

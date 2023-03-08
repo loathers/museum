@@ -2,47 +2,18 @@ import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
-import { prisma } from "~/lib/prisma.server";
 import ItemPageRanking from "~/components/ItemPageRanking";
-import { itemToString } from "~/utils";
-
-export async function loadCollections(id: number, take = 999) {
-  if (!id) throw json("An item id must be specified", { status: 400 });
-  if (id >= 2 ** 31) throw json("Item not found with that id", { status: 404 });
-
-  const item = await prisma.item.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      collection: {
-        select: {
-          quantity: true,
-          rank: true,
-          player: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-        },
-        orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
-        take,
-      },
-    },
-  });
-
-  if (!item || item.collection.length === 0) {
-    throw json("Item not found with that id", { status: 404 });
-  }
-
-  return item;
-}
+import { HTTPError, itemToString, loadCollections } from "~/utils";
 
 export async function loader({ params }: LoaderArgs) {
   const id = Number(params.id);
-
-  return await loadCollections(id);
+  try {
+    const collections = await loadCollections(id);
+    return json(collections);
+  } catch (error) {
+    if (!(error instanceof HTTPError)) throw error;
+    throw json(error.message, { status: error.status });
+  }
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data: item }) => {
