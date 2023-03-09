@@ -2,6 +2,7 @@ import type { Player } from "@prisma/client";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { decodeHTML } from "entities";
 import { Suspense, useCallback, useState } from "react";
 
 import ItemSelect from "~/components/ItemSelect";
@@ -136,7 +137,11 @@ export default function Index() {
                     ))
                   )}{" "}
                   {data.players.length === 1 ? "has" : "jointly have"} the most{" "}
-                  <b>{data.plural}</b>
+                  <b
+                    dangerouslySetInnerHTML={{
+                      __html: decodeHTML(data.plural),
+                    }}
+                  ></b>
                 </Link>
                 .
               </p>
