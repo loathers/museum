@@ -64,12 +64,6 @@ export const meta: MetaFunction<typeof loader> = ({ data: { player } }) => {
   };
 };
 
-const container: React.CSSProperties = {
-  display: "grid",
-  gap: "20px 20px",
-  listStyle: "none",
-};
-
 const currentSort: React.CSSProperties = {
   textDecoration: "none",
   color: "inherit",

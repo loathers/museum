@@ -104,6 +104,7 @@ export default function Index() {
       <h1>Welcome to the Museum</h1>
       <div style={{ marginBottom: 20 }}>
         <Link to="/about">[❓ about]</Link>
+        <Link to="/player">[🔎 player search]</Link>
       </div>
       <Suspense
         fallback={
