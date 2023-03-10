@@ -107,6 +107,9 @@ export default function Index() {
         <Link to="/about">[❓ about]</Link>
         <Link to="/player">[🔎 player search]</Link>
       </div>
+      <div style={{ marginTop: 40, marginBottom: 40 }}>
+        <img src="/museum.webp" alt="The museum that can be found in KoL" />
+      </div>
       <Suspense
         fallback={
           <ItemSelect label="Item list loading..." items={[]} loading={true} />
