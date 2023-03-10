@@ -7,6 +7,6 @@ type Props = {
   plural?: boolean;
 };
 
-export default function ItemName({ item, disambiguate, plural }: Props) {
+export default function ItemName({ item, disambiguate, plural = false }: Props) {
   return <>{itemToString(item, disambiguate, plural)}</>;
 }

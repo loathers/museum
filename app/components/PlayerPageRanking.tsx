@@ -29,7 +29,7 @@ export default function ItemPageRanking({ collections }: Props) {
       {collections.map(({ item, rank, quantity }) => (
         <Rank key={item.id} rank={rank} quantity={quantity} joint={false}>
           <Link to={`/item/${item.id}`}>
-            <ItemName item={item} plural={quantity !== 1} disambiguate />
+            <ItemName item={item} disambiguate />
           </Link>
         </Rank>
       ))}
