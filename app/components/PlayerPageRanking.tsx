@@ -20,7 +20,7 @@ const container: React.CSSProperties = {
   gridTemplateColumns: "repeat(3, 1fr)",
 };
 
-export default function ItemPageRanking({ collections }: Props) {
+export default function PlayerPageRanking({ collections }: Props) {
   return (
     <div style={container}>
       <h4>Collection Rank</h4>
