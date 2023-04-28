@@ -236,7 +236,7 @@ async function updateCollections() {
           const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) !== null;
 
           if (!playerExists) {
-            await prisma.player.create({ data: { id: playerId, name: "Unknown Player", missing: true } });
+            await prisma.player.create({ data: { id: playerId, name: `Unknown Player #${playerId}`, missing: true } });
             ignorePlayer.push(playerId)
           }
 
