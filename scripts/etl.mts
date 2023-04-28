@@ -162,8 +162,12 @@ async function updatePlayers() {
 
 async function updateCollections() {
   // Load known players to ignore
-  const ignorePlayer = (await prisma.player.findMany({ where: { missing: true }, select: { id: true } }))
-    .map(({ id }) => id);
+  const ignorePlayer = (
+    await prisma.player.findMany({
+      where: { missing: true },
+      select: { id: true },
+    })
+  ).map(({ id }) => id);
 
   // A classic piece of advice: always ignore MC
   ignorePlayer.push(6);
@@ -231,26 +235,39 @@ async function updateCollections() {
         DO UPDATE SET quantity = EXCLUDED.quantity
       `);
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.meta?.code === "23503") {
-        for (const [playerId, itemId,] of chunk) {
-          const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) !== null;
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.meta?.code === "23503"
+      ) {
+        for (const [playerId, itemId] of chunk) {
+          const playerExists =
+            (await prisma.player.findUnique({ where: { id: playerId } })) !==
+            null;
 
           if (!playerExists) {
-            await prisma.player.create({ data: { id: playerId, name: `Unknown Player #${playerId}`, missing: true } });
-            ignorePlayer.push(playerId)
+            await prisma.player.create({
+              data: {
+                id: playerId,
+                name: `Unknown Player #${playerId}`,
+                missing: true,
+              },
+            });
+            ignorePlayer.push(playerId);
           }
 
-          const itemExists = await prisma.item.findUnique({ where: { id: itemId }}) !== null;
+          const itemExists =
+            (await prisma.item.findUnique({ where: { id: itemId } })) !== null;
 
           if (!itemExists) {
             await prisma.item.create({
               data: {
                 id: itemId,
                 name: "Unknown",
-                description: "Museum heard that this item exists but doesn't know anything about it!",
+                description:
+                  "Museum heard that this item exists but doesn't know anything about it!",
                 picture: "nopic.gif",
-                missing: true
-              }
+                missing: true,
+              },
             });
           }
         }
