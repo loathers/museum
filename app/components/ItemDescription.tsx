@@ -35,7 +35,7 @@ type Props = {
 export default function ItemDescription({ description }: Props) {
   const contents = description
     .replace(/\\[rn]/g, "")
-    .split(/(showitem):(\d+)/)
+    .split(/(showitem): ?(\d+)/)
     .map((value, i, arr) => {
       switch (i % 3) {
         case 0:
