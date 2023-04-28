@@ -1,10 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { Prisma, PrismaClient } from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
-import fs from "fs/promises";
 import fetch from "node-fetch";
-import path from "path";
 
 // Load environment from .env
 dotenv.config();
@@ -234,7 +231,7 @@ async function updateCollections() {
         DO UPDATE SET quantity = EXCLUDED.quantity
       `);
     } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError && err.meta?.code === "23503") {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.meta?.code === "23503") {
         for (const [playerId, itemId,] of chunk) {
           const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) === null;
 
