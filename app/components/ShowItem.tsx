@@ -10,7 +10,6 @@ export default function ShowItem({ id }: Props) {
   const fetcher = useFetcher<Item>();
 
   useEffect(() => {
-    console.log(fetcher.state, fetcher.data);
     if (fetcher.state === "idle" && !fetcher.data) {
       fetcher.load(`/api/item/${id}`);
     }
