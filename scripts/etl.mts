@@ -202,6 +202,7 @@ async function updateCollections() {
   let i = 0;
 
   while (cursor >= 0) {
+    const previousCursor = cursor;
     const next = raw.indexOf("\n", cursor);
 
     if (next > 0) {
@@ -221,7 +222,6 @@ async function updateCollections() {
     if (chunk.length < chunkSize && cursor >= 0) continue;
 
     const values = chunk.map((c) => `(${c.join(",")})`).join(",");
-    chunk = [];
 
     try {
       await prisma.$executeRawUnsafe(`
@@ -233,14 +233,14 @@ async function updateCollections() {
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.meta?.code === "23503") {
         for (const [playerId, itemId,] of chunk) {
-          const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) === null;
+          const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) !== null;
 
           if (!playerExists) {
-            await prisma.player.update({ where: { id: playerId }, data: { missing: true } });
+            await prisma.player.create({ data: { id: playerId, name: "Unknown Player", missing: true } });
             ignorePlayer.push(playerId)
           }
 
-          const itemExists = await prisma.item.findUnique({ where: { id: itemId }}) === null;
+          const itemExists = await prisma.item.findUnique({ where: { id: itemId }}) !== null;
 
           if (!itemExists) {
             await prisma.item.create({
@@ -250,10 +250,13 @@ async function updateCollections() {
                 description: "Museum heard that this item exists but doesn't know anything about it!",
                 picture: "nopic.gif",
                 missing: true
-              },
+              }
             });
           }
         }
+
+        cursor = previousCursor;
+        chunk = [];
 
         // Continue now to re-try this chunk
         continue;
@@ -264,6 +267,7 @@ async function updateCollections() {
     }
 
     i += chunk.length;
+    chunk = [];
 
     bar.update(i);
   }
