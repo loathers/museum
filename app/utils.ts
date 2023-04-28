@@ -38,21 +38,17 @@ export async function loadCollections(id: number, take = 999) {
   if (!id) throw new HTTPError("An item id must be specified", 400);
   if (id >= 2 ** 31) throw new HTTPError("Item not found with that id", 404);
 
-  const item = await prisma.item.findUnique({
+  const item = await prisma.item.findFirst({
     where: {
       id,
+      missing: false,
     },
     include: {
       collection: {
         select: {
           quantity: true,
           rank: true,
-          player: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
+          player: true,
         },
         orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
         take,
