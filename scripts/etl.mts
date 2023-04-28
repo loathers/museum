@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import progress from "cli-progress";
 import dotenv from "dotenv";
 import fs from "fs/promises";
@@ -162,10 +163,14 @@ async function updatePlayers() {
   );
 }
 
-const ignorePlayer = [6, 589227, 690946, 830230, 1374389, 3056907];
-const ignoreItem = [745, 1223, 5904, 6375, 6376, 6377, 10745, 11027];
-
 async function updateCollections() {
+  // Load known players to ignore
+  const ignorePlayer = (await prisma.player.findMany({ where: { missing: true }, select: { id: true } }))
+    .map(({ id }) => id);
+
+  // A classic piece of advice: always ignore MC
+  ignorePlayer.push(6);
+
   // Load the items from KoL source
   const raw = await load("collections.txt");
 
@@ -210,7 +215,6 @@ async function updateCollections() {
       const playerId = Number(parts[0]);
       const itemId = Number(parts[1]);
       if (ignorePlayer.includes(playerId)) continue;
-      if (ignoreItem.includes(itemId)) continue;
 
       chunk.push([playerId, itemId, Number(parts[2])]);
     } else {
@@ -219,32 +223,50 @@ async function updateCollections() {
 
     if (chunk.length < chunkSize && cursor >= 0) continue;
 
-    i += chunk.length;
     const values = chunk.map((c) => `(${c.join(",")})`).join(",");
     chunk = [];
 
-    // This query is still problematic because of the fk constraints on Player and Item.
-    // The incoming data quality isn't amazing and often there will be collections for
-    // non-existent players and non-public items. For now I have a manual list of
-    // skippable player and item ids.
-    //
-    // For players: I want to rewrite this to use a CTE and only insert for players
-    // that exist in the db already (a la https://stackoverflow.com/a/68540209)
-    //
-    // For items: I want to insert an item row manually for any missing. I think it would
-    // be acceptable to generate a report of missing items to be done manually. Such rows
-    // can be marked as seed data via Prisma which will ensure they are available for any
-    // instances.
-    //
-    // Once I've done the new query 'm thinking that I can just compare rows-added actual to
-    // rows-added expected and only perform slow comparisons when that number is not the same.
+    try {
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO "Collection" (${keysString})
+        VALUES ${values}
+        ON CONFLICT ("playerId", "itemId")
+        DO UPDATE SET quantity = EXCLUDED.quantity
+      `);
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError && err.meta?.code === "23503") {
+        for (const [playerId, itemId,] of chunk) {
+          const playerExists = await prisma.player.findUnique({ where: { id: playerId }}) === null;
 
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO "Collection" (${keysString})
-      VALUES ${values}
-      ON CONFLICT ("playerId", "itemId")
-      DO UPDATE SET quantity = EXCLUDED.quantity
-    `);
+          if (!playerExists) {
+            await prisma.player.update({ where: { id: playerId }, data: { missing: true } });
+            ignorePlayer.push(playerId)
+          }
+
+          const itemExists = await prisma.item.findUnique({ where: { id: itemId }}) === null;
+
+          if (!itemExists) {
+            await prisma.item.create({
+              data: {
+                id: itemId,
+                name: "Unknown",
+                description: "Museum heard that this item exists but doesn't know anything about it!",
+                picture: "nopic.gif",
+                missing: true
+              },
+            });
+          }
+        }
+
+        // Continue now to re-try this chunk
+        continue;
+      }
+
+      // Otherwise rethrow this error
+      throw err;
+    }
+
+    i += chunk.length;
 
     bar.update(i);
   }

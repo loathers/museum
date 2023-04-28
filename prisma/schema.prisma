@@ -13,6 +13,7 @@ datasource db {
 model Player {
   id         Int          @id
   name       String       @unique
+  missing    Boolean      @default(false)
   collection Collection[]
 }
 
@@ -22,6 +23,7 @@ model Item {
   plural      String?
   picture     String
   description String
+  missing     Boolean      @default(false)
   ambiguous   Boolean      @default(false)
   collection  Collection[]
 }
