@@ -2,6 +2,7 @@ import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
+import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
 import { HTTPError, itemToString, loadCollections } from "~/utils";
 
@@ -68,20 +69,7 @@ export default function Item() {
         </a>
       </div>
 
-      <blockquote
-        style={{
-          margin: "0 auto",
-          marginBottom: 20,
-          background: "#eee",
-          padding: "10px 20px",
-        }}
-      >
-        <p
-          dangerouslySetInnerHTML={{
-            __html: item.description.replace(/\\[rn]/g, ""),
-          }}
-        />
-      </blockquote>
+      <ItemDescription description={item.description} />
 
       <ItemPageRanking collections={item.collection} />
     </div>
