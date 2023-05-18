@@ -5,13 +5,34 @@ type Props = {
   groups: Map<number, Collection[]>;
 };
 
+const HOLDER_ID = 216194;
+
 export default function CollectionInsights({ groups }: Props) {
   const keys = [...groups.keys()];
+
   if (keys.length > 1) return null;
+
+  if (keys.length === 0)
+    return (
+      <div
+        style={{
+          gridColumn: "1/4",
+          margin: "0 auto",
+          marginBottom: 10,
+          background: "#eee",
+          padding: "10px 20px 30px 20px",
+        }}
+      >
+        <h3>No-one has this item in their display case</h3>
+        <p>
+          Not even <Link to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</Link>!
+        </p>
+      </div>
+    );
 
   const group = groups.get(keys[0])!;
 
-  if (group.length === 1 && group[0].player.id === 216194) {
+  if (group.length === 1 && group[0].player.id === HOLDER_ID) {
     const holder = group[0].player;
     return (
       <div

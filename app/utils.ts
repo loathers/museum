@@ -56,7 +56,7 @@ export async function loadCollections(id: number, take = 999) {
     },
   });
 
-  if (!item || item.collection.length === 0) {
+  if (!item) {
     throw new HTTPError("Item not found with that id", 404);
   }
 
