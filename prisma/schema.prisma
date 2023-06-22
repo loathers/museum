@@ -11,10 +11,19 @@ datasource db {
 }
 
 model Player {
-  id         Int          @id
-  name       String       @unique
-  missing    Boolean      @default(false)
-  collection Collection[]
+  id               Int                @id
+  name             String
+  missing          Boolean            @default(false)
+  collection       Collection[]
+  playerNameChange PlayerNameChange[]
+}
+
+model PlayerNameChange {
+  id       String   @id @default(uuid())
+  playerId Int
+  player   Player   @relation(fields: [playerId], references: [id])
+  oldName  String
+  when     DateTime
 }
 
 model Item {
