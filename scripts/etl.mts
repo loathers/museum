@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, PrismaPromise } from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
@@ -139,25 +139,59 @@ async function updatePlayers() {
     };
   });
 
-  const start = Date.now();
-  process.stdout.write(`Importing ${players.length} players`);
-  process.stdout.write("\x1B[?25l");
-
-  // Insert them all
-  // This won't update old items. Until `upsertMany` is added, I'll leave it like this
-  const results = await prisma.player.createMany({
-    data: players,
-    skipDuplicates: true,
-  });
-
-  process.stdout.clearLine(0);
-  process.stdout.cursorTo(0);
-  process.stdout.write("\x1B[?25h");
-  console.log(
-    `Imported ${players.length} players (${
-      results.count
-    } added) in ${Math.round((Date.now() - start) / 1000)}s`
+  const bar = new progress.SingleBar(
+    {
+      format: `Importing players [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
+      hideCursor: true,
+    },
+    progress.Presets.shades_classic
   );
+
+  bar.start(players.length, 0);
+
+  for (const player of players) {
+    const old = await prisma.player.findUnique({ where: { id: player.id } });
+
+    // If player doesn't exist, create
+    if (!old) {
+      await prisma.player.create({ data: player });
+      bar.increment();
+      continue;
+    }
+
+    // If the player is identical, finish
+    if (old.name === player.name) {
+      bar.increment();
+      continue;
+    }
+
+    // Otherwise, update a name change or a capitalization change
+    const jobs: PrismaPromise<any>[] = [
+      prisma.player.update({
+        where: { id: player.id },
+        data: player,
+      }),
+    ];
+
+    const capitalization = old.name.toLowerCase() === player.name.toLowerCase();
+
+    if (!capitalization) {
+      jobs.push(
+        prisma.playerNameChange.create({
+          data: {
+            oldName: old.name,
+            playerId: player.id,
+            when: new Date(),
+          },
+        })
+      );
+    }
+
+    await prisma.$transaction(jobs);
+    bar.increment();
+  }
+
+  bar.stop();
 }
 
 async function updateCollections() {
