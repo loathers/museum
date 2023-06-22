@@ -3,6 +3,7 @@ import type { LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
+import Formerly from "~/components/Formerly";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -50,6 +51,9 @@ export async function loader({ params, request }: LoaderArgs) {
         },
         orderBy: [orderBy, { item: { id: "asc" as const } }],
       },
+      playerNameChange: {
+        orderBy: { when: "desc" },
+      },
     },
   });
 
@@ -88,11 +92,14 @@ export default function Player() {
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          marginBottom: "0.83em",
         }}
       >
-        <h2>{player.name}</h2>
+        <h2 style={{ marginBottom: 0 }}>{player.name}</h2>
+        <Formerly names={player.playerNameChange} />
       </div>
       <div style={{ marginBottom: 20 }}>
         <Link to="/">[← home]</Link>
