@@ -89,17 +89,10 @@ export default function Player() {
         margin: "0 auto",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "0.83em",
-        }}
-      >
-        <h2 style={{ marginBottom: 0 }}>{player.name}</h2>
-        <Formerly names={player.playerNameChange} />
+      <div>
+        <h2>
+          {player.name} <Formerly names={player.playerNameChange} />
+        </h2>
       </div>
       <div style={{ marginBottom: 20 }}>
         <Link to="/">[← home]</Link>

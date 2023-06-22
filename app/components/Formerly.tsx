@@ -3,8 +3,10 @@ type Props = {
 };
 
 export default function Formerly({ names }: Props) {
+  if (names.length === 0) return null;
+
   return (
-    <div style={{ fontSize: "small" }}>
+    <div style={{ fontWeight: "normal", fontSize: "small" }}>
       formerly{" "}
       {names.map((n, i) => (
         <>
