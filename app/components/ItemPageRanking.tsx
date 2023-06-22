@@ -36,8 +36,9 @@ export default function ItemPageRanking({ collections }: Props) {
   const grouped = groupToMap(collections, (c) => c.rank);
   const keys = [...grouped.keys()].sort((a, b) => a - b);
 
-  const table = collections.length > 0 && <>
-    <h4>Rank</h4>
+  const table = collections.length > 0 && (
+    <>
+      <h4>Rank</h4>
       <h4>Item</h4>
       <h4>Quantity</h4>
 
@@ -66,7 +67,8 @@ export default function ItemPageRanking({ collections }: Props) {
             )}
           </Rank>
         ))}
-        </>;
+    </>
+  );
 
   return (
     <div style={container}>
