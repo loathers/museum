@@ -1,5 +1,5 @@
 import type { Player } from "@prisma/client";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { decodeHTML } from "entities";
@@ -64,21 +64,17 @@ export async function loader() {
   });
 }
 
-export const links: LinksFunction = () => {
-  return [
+export const links: LinksFunction = () => [
     {
       rel: "icon",
       href: "/favicon.gif",
       type: "image/gif",
     },
   ];
-};
 
-export const meta: MetaFunction = () => {
-  return {
-    title: "Museum :: Welcome to the musuem",
-  };
-};
+export const meta: V2_MetaFunction = () => [
+  { title: "Museum :: Welcome to the musuem" }
+];
 
 export default function Index() {
   const { collection, items } = useLoaderData<typeof loader>();

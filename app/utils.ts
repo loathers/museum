@@ -1,9 +1,9 @@
 import { decodeHTML } from "entities";
 import { prisma } from "./lib/prisma.server";
 
-export const plural = (item: { plural?: string | null, name: string }) => {
-    return item.plural || item.name + "s";
-}
+export const plural = (item: { plural?: string | null; name: string }) => {
+  return item.plural || item.name + "s";
+};
 
 export function englishJoin(elements: React.ReactNode[]) {
   if (elements.length === 0) return null;
@@ -14,9 +14,13 @@ export function englishJoin(elements: React.ReactNode[]) {
   ]);
 }
 
-export type SlimItem = { id: number, name: string, ambiguous: boolean };
+export type SlimItem = { id: number; name: string; ambiguous: boolean };
 
-export function itemToString(item: SlimItem | null, disambiguate = false, usePlural = false) {
+export function itemToString(
+  item: SlimItem | null | undefined,
+  disambiguate = false,
+  usePlural = false
+) {
   return item
     ? `${item.ambiguous && disambiguate ? `[${item.id}]` : ""}${decodeHTML(
         usePlural ? plural(item) : item.name

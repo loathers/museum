@@ -1,6 +1,11 @@
-import type { MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import type { V2_MetaFunction } from "@remix-run/node";
+import {
+  Await,
+  Link,
+  useLoaderData,
+  useNavigate
+} from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
 import { prisma } from "~/lib/prisma.server";
@@ -13,11 +18,9 @@ export async function loader() {
   });
 }
 
-export const meta: MetaFunction<typeof loader> = () => {
-  return {
-    title: `Museum :: Players`,
-  };
-};
+export const meta: V2_MetaFunction<typeof loader> = () => [
+  { title: `Museum :: Players` },
+];
 
 export default function PlayerRoot() {
   const data = useLoaderData<typeof loader>();

@@ -1,5 +1,5 @@
 import { prisma } from "~/lib/prisma.server";
-import type { LoaderArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
@@ -62,11 +62,9 @@ export async function loader({ params, request }: LoaderArgs) {
   return { player, sort };
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: { player } }) => {
-  return {
-    title: `Museum :: ${player.name}`,
-  };
-};
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [
+  { title: `Museum :: ${data?.player.name}` }
+];
 
 const currentSort: React.CSSProperties = {
   textDecoration: "none",
