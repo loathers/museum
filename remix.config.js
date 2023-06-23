@@ -1,7 +1,6 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
-  serverModuleFormat: "esm",
   future: {
     v2_routeConvention: true,
     v2_errorBoundary: true,
