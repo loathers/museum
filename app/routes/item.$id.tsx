@@ -80,8 +80,6 @@ export function ErrorBoundary() {
 
   if (!isRouteErrorResponse(error)) return "Unexpected error";
 
-  console.log(error);
-
   return (
     <div
       style={{
