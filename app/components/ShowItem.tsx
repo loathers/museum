@@ -1,13 +1,13 @@
-import type { Item } from "@prisma/client";
 import { Link, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
+import type { loader } from "~/routes/api.item.$id";
 import { itemToString } from "~/utils";
 import ItemName from "./ItemName";
 
 type Props = { id: number };
 
 export default function ShowItem({ id }: Props) {
-  const fetcher = useFetcher<Item>();
+  const fetcher = useFetcher<typeof loader>();
 
   useEffect(() => {
     if (fetcher.state === "idle" && !fetcher.data) {
@@ -21,8 +21,15 @@ export default function ShowItem({ id }: Props) {
 
   const item = fetcher.data;
 
+  const OptionalLink = ({ children }: React.PropsWithChildren<{}>) =>
+    item.collection.length > 0 ? (
+      <Link to={`/item/${item.id}`}>{children}</Link>
+    ) : (
+      <>{children}</>
+    );
+
   return (
-    <Link to={`/item/${item.id}`}>
+    <OptionalLink>
       <div>
         <img
           src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
@@ -30,6 +37,6 @@ export default function ShowItem({ id }: Props) {
         />
       </div>
       <ItemName item={item} />
-    </Link>
+    </OptionalLink>
   );
 }

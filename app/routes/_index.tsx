@@ -58,9 +58,9 @@ export async function loader() {
     // https://github.com/remix-run/remix/issues/5153
     items: await prisma.item.findMany({
       where: { missing: false },
-      select: { name: true, id: true, ambiguous: true },
+      select: { name: true, id: true, ambiguous: true, _count: { select: { collection: true } } },
       orderBy: [{ name: "asc" }, { id: "asc" }],
-    }),
+    }).then(items => items.filter(i => i._count.collection > 0)),
   });
 }
 

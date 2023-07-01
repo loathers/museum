@@ -1,3 +1,4 @@
+import { json } from "@remix-run/node";
 import { decodeHTML } from "entities";
 import { prisma } from "./lib/prisma.server";
 
@@ -28,19 +29,37 @@ export function itemToString(
     : "";
 }
 
-export class HTTPError {
+export class HttpError {
   message: string;
   status: number;
 
-  constructor(message: string, status = 500) {
-    this.message = message;
+  constructor(status: number, message: string) {
     this.status = status;
+    this.message = message;
+  }
+
+  toRouteError() {
+    return json(this.message, {
+      status: this.status,
+      statusText: HTTP_ERROR_TYPES[this.status] || "Unknown Error",
+    });
   }
 }
 
+export const ITEM_NOT_FOUND_ERROR = new HttpError(
+  404,
+  "That item, if it exists at all, has no collections."
+);
+
+const HTTP_ERROR_TYPES: { [key: number]: string } = {
+  404: "Not Found",
+  400: "Bad Request",
+  500: "Internal Server Error",
+};
+
 export async function loadCollections(id: number, take = 999) {
-  if (!id) throw new HTTPError("An item id must be specified", 400);
-  if (id >= 2 ** 31) throw new HTTPError("Item not found with that id", 404);
+  if (!id) throw new HttpError(400, "An item id must be specified");
+  if (id >= 2 ** 31) throw ITEM_NOT_FOUND_ERROR;
 
   const item = await prisma.item.findFirst({
     where: {
@@ -61,7 +80,7 @@ export async function loadCollections(id: number, take = 999) {
   });
 
   if (!item) {
-    throw new HTTPError("Item not found with that id", 404);
+    throw ITEM_NOT_FOUND_ERROR;
   }
 
   return item;
