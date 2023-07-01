@@ -1,6 +1,7 @@
+import { Container, Heading, HStack, Image, Link, Stack } from "@chakra-ui/react";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from "@remix-run/react";
+import { isRouteErrorResponse, Link as RemixLink, useLoaderData, useRouteError } from "@remix-run/react";
 
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
@@ -26,52 +27,42 @@ export default function Item() {
   const item = useLoaderData<typeof loader>();
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        lineHeight: "1.4",
-        textAlign: "center",
-        maxWidth: 780,
-        padding: "0 20px",
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
-          alt={itemToString(item)}
-          style={{ marginRight: "0.7em" }}
-        />
+    <Container>
+      <Stack alignItems="center">
+        <HStack spacing={6}>
+          <Image
+            src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
+            alt={itemToString(item)}
+          />
 
-        <h2 dangerouslySetInnerHTML={{ __html: item.name }} />
-      </div>
-      <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← home]</Link>
-        <a
-          href={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
-            item
-          )}`}
-        >
-          [
-          <img
-            src="/coldfront.png"
-            alt="Wiki link"
-            style={{ width: "1em", verticalAlign: "middle" }}
-          />{" "}
-          wiki]
-        </a>
-      </div>
+          <Heading as="h2" dangerouslySetInnerHTML={{ __html: item.name }} />
+        </HStack>
+        <HStack>
+          <Link as={RemixLink} to="/">
+            [← home]
+          </Link>
+          <HStack
+          spacing={0}
+            as={RemixLink}
+            to={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
+              item
+            )}`}
+          >
+            <span>[</span>
+            <img
+              src="/coldfront.png"
+              alt="Wiki link"
+              style={{ width: "1em", verticalAlign: "middle" }}
+            />
+            <span>&nbsp;wiki]</span>
+          </HStack>
+        </HStack>
 
-      <ItemDescription description={item.description} />
+        <ItemDescription description={item.description} />
 
-      <ItemPageRanking collections={item.collection} />
-    </div>
+        <ItemPageRanking collections={item.collection} />
+      </Stack>
+    </Container>
   );
 }
 
@@ -108,7 +99,7 @@ export function ErrorBoundary() {
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← home]</Link>
+        <Link as={RemixLink} to="/">[← home]</Link>
       </div>
 
       <div>

@@ -1,7 +1,8 @@
+import { Container, Heading, HStack, Image, Link, Stack } from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
 import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Await, Link as RemixLink, useLoaderData, useNavigate } from "@remix-run/react";
 import { decodeHTML } from "entities";
 import { Suspense, useCallback, useState } from "react";
 
@@ -92,66 +93,77 @@ export default function Index() {
   );
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        lineHeight: "1.4",
-        textAlign: "center",
-      }}
-    >
-      <h1>Welcome to the Museum</h1>
-      <div style={{ marginBottom: 20 }}>
-        <Link to="/about">[❓ about]</Link>
-        <Link to="/player">[🔎 player search]</Link>
-      </div>
-      <div style={{ marginTop: 40, marginBottom: 40 }}>
-        <img src="/museum.webp" alt="The museum that can be found in KoL" />
-      </div>
-      <Suspense
-        fallback={
-          <ItemSelect label="Item list loading..." items={[]} loading={true} />
-        }
-      >
-        <Await resolve={items}>
-          {(data) => (
+    <Container>
+      <Stack alignItems="center">
+        <Heading as="h1">Welcome to the Museum</Heading>
+        <HStack justifyContent="center">
+          <Link as={RemixLink} to="/about">
+            [❓ about]
+          </Link>
+          <Link as={RemixLink} to="/player">
+            [🔎 player search]
+          </Link>
+        </HStack>
+        <Image
+          src="/museum.webp"
+          alt="The museum that can be found in KoL"
+          margin={8}
+        />
+        <Suspense
+          fallback={
             <ItemSelect
-              label="Check the leaderboard for an item:"
-              items={data}
-              loading={loading}
-              onChange={browseItem}
+              label="Item list loading..."
+              items={[]}
+              loading={true}
             />
-          )}
-        </Await>
-      </Suspense>
-      <Suspense fallback={<p>Loading a random collection...</p>}>
-        <Await resolve={collection}>
-          {(data) =>
-            data && data.players ? (
-              <p>
-                For example, you can see how{" "}
-                <Link to={`/item/${data.id}`} prefetch="intent">
-                  {englishJoin(
-                    data.players.map((p) => (
-                      <b key={p.id} title={`#${p.id}`}>
-                        {p.name}
-                      </b>
-                    ))
-                  )}{" "}
-                  {data.players.length === 1 ? "has" : "jointly have"} the most{" "}
-                  <b
-                    dangerouslySetInnerHTML={{
-                      __html: decodeHTML(data.plural),
-                    }}
-                  ></b>
-                </Link>
-                .
-              </p>
-            ) : (
-              <div />
-            )
           }
-        </Await>
-      </Suspense>
-    </div>
+        >
+          <Await resolve={items}>
+            {(data) => (
+              <ItemSelect
+                label="Check the leaderboard for an item:"
+                items={data}
+                loading={loading}
+                onChange={browseItem}
+              />
+            )}
+          </Await>
+        </Suspense>
+        <Suspense fallback={<p>Loading a random collection...</p>}>
+          <Await resolve={collection}>
+            {(data) =>
+              data && data.players ? (
+                <p>
+                  For example, you can see how{" "}
+                  <Link
+                    as={RemixLink}
+                    to={`/item/${data.id}`}
+                    prefetch="intent"
+                  >
+                    {englishJoin(
+                      data.players.map((p) => (
+                        <b key={p.id} title={`#${p.id}`}>
+                          {p.name}
+                        </b>
+                      ))
+                    )}{" "}
+                    {data.players.length === 1 ? "has" : "jointly have"} the
+                    most{" "}
+                    <b
+                      dangerouslySetInnerHTML={{
+                        __html: decodeHTML(data.plural),
+                      }}
+                    ></b>
+                  </Link>
+                  .
+                </p>
+              ) : (
+                <div />
+              )
+            }
+          </Await>
+        </Suspense>
+      </Stack>
+    </Container>
   );
 }

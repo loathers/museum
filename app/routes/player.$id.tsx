@@ -1,7 +1,9 @@
-import { prisma } from "~/lib/prisma.server";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+import { Container, Heading, HStack, Link, Stack } from "@chakra-ui/react";
+
+import { prisma } from "~/lib/prisma.server";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import Formerly from "~/components/Formerly";
 
@@ -77,47 +79,43 @@ export default function Player() {
   const { player, sort } = useLoaderData<typeof loader>();
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        lineHeight: "1.4",
-        textAlign: "center",
-        maxWidth: 780,
-        padding: "0 20px",
-        margin: "0 auto",
-      }}
-    >
-      <div>
-        <h2>
+    <Container>
+      <Stack alignItems="center">
+        <Heading>
           {player.name} <Formerly names={player.playerNameChange} />
-        </h2>
-      </div>
-      <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← home]</Link>
-        <Link
-          title="Sort by item name"
-          style={sort === "name" ? currentSort : undefined}
-          to={`/player/${player.id}`}
-        >
-          [🔡]
-        </Link>
-        <Link
-          title="Sort by collection rank"
-          style={sort === "rank" ? currentSort : undefined}
-          to={`/player/${player.id}?sort=rank`}
-        >
-          [🏅]
-        </Link>
-        <Link
-          title="Sort by quantity of item"
-          style={sort === "quantity" ? currentSort : undefined}
-          to={`/player/${player.id}?sort=quantity`}
-        >
-          [🔢]
-        </Link>
-      </div>
+        </Heading>
+        <HStack>
+          <Link as={RemixLink} to="/">
+            [← home]
+          </Link>
+          <Link
+            as={RemixLink}
+            title="Sort by item name"
+            style={sort === "name" ? currentSort : undefined}
+            to={`/player/${player.id}`}
+          >
+            [🔡]
+          </Link>
+          <Link
+            as={RemixLink}
+            title="Sort by collection rank"
+            style={sort === "rank" ? currentSort : undefined}
+            to={`/player/${player.id}?sort=rank`}
+          >
+            [🏅]
+          </Link>
+          <Link
+            as={RemixLink}
+            title="Sort by quantity of item"
+            style={sort === "quantity" ? currentSort : undefined}
+            to={`/player/${player.id}?sort=quantity`}
+          >
+            [🔢]
+          </Link>
+        </HStack>
 
-      <PlayerPageRanking collections={player.collection} />
-    </div>
+        <PlayerPageRanking collections={player.collection} />
+      </Stack>
+    </Container>
   );
 }

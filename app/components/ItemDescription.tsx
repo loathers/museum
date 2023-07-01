@@ -41,7 +41,7 @@ export default function ItemDescription({ description }: Props) {
         case 0:
           return <DescriptionParagraph key={i} value={value} />;
         case 1:
-          return <DescriptionMacro type={value} value={Number(arr[i + 1])} />;
+          return <DescriptionMacro key={i} type={value} value={Number(arr[i + 1])} />;
         default:
           return null;
       }

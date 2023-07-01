@@ -1,3 +1,4 @@
+import { Table, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 import type { Item } from "@prisma/client";
 import { Link } from "@remix-run/react";
 
@@ -14,25 +15,25 @@ type Props = {
   collections: Collection[];
 };
 
-const container: React.CSSProperties = {
-  display: "grid",
-  rowGap: 20,
-  gridTemplateColumns: "repeat(3, 1fr)",
-};
-
 export default function ItemPageRanking({ collections }: Props) {
   return (
-    <div style={container}>
-      <h4>Collection Rank</h4>
-      <h4>Item</h4>
-      <h4>Quantity</h4>
-      {collections.map(({ item, rank, quantity }) => (
-        <Rank key={item.id} rank={rank} quantity={quantity} joint={false}>
-          <Link to={`/item/${item.id}`}>
-            <ItemName item={item} disambiguate />
-          </Link>
-        </Rank>
-      ))}
-    </div>
+    <Table variant="simple">
+      <Thead>
+        <Tr>
+          <Th>Collection Rank</Th>
+          <Th>Item</Th>
+          <Th>Quantity</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {collections.map(({ item, rank, quantity }) => (
+          <Rank key={item.id} rank={rank} quantity={quantity} joint={false}>
+            <Link to={`/item/${item.id}`}>
+              <ItemName item={item} disambiguate />
+            </Link>
+          </Rank>
+        ))}
+      </Tbody>
+    </Table>
   );
 }

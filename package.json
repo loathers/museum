@@ -11,6 +11,11 @@
     "etl": "node --no-warnings --loader ts-node/esm/transpile-only scripts/etl.mts"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.7.1",
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "@prisma/client": "^4.16.1",
     "@remix-run/node": "^1.11.1",
     "@remix-run/react": "^1.11.1",
@@ -19,6 +24,7 @@
     "dotenv": "^16.0.3",
     "downshift": "^7.2.0",
     "entities": "^4.4.0",
+    "framer-motion": "^10.12.18",
     "isbot": "^3.6.5",
     "node-fetch": "^3.3.0",
     "react": "^18.2.0",
