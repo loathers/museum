@@ -1,3 +1,4 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -7,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { theme } from "./theme";
 
 export const meta: V2_MetaFunction = () => [
   { charSet: "utf-8" },
@@ -21,7 +23,7 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export default function App() {
+export function Document({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <head>
@@ -29,11 +31,21 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  );
+}
+
+export default function App() {
+  return (
+    <Document>
+      <ChakraProvider theme={theme}>
+        <Outlet />
+      </ChakraProvider>
+    </Document>
   );
 }

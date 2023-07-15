@@ -39,11 +39,11 @@ const style = {
 
 export default function RankSymbol({ rank, joint }: Props) {
   return (
-    <div
+    <span
       style={style}
       title={`${joint ? "Joint " : ""}${rank}${numberSuffix(rank)} place`}
     >
       {getRankSymbol(rank)}
-    </div>
+    </span>
   );
 }

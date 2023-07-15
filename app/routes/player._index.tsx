@@ -2,13 +2,15 @@ import { defer } from "@remix-run/node";
 import type { V2_MetaFunction } from "@remix-run/node";
 import {
   Await,
-  Link,
   useLoaderData,
-  useNavigate
+  useNavigate,
+  Link as RemixLink,
 } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
 import { prisma } from "~/lib/prisma.server";
+import { Button, ButtonGroup, Heading, Stack } from "@chakra-ui/react";
+import Layout from "~/components/Layout";
 
 export async function loader() {
   return defer({
@@ -37,17 +39,15 @@ export default function PlayerRoot() {
   );
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        lineHeight: "1.4",
-        textAlign: "center",
-      }}
-    >
-      <h1>Players</h1>
-      <div style={{ marginBottom: 20 }}>
-        <Link to="/">[← home]</Link>
-      </div>
+    <Layout>
+      <Stack>
+        <Heading>Players</Heading>
+        <ButtonGroup justifyContent="center">
+          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+            home
+          </Button>
+        </ButtonGroup>
+      </Stack>
       <Suspense
         fallback={
           <PlayerSelect
@@ -68,6 +68,6 @@ export default function PlayerRoot() {
           )}
         </Await>
       </Suspense>
-    </div>
+    </Layout>
   );
 }

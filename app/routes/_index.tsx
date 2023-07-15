@@ -1,11 +1,25 @@
+import {
+  Button,
+  ButtonGroup,
+  Heading,
+  Image,
+  Link,
+  Stack,
+} from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
 import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import {
+  Await,
+  Link as RemixLink,
+  useLoaderData,
+  useNavigate,
+} from "@remix-run/react";
 import { decodeHTML } from "entities";
 import { Suspense, useCallback, useState } from "react";
 
 import ItemSelect from "~/components/ItemSelect";
+import Layout from "~/components/Layout";
 import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
 
@@ -56,24 +70,31 @@ export async function loader() {
     collection: getRandomCollection(),
     // Though we're set up for deferring this, prisma currently can't be deferred
     // https://github.com/remix-run/remix/issues/5153
-    items: await prisma.item.findMany({
-      where: { missing: false },
-      select: { name: true, id: true, ambiguous: true, _count: { select: { collection: true } } },
-      orderBy: [{ name: "asc" }, { id: "asc" }],
-    }).then(items => items.filter(i => i._count.collection > 0)),
+    items: await prisma.item
+      .findMany({
+        where: { missing: false },
+        select: {
+          name: true,
+          id: true,
+          ambiguous: true,
+          _count: { select: { collection: true } },
+        },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
+      })
+      .then((items) => items.filter((i) => i._count.collection > 0)),
   });
 }
 
 export const links: LinksFunction = () => [
-    {
-      rel: "icon",
-      href: "/favicon.gif",
-      type: "image/gif",
-    },
-  ];
+  {
+    rel: "icon",
+    href: "/favicon.gif",
+    type: "image/gif",
+  },
+];
 
 export const meta: V2_MetaFunction = () => [
-  { title: "Museum :: Welcome to the musuem" }
+  { title: "Museum :: Welcome to the musuem" },
 ];
 
 export default function Index() {
@@ -92,21 +113,23 @@ export default function Index() {
   );
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        lineHeight: "1.4",
-        textAlign: "center",
-      }}
-    >
-      <h1>Welcome to the Museum</h1>
-      <div style={{ marginBottom: 20 }}>
-        <Link to="/about">[❓ about]</Link>
-        <Link to="/player">[🔎 player search]</Link>
-      </div>
-      <div style={{ marginTop: 40, marginBottom: 40 }}>
-        <img src="/museum.webp" alt="The museum that can be found in KoL" />
-      </div>
+    <Layout>
+      <Stack>
+        <Heading as="h1">Welcome to the Museum</Heading>
+        <ButtonGroup justifyContent="center">
+          <Button leftIcon={<>❓</>} as={RemixLink} to="/about">
+            about
+          </Button>
+          <Button leftIcon={<>🔎</>} as={RemixLink} to="/player">
+            player search
+          </Button>
+        </ButtonGroup>
+      </Stack>
+      <Image
+        src="/museum.webp"
+        alt="The museum that can be found in KoL"
+        margin={8}
+      />
       <Suspense
         fallback={
           <ItemSelect label="Item list loading..." items={[]} loading={true} />
@@ -129,7 +152,7 @@ export default function Index() {
             data && data.players ? (
               <p>
                 For example, you can see how{" "}
-                <Link to={`/item/${data.id}`} prefetch="intent">
+                <Link as={RemixLink} to={`/item/${data.id}`} prefetch="intent">
                   {englishJoin(
                     data.players.map((p) => (
                       <b key={p.id} title={`#${p.id}`}>
@@ -152,6 +175,6 @@ export default function Index() {
           }
         </Await>
       </Suspense>
-    </div>
+    </Layout>
   );
 }

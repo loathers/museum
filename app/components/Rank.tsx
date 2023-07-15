@@ -1,3 +1,4 @@
+import { Td, Tr, Text } from "@chakra-ui/react";
 import RankSymbol from "./RankSymbol";
 
 type Props = {
@@ -28,38 +29,33 @@ export default function Rank({
   children,
   difference,
 }: Props) {
-  const cellStyle = {
-    backgroundColor: bg(rank),
-    padding: rank > 3 ? undefined : 10,
-  };
-
   return (
-    <div style={{ display: "contents" }}>
-      <div style={cellStyle}>
-        <RankSymbol rank={rank} joint={joint} />
-      </div>
-      <div style={cellStyle}>{children}</div>
-      <div style={cellStyle}>{quantity.toLocaleString()}</div>
+    <>
+      <Tr backgroundColor={bg(rank)} padding={rank > 3 ? undefined : 10}>
+        <Td>
+          <RankSymbol rank={rank} joint={joint} />
+        </Td>
+        <Td>{children}</Td>
+        <Td>{quantity.toLocaleString()}</Td>
+      </Tr>
       {difference && (
-        <div
-          style={{
-            gridColumn: "3/4",
-            fontSize: 10,
-            padding: 10,
-            filter: "grayscale(1) opacity(0.5)",
-          }}
-        >
-          <span
-            title={`${difference.toLocaleString()} (+${(
-              (difference / (quantity - difference)) *
-              100
-            ).toPrecision(3)}%)`}
-            style={{ cursor: "help" }}
-          >
-            ↕️
-          </span>
-        </div>
+        <Tr>
+          <Td paddingY={1} colSpan={2}></Td>
+          <Td paddingY={1}>
+            <Text
+              title={`${difference.toLocaleString()} (+${(
+                (difference / (quantity - difference)) *
+                100
+              ).toPrecision(3)}%)`}
+              cursor="help"
+              filter="grayscale(1) opacity(0.5)"
+              fontSize={10}
+            >
+              ↕️
+            </Text>
+          </Td>
+        </Tr>
       )}
-    </div>
+    </>
   );
 }

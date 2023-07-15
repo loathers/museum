@@ -1,3 +1,4 @@
+import { Center } from "@chakra-ui/react";
 import { Link, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import type { loader } from "~/routes/api.item.$id";
@@ -30,12 +31,12 @@ export default function ShowItem({ id }: Props) {
 
   return (
     <OptionalLink>
-      <div>
+      <Center>
         <img
           src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
           alt={itemToString(item)}
         />
-      </div>
+      </Center>
       <ItemName item={item} />
     </OptionalLink>
   );
