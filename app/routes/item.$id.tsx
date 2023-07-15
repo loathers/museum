@@ -62,7 +62,7 @@ export default function Item() {
           <Button
             as={RemixLink}
             to={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
-              item
+              item,
             )}`}
             leftIcon={
               <img

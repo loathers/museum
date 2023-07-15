@@ -22,7 +22,7 @@ export default function ShowItem({ id }: Props) {
 
   const item = fetcher.data;
 
-  const OptionalLink = ({ children }: React.PropsWithChildren<{}>) =>
+  const OptionalLink = ({ children }: React.PropsWithChildren<object>) =>
     item.collection.length > 0 ? (
       <Link to={`/item/${item.id}`}>{children}</Link>
     ) : (

@@ -17,12 +17,13 @@ type Props = {
 
 function groupToMap<K, V>(
   array: V[],
-  callbackFn: (element: V, index?: number, array?: V[]) => K
+  callbackFn: (element: V, index?: number, array?: V[]) => K,
 ) {
   const map = new Map<K, V[]>();
   for (let i = 0; i < array.length; i++) {
     const key = callbackFn(array[i], i, array);
     if (!map.has(key)) map.set(key, [] as V[]);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     map.get(key)!.push(array[i]);
   }
   return map;
@@ -48,6 +49,7 @@ export default function ItemPageRanking({ collections }: Props) {
 
           <Tbody>
             {keys
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               .map((k) => grouped.get(k)!)
               .map((c, i, a) => (
                 <Rank
@@ -70,7 +72,7 @@ export default function ItemPageRanking({ collections }: Props) {
                       >
                         {player.name}
                       </Link>
-                    ))
+                    )),
                   )}
                 </Rank>
               ))}

@@ -9,14 +9,14 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 const auth = Buffer.from(
-  `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`
+  `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`,
 ).toString("base64");
 
 async function load(file: string) {
   // Construct request
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/${file}`,
-    { headers: { Authorization: `Basic ${auth}` } }
+    { headers: { Authorization: `Basic ${auth}` } },
   );
 
   // Download with progress
@@ -29,7 +29,7 @@ async function load(file: string) {
       format: `Downloading ${file} [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   const contentLength = Number(response.headers.get("Content-Length") ?? 0);
@@ -44,7 +44,7 @@ async function load(file: string) {
   }
 
   const allChunks = new Uint8Array(
-    chunks.reduce((acc, c) => acc + c.length, 0)
+    chunks.reduce((acc, c) => acc + c.length, 0),
   );
   let position = 0;
   for (let chunk of chunks) {
@@ -83,7 +83,7 @@ async function updateItems() {
       format: `Importing items [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(items.length, 0);
@@ -144,7 +144,7 @@ async function updatePlayers() {
       format: `Importing players [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(players.length, 0);
@@ -183,7 +183,7 @@ async function updatePlayers() {
             playerId: player.id,
             when: new Date(),
           },
-        })
+        }),
       );
     }
 

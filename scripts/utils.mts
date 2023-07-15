@@ -1,7 +1,7 @@
 export function chunkify<T>(items: T[], size: number) {
   return Array.from(
     { length: Math.ceil(items.length / size) },
-    (_: T, i: number) => items.slice(i * size, (i + 1) * size)
+    (_: T, i: number) => items.slice(i * size, (i + 1) * size),
   );
 }
 
