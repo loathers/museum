@@ -38,12 +38,13 @@ model Item {
 }
 
 model Collection {
-  playerId Int
-  player   Player @relation(fields: [playerId], references: [id])
-  itemId   Int
-  item     Item   @relation(fields: [itemId], references: [id])
-  quantity Int
-  rank     Int    @default(0)
+  playerId    Int
+  player      Player   @relation(fields: [playerId], references: [id])
+  itemId      Int
+  item        Item     @relation(fields: [itemId], references: [id])
+  quantity    Int
+  rank        Int      @default(0)
+  lastUpdated DateTime @default(now())
 
   @@unique([playerId, itemId])
 }

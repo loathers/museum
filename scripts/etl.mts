@@ -226,16 +226,23 @@ async function updateCollections() {
       format: `Importing collections [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(total, 0);
 
-  let chunk = [] as [playerId: number, itemId: number, quantity: number][];
+  let chunk = [] as [
+    playerId: number,
+    itemId: number,
+    quantity: number,
+    lastUpdated: string,
+  ][];
   let cursor = 0;
 
-  const keys = ["playerId", "itemId", "quantity"] as const;
+  const keys = ["playerId", "itemId", "quantity", "lastUpdated"] as const;
   const keysString = keys.map((k) => `"${k}"`).join(",");
+
+  const now = new Date().toISOString();
 
   let i = 0;
 
@@ -252,7 +259,7 @@ async function updateCollections() {
       const itemId = Number(parts[1]);
       if (ignorePlayer.includes(playerId)) continue;
 
-      chunk.push([playerId, itemId, Number(parts[2])]);
+      chunk.push([playerId, itemId, Number(parts[2]), now]);
     } else {
       cursor = -1;
     }
@@ -266,7 +273,7 @@ async function updateCollections() {
         INSERT INTO "Collection" (${keysString})
         VALUES ${values}
         ON CONFLICT ("playerId", "itemId")
-        DO UPDATE SET quantity = EXCLUDED.quantity
+        DO UPDATE SET quantity = EXCLUDED.quantity, lastUpdated = EXCLUDED.lastUpdated
       `);
     } catch (err) {
       if (
