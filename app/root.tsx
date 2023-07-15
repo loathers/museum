@@ -8,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { theme } from "./theme";
 
 export const meta: V2_MetaFunction = () => [
   { charSet: "utf-8" },
@@ -42,7 +43,7 @@ export function Document({ children }: React.PropsWithChildren) {
 export default function App() {
   return (
     <Document>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <Outlet />
       </ChakraProvider>
     </Document>

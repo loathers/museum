@@ -1,11 +1,29 @@
-import { Container, Heading, HStack, Image, Link, Stack } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonGroup,
+  Heading,
+  HStack,
+  Image,
+  Stack,
+} from "@chakra-ui/react";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { isRouteErrorResponse, Link as RemixLink, useLoaderData, useRouteError } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  Link as RemixLink,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
-import { HttpError, itemToString, ITEM_NOT_FOUND_ERROR, loadCollections } from "~/utils";
+import Layout from "~/components/Layout";
+import {
+  HttpError,
+  itemToString,
+  ITEM_NOT_FOUND_ERROR,
+  loadCollections,
+} from "~/utils";
 
 export async function loader({ params }: LoaderArgs) {
   const id = Number(params.id);
@@ -20,49 +38,49 @@ export async function loader({ params }: LoaderArgs) {
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data: item }) => [
-  { title: `Museum :: ${itemToString(item)}` }
+  { title: `Museum :: ${itemToString(item)}` },
 ];
 
 export default function Item() {
   const item = useLoaderData<typeof loader>();
 
   return (
-    <Container>
-      <Stack alignItems="center">
-        <HStack spacing={6}>
+    <Layout>
+      <Stack>
+        <HStack spacing={6} justifyContent="center">
           <Image
             src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
             alt={itemToString(item)}
           />
 
-          <Heading as="h2" dangerouslySetInnerHTML={{ __html: item.name }} />
+          <Heading dangerouslySetInnerHTML={{ __html: item.name }} />
         </HStack>
-        <HStack>
-          <Link as={RemixLink} to="/">
-            [← home]
-          </Link>
-          <HStack
-          spacing={0}
+        <ButtonGroup justifyContent="center">
+          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+            home
+          </Button>
+          <Button
             as={RemixLink}
             to={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
               item
             )}`}
+            leftIcon={
+              <img
+                src="/coldfront.png"
+                alt="Wiki link"
+                style={{ width: "1em", verticalAlign: "middle" }}
+              />
+            }
           >
-            <span>[</span>
-            <img
-              src="/coldfront.png"
-              alt="Wiki link"
-              style={{ width: "1em", verticalAlign: "middle" }}
-            />
-            <span>&nbsp;wiki]</span>
-          </HStack>
-        </HStack>
-
-        <ItemDescription description={item.description} />
-
-        <ItemPageRanking collections={item.collection} />
+            wiki
+          </Button>
+        </ButtonGroup>
       </Stack>
-    </Container>
+
+      <ItemDescription description={item.description} />
+
+      <ItemPageRanking collections={item.collection} />
+    </Layout>
   );
 }
 
@@ -99,12 +117,12 @@ export function ErrorBoundary() {
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <Link as={RemixLink} to="/">[← home]</Link>
+        <Button leftIcon={<>←</>} as={RemixLink} to="/">
+          home
+        </Button>
       </div>
 
-      <div>
-        {error.data}
-      </div>
+      <div>{error.data}</div>
     </div>
   );
 }

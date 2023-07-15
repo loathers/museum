@@ -1,6 +1,15 @@
-import { Alert, Container, Heading, HStack, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Heading,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";
 import { prisma } from "~/lib/prisma.server";
 
@@ -32,47 +41,47 @@ export const loader = async () => {
 export default function About() {
   const { gausieRank, gausieNeeded } = useLoaderData<typeof loader>();
   return (
-    <Container>
-      <Stack alignItems="center">
+    <Layout>
+      <Stack>
         <Heading>About</Heading>
-        <HStack>
-          <Link as={RemixLink} to="/">
-            [← home]
-          </Link>
-        </HStack>
-        <Alert status="info" variant="subtle">
-          <Text>
-            <b>Museum</b> is made by{" "}
-            <Link as={RemixLink} to="/player/1197090">
-              gausie
-            </Link>{" "}
-            from a closed data feed provided by TPTB. He collects{" "}
-            <Link as={RemixLink} to="/item/641">
-              toast
-            </Link>{" "}
-            and is currently ranked <RankSymbol rank={gausieRank} />
-            {gausieRank === 1
-              ? "! Thanks for your generous help!"
-              : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
-          </Text>
-        </Alert>
-        <Text>
-          The site is generously hosted by{" "}
-          <Link as={RemixLink} to="/player/2485157">
-            Joe the Sauceror
-          </Link>
-          .
-        </Text>
-        <Text>
-          It is inspired by the (currently much more powerful) service provided
-          by the <a href="http://dcdb.coldfront.net">Display Case Database</a>{" "}
-          hosted by Coldfront for many years.
-        </Text>
-        <Text>
-          The source for the website itself is hosted on{" "}
-          <a href="https://github.com/loathers/museum">GitHub</a>.
-        </Text>
+        <ButtonGroup justifyContent="center">
+          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+            home
+          </Button>
+        </ButtonGroup>
       </Stack>
-    </Container>
+      <Alert status="info" variant="subtle">
+        <Text>
+          <b>Museum</b> is made by{" "}
+          <Link as={RemixLink} to="/player/1197090">
+            gausie
+          </Link>{" "}
+          from a closed data feed provided by TPTB. He collects{" "}
+          <Link as={RemixLink} to="/item/641">
+            toast
+          </Link>{" "}
+          and is currently ranked <RankSymbol rank={gausieRank} />
+          {gausieRank === 1
+            ? "! Thanks for your generous help!"
+            : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
+        </Text>
+      </Alert>
+      <Text>
+        The site is generously hosted by{" "}
+        <Link as={RemixLink} to="/player/2485157">
+          Joe the Sauceror
+        </Link>
+        .
+      </Text>
+      <Text>
+        It is inspired by the (currently much more powerful) service provided by
+        the <a href="http://dcdb.coldfront.net">Display Case Database</a> hosted
+        by Coldfront for many years.
+      </Text>
+      <Text>
+        The source for the website itself is hosted on{" "}
+        <a href="https://github.com/loathers/museum">GitHub</a>.
+      </Text>
+    </Layout>
   );
 }

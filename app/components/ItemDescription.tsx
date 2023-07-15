@@ -1,3 +1,4 @@
+import { Alert } from "@chakra-ui/react";
 import ShowItem from "./ShowItem";
 
 function DescriptionParagraph({ value }: { value: string }) {
@@ -14,17 +15,9 @@ function DescriptionMacro({ type, value }: { type: string; value: number }) {
     }
   })();
   return (
-    <blockquote
-      style={{
-        display: "inline-block",
-        marginBottom: 20,
-        padding: "10px 20px",
-        backgroundColor: "white",
-        border: "1px solid black",
-      }}
-    >
+    <Alert bg="white" display="inline-flex" width="auto">
       {contents}
-    </blockquote>
+    </Alert>
   );
 }
 
@@ -41,22 +34,17 @@ export default function ItemDescription({ description }: Props) {
         case 0:
           return <DescriptionParagraph key={i} value={value} />;
         case 1:
-          return <DescriptionMacro key={i} type={value} value={Number(arr[i + 1])} />;
+          return (
+            <DescriptionMacro key={i} type={value} value={Number(arr[i + 1])} />
+          );
         default:
           return null;
       }
     });
 
   return (
-    <blockquote
-      style={{
-        margin: "0 auto",
-        marginBottom: 20,
-        background: "#eee",
-        padding: "10px 20px",
-      }}
-    >
+    <Alert flexDirection="column" textAlign="center">
       {contents}
-    </blockquote>
+    </Alert>
   );
 }

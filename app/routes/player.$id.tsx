@@ -1,11 +1,18 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
-import { Container, Heading, HStack, Link, Stack } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonGroup,
+  Heading,
+  IconButton,
+  Stack,
+} from "@chakra-ui/react";
 
 import { prisma } from "~/lib/prisma.server";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import Formerly from "~/components/Formerly";
+import Layout from "~/components/Layout";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -65,57 +72,52 @@ export async function loader({ params, request }: LoaderArgs) {
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [
-  { title: `Museum :: ${data?.player.name}` }
+  { title: `Museum :: ${data?.player.name}` },
 ];
-
-const currentSort: React.CSSProperties = {
-  textDecoration: "none",
-  color: "inherit",
-  pointerEvents: "none",
-  fontWeight: "bold",
-};
 
 export default function Player() {
   const { player, sort } = useLoaderData<typeof loader>();
 
   return (
-    <Container>
-      <Stack alignItems="center">
-        <Heading>
+    <Layout>
+      <Stack>
+        <Heading textAlign="center">
           {player.name} <Formerly names={player.playerNameChange} />
         </Heading>
-        <HStack>
-          <Link as={RemixLink} to="/">
-            [← home]
-          </Link>
-          <Link
-            as={RemixLink}
-            title="Sort by item name"
-            style={sort === "name" ? currentSort : undefined}
-            to={`/player/${player.id}`}
-          >
-            [🔡]
-          </Link>
-          <Link
-            as={RemixLink}
-            title="Sort by collection rank"
-            style={sort === "rank" ? currentSort : undefined}
-            to={`/player/${player.id}?sort=rank`}
-          >
-            [🏅]
-          </Link>
-          <Link
-            as={RemixLink}
-            title="Sort by quantity of item"
-            style={sort === "quantity" ? currentSort : undefined}
-            to={`/player/${player.id}?sort=quantity`}
-          >
-            [🔢]
-          </Link>
-        </HStack>
-
-        <PlayerPageRanking collections={player.collection} />
+        <ButtonGroup justifyContent="center">
+          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+            home
+          </Button>
+          <ButtonGroup isAttached>
+            <IconButton
+              as={RemixLink}
+              aria-label="Sort by item name"
+              title="Sort by item name"
+              variant={sort === "name" ? "solid" : "outline"}
+              to={`/player/${player.id}`}
+              icon={<>🔡</>}
+            />
+            <IconButton
+              as={RemixLink}
+              aria-label="Sort by collection rank"
+              title="Sort by collection rank"
+              variant={sort === "rank" ? "solid" : "outline"}
+              to={`/player/${player.id}?sort=rank`}
+              icon={<>🏅</>}
+            />
+            <IconButton
+              as={RemixLink}
+              aria-label="Sort by quantity of item"
+              title="Sort by quantity of item"
+              variant={sort === "quantity" ? "solid" : "outline"}
+              to={`/player/${player.id}?sort=quantity`}
+              icon={<>🔢</>}
+            />
+          </ButtonGroup>
+        </ButtonGroup>
       </Stack>
-    </Container>
+
+      <PlayerPageRanking collections={player.collection} />
+    </Layout>
   );
 }

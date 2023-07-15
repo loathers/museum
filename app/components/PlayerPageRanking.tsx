@@ -17,7 +17,7 @@ type Props = {
 
 export default function ItemPageRanking({ collections }: Props) {
   return (
-    <Table variant="simple">
+    <Table>
       <Thead>
         <Tr>
           <Th>Collection Rank</Th>
