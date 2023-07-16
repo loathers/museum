@@ -335,6 +335,23 @@ async function updateCollections() {
   bar.stop();
 }
 
+async function removeEmptiedCollections() {
+  process.stdout.write(`Removing emptied collections`);
+  process.stdout.write("\x1B[?25l");
+
+  const midnight = new Date();
+  midnight.setHours(0, 0, 0, 0);
+
+  const results = await prisma.collection.deleteMany({
+    where: { lastUpdated: { lt: midnight } },
+  });
+
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  process.stdout.write("\x1B[?25h");
+  console.log(`Removed ${results.count} emptied collections`);
+}
+
 async function rankCollections() {
   process.stdout.write(`Ranking collections`);
   process.stdout.write("\x1B[?25l");
@@ -364,6 +381,7 @@ async function main() {
   await markAmbiguousItems();
   await updatePlayers();
   await updateCollections();
+  await removeEmptiedCollections();
   await rankCollections();
 }
 
