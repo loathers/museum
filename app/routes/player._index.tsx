@@ -1,16 +1,12 @@
 import { defer } from "@remix-run/node";
 import type { V2_MetaFunction } from "@remix-run/node";
-import {
-  Await,
-  useLoaderData,
-  useNavigate,
-  Link as RemixLink,
-} from "@remix-run/react";
+import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
 import { prisma } from "~/lib/prisma.server";
-import { Button, ButtonGroup, Heading, Stack } from "@chakra-ui/react";
+import { ButtonGroup, Heading, Stack } from "@chakra-ui/react";
 import Layout from "~/components/Layout";
+import ButtonLink from "~/components/ButtonLink";
 
 export async function loader() {
   return defer({
@@ -43,9 +39,9 @@ export default function PlayerRoot() {
       <Stack>
         <Heading>Players</Heading>
         <ButtonGroup justifyContent="center">
-          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+          <ButtonLink leftIcon={<>←</>} to="/">
             home
-          </Button>
+          </ButtonLink>
         </ButtonGroup>
       </Stack>
       <Suspense
@@ -60,7 +56,7 @@ export default function PlayerRoot() {
         <Await resolve={data.players}>
           {(players) => (
             <PlayerSelect
-              label="Check a player's collection:"
+              label="Check a player's collection"
               players={players}
               loading={loading}
               onChange={browsePlayer}

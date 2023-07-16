@@ -1,18 +1,13 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
-import {
-  Button,
-  ButtonGroup,
-  Heading,
-  IconButton,
-  Stack,
-} from "@chakra-ui/react";
+import { ButtonGroup, Heading, IconButton, Stack } from "@chakra-ui/react";
 
 import { prisma } from "~/lib/prisma.server";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
+import ButtonLink from "~/components/ButtonLink";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -85,9 +80,9 @@ export default function Player() {
           {player.name} <Formerly names={player.playerNameChange} />
         </Heading>
         <ButtonGroup justifyContent="center">
-          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+          <ButtonLink leftIcon={<>←</>} to="/">
             home
-          </Button>
+          </ButtonLink>
           <ButtonGroup isAttached>
             <IconButton
               as={RemixLink}

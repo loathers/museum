@@ -1,6 +1,5 @@
 import {
   Alert,
-  Button,
   ButtonGroup,
   Heading,
   Link,
@@ -9,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";
 import { prisma } from "~/lib/prisma.server";
@@ -45,9 +45,9 @@ export default function About() {
       <Stack>
         <Heading>About</Heading>
         <ButtonGroup justifyContent="center">
-          <Button leftIcon={<>←</>} as={RemixLink} to="/">
+          <ButtonLink leftIcon={<>←</>} to="/">
             home
-          </Button>
+          </ButtonLink>
         </ButtonGroup>
       </Stack>
       <Alert status="info" variant="subtle">

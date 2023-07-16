@@ -1,16 +1,14 @@
 import {
   Button,
-  HStack,
   Input,
   InputGroup,
   InputRightAddon,
   List,
   ListItem,
+  Stack,
 } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
 import { useState } from "react";
-
-import Loading from "./Loading";
 
 interface Props<T> {
   label?: string;
@@ -59,7 +57,7 @@ export default function Select<T>({
   });
 
   return (
-    <HStack>
+    <Stack align="center">
       {label && <label {...getLabelProps()}>{label}</label>}
       <div style={{ display: "inline-block", position: "relative" }}>
         <InputGroup>
@@ -71,14 +69,9 @@ export default function Select<T>({
                 disabled: inputItems.length === 0,
               })}
               aria-label="toggle menu"
+              isLoading={loading}
             >
-              {loading ? (
-                <Loading />
-              ) : isOpen && inputItems.length > 0 ? (
-                <>&#8593;</>
-              ) : (
-                <>&#8595;</>
-              )}
+              {isOpen && inputItems.length > 0 ? <>&#8593;</> : <>&#8595;</>}
             </Button>
           </InputRightAddon>
         </InputGroup>
@@ -116,6 +109,6 @@ export default function Select<T>({
             ))}
         </List>
       </div>
-    </HStack>
+    </Stack>
   );
 }

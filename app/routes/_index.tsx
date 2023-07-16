@@ -1,11 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Heading,
-  Image,
-  Link,
-  Stack,
-} from "@chakra-ui/react";
+import { ButtonGroup, Heading, Image, Link, Stack } from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
 import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
@@ -17,6 +10,7 @@ import {
 } from "@remix-run/react";
 import { decodeHTML } from "entities";
 import { Suspense, useCallback, useState } from "react";
+import ButtonLink from "~/components/ButtonLink";
 
 import ItemSelect from "~/components/ItemSelect";
 import Layout from "~/components/Layout";
@@ -117,12 +111,12 @@ export default function Index() {
       <Stack>
         <Heading as="h1">Welcome to the Museum</Heading>
         <ButtonGroup justifyContent="center">
-          <Button leftIcon={<>❓</>} as={RemixLink} to="/about">
+          <ButtonLink leftIcon={<>❓</>} to="/about">
             about
-          </Button>
-          <Button leftIcon={<>🔎</>} as={RemixLink} to="/player">
+          </ButtonLink>
+          <ButtonLink leftIcon={<>🔎</>} to="/player">
             player search
-          </Button>
+          </ButtonLink>
         </ButtonGroup>
       </Stack>
       <Image
@@ -138,7 +132,7 @@ export default function Index() {
         <Await resolve={items}>
           {(data) => (
             <ItemSelect
-              label="Check the leaderboard for an item:"
+              label="Check the leaderboard for an item"
               items={data}
               loading={loading}
               onChange={browseItem}
