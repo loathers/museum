@@ -1,6 +1,14 @@
-import { Table, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
-import { Link } from "@remix-run/react";
+import { Link as RemixLink } from "@remix-run/react";
 import { englishJoin } from "~/utils";
 import CollectionInsights from "./CollectionInsights";
 import Rank from "./Rank";
@@ -38,46 +46,50 @@ export default function ItemPageRanking({ collections }: Props) {
       <CollectionInsights groups={grouped} />
 
       {collections.length > 0 && (
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Rank</Th>
-              <Th>Item</Th>
-              <Th>Quantity</Th>
-            </Tr>
-          </Thead>
+        <TableContainer whiteSpace="normal">
+          <Table layout="fixed">
+            <Thead>
+              <Tr>
+                <Th>Rank</Th>
+                <Th>Item</Th>
+                <Th isNumeric>Quantity</Th>
+              </Tr>
+            </Thead>
 
-          <Tbody>
-            {keys
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              .map((k) => grouped.get(k)!)
-              .map((c, i, a) => (
-                <Rank
-                  key={c[0].rank}
-                  rank={c[0].rank}
-                  difference={
-                    a.length > i + 1
-                      ? c[0].quantity - a[i + 1][0].quantity
-                      : null
-                  }
-                  quantity={c[0].quantity}
-                  joint={c.length > 1}
-                >
-                  {englishJoin(
-                    c.map(({ player }) => (
-                      <Link
-                        key={player.id}
-                        title={`${player.name} #${player.id}`}
-                        to={`/player/${player.id}`}
-                      >
-                        {player.name}
-                      </Link>
-                    )),
-                  )}
-                </Rank>
-              ))}
-          </Tbody>
-        </Table>
+            <Tbody>
+              {keys
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                .map((k) => grouped.get(k)!)
+                .map((c, i, a) => (
+                  <Rank
+                    key={c[0].rank}
+                    rank={c[0].rank}
+                    difference={
+                      a.length > i + 1
+                        ? c[0].quantity - a[i + 1][0].quantity
+                        : null
+                    }
+                    quantity={c[0].quantity}
+                    joint={c.length > 1}
+                  >
+                    {englishJoin(
+                      c.map(({ player }) => (
+                        <Link
+                          as={RemixLink}
+                          key={player.id}
+                          title={`${player.name} #${player.id}`}
+                          to={`/player/${player.id}`}
+                          sx={{ wordWrap: "normal" }}
+                        >
+                          {player.name}
+                        </Link>
+                      )),
+                    )}
+                  </Rank>
+                ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       )}
     </>
   );
