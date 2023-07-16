@@ -11,9 +11,7 @@ import {
 import { theme } from "./theme";
 
 export const meta: V2_MetaFunction = () => [
-  { charSet: "utf-8" },
   { title: "Museum" },
-  { viewport: "width=device-width,initial-scale=1"  },
 ];
 
 export const links: LinksFunction = () => [
@@ -27,6 +25,8 @@ export function Document({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
       </head>

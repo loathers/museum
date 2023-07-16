@@ -1,6 +1,6 @@
 import { Container, Stack } from "@chakra-ui/react";
 
-type Props = React.PropsWithChildren<{}>;
+type Props = React.PropsWithChildren<object>;
 
 export default function Layout({ children }: Props) {
   return (

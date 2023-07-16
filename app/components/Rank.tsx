@@ -36,12 +36,12 @@ export default function Rank({
           <RankSymbol rank={rank} joint={joint} />
         </Td>
         <Td>{children}</Td>
-        <Td>{quantity.toLocaleString()}</Td>
+        <Td isNumeric>{quantity.toLocaleString()}</Td>
       </Tr>
       {difference && (
         <Tr>
           <Td paddingY={1} colSpan={2}></Td>
-          <Td paddingY={1}>
+          <Td paddingY={1} isNumeric>
             <Text
               title={`${difference.toLocaleString()} (+${(
                 (difference / (quantity - difference)) *

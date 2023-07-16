@@ -24,7 +24,7 @@ import { prisma } from "~/lib/prisma.server";
 import { englishJoin, plural } from "~/utils";
 
 async function getRandomCollection(
-  retrying = false
+  retrying = false,
 ): Promise<{ id: number; plural: string; players: Player[] } | null> {
   const count = await prisma.item.count();
 
@@ -109,7 +109,7 @@ export default function Index() {
       setLoading(true);
       navigate(`/item/${item.id}`);
     },
-    [navigate]
+    [navigate],
   );
 
   return (
@@ -158,7 +158,7 @@ export default function Index() {
                       <b key={p.id} title={`#${p.id}`}>
                         {p.name}
                       </b>
-                    ))
+                    )),
                   )}{" "}
                   {data.players.length === 1 ? "has" : "jointly have"} the most{" "}
                   <b

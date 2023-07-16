@@ -6,6 +6,7 @@ import {
   Image,
   Stack,
 } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
@@ -62,7 +63,7 @@ export default function Item() {
           <Button
             as={RemixLink}
             to={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
-              item
+              item,
             )}`}
             leftIcon={
               <img
@@ -71,6 +72,7 @@ export default function Item() {
                 style={{ width: "1em", verticalAlign: "middle" }}
               />
             }
+            rightIcon={<ExternalLinkIcon />}
           >
             wiki
           </Button>

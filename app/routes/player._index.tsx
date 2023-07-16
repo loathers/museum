@@ -35,7 +35,7 @@ export default function PlayerRoot() {
       setLoading(true);
       navigate(`/player/${player.id}`);
     },
-    [navigate]
+    [navigate],
   );
 
   return (

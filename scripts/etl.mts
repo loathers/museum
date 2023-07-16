@@ -9,14 +9,14 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 const auth = Buffer.from(
-  `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`
+  `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`,
 ).toString("base64");
 
 async function load(file: string) {
   // Construct request
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/${file}`,
-    { headers: { Authorization: `Basic ${auth}` } }
+    { headers: { Authorization: `Basic ${auth}` } },
   );
 
   // Download with progress
@@ -29,7 +29,7 @@ async function load(file: string) {
       format: `Downloading ${file} [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   const contentLength = Number(response.headers.get("Content-Length") ?? 0);
@@ -44,7 +44,7 @@ async function load(file: string) {
   }
 
   const allChunks = new Uint8Array(
-    chunks.reduce((acc, c) => acc + c.length, 0)
+    chunks.reduce((acc, c) => acc + c.length, 0),
   );
   let position = 0;
   for (let chunk of chunks) {
@@ -83,7 +83,7 @@ async function updateItems() {
       format: `Importing items [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(items.length, 0);
@@ -144,7 +144,7 @@ async function updatePlayers() {
       format: `Importing players [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(players.length, 0);
@@ -183,7 +183,7 @@ async function updatePlayers() {
             playerId: player.id,
             when: new Date(),
           },
-        })
+        }),
       );
     }
 
@@ -226,16 +226,23 @@ async function updateCollections() {
       format: `Importing collections [{bar}] {percentage}% | ETA: {eta_formatted} (elapsed: {duration_formatted}) | {value}/{total}`,
       hideCursor: true,
     },
-    progress.Presets.shades_classic
+    progress.Presets.shades_classic,
   );
 
   bar.start(total, 0);
 
-  let chunk = [] as [playerId: number, itemId: number, quantity: number][];
+  let chunk = [] as [
+    playerId: number,
+    itemId: number,
+    quantity: number,
+    lastUpdated: string,
+  ][];
   let cursor = 0;
 
-  const keys = ["playerId", "itemId", "quantity"] as const;
+  const keys = ["playerId", "itemId", "quantity", "lastUpdated"] as const;
   const keysString = keys.map((k) => `"${k}"`).join(",");
+
+  const now = `'${new Date().toISOString()}'`;
 
   let i = 0;
 
@@ -252,7 +259,7 @@ async function updateCollections() {
       const itemId = Number(parts[1]);
       if (ignorePlayer.includes(playerId)) continue;
 
-      chunk.push([playerId, itemId, Number(parts[2])]);
+      chunk.push([playerId, itemId, Number(parts[2]), now]);
     } else {
       cursor = -1;
     }
@@ -266,7 +273,7 @@ async function updateCollections() {
         INSERT INTO "Collection" (${keysString})
         VALUES ${values}
         ON CONFLICT ("playerId", "itemId")
-        DO UPDATE SET quantity = EXCLUDED.quantity
+        DO UPDATE SET quantity = EXCLUDED.quantity, "lastUpdated" = EXCLUDED."lastUpdated"
       `);
     } catch (err) {
       if (
@@ -328,6 +335,23 @@ async function updateCollections() {
   bar.stop();
 }
 
+async function removeEmptiedCollections() {
+  process.stdout.write(`Removing emptied collections`);
+  process.stdout.write("\x1B[?25l");
+
+  const midnight = new Date();
+  midnight.setHours(0, 0, 0, 0);
+
+  const results = await prisma.collection.deleteMany({
+    where: { lastUpdated: { lt: midnight } },
+  });
+
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  process.stdout.write("\x1B[?25h");
+  console.log(`Removed ${results.count} emptied collections`);
+}
+
 async function rankCollections() {
   process.stdout.write(`Ranking collections`);
   process.stdout.write("\x1B[?25l");
@@ -357,6 +381,7 @@ async function main() {
   await markAmbiguousItems();
   await updatePlayers();
   await updateCollections();
+  await removeEmptiedCollections();
   await rankCollections();
 }
 

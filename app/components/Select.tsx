@@ -12,7 +12,7 @@ import { useState } from "react";
 
 import Loading from "./Loading";
 
-interface Props<T extends unknown> {
+interface Props<T> {
   label?: string;
   items: T[];
   onChange?: (item?: T | null) => unknown;
@@ -50,9 +50,9 @@ export default function Select<T>({
           ? items.filter((item) =>
               itemToString(item)
                 .toLowerCase()
-                .startsWith(inputValue.toLowerCase())
+                .startsWith(inputValue.toLowerCase()),
             )
-          : []
+          : [],
       );
     },
     onSelectedItemChange: (p) => onChange?.(p.selectedItem),
