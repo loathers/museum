@@ -1,5 +1,6 @@
 import {
   Alert,
+  AlertDescription,
   ButtonGroup,
   Heading,
   Link,
@@ -51,7 +52,7 @@ export default function About() {
         </ButtonGroup>
       </Stack>
       <Alert status="info" variant="subtle">
-        <Text>
+        <AlertDescription>
           <b>Museum</b> is made by{" "}
           <Link as={RemixLink} to="/player/1197090">
             gausie
@@ -64,7 +65,7 @@ export default function About() {
           {gausieRank === 1
             ? "! Thanks for your generous help!"
             : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
-        </Text>
+        </AlertDescription>
       </Alert>
       <Text>
         The site is generously hosted by{" "}
