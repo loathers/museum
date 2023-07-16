@@ -242,7 +242,7 @@ async function updateCollections() {
   const keys = ["playerId", "itemId", "quantity", "lastUpdated"] as const;
   const keysString = keys.map((k) => `"${k}"`).join(",");
 
-  const now = new Date().toISOString();
+  const now = `'${new Date().toISOString()}'`;
 
   let i = 0;
 
@@ -273,7 +273,7 @@ async function updateCollections() {
         INSERT INTO "Collection" (${keysString})
         VALUES ${values}
         ON CONFLICT ("playerId", "itemId")
-        DO UPDATE SET quantity = EXCLUDED.quantity, lastUpdated = EXCLUDED.lastUpdated
+        DO UPDATE SET quantity = EXCLUDED.quantity, "lastUpdated" = EXCLUDED."lastUpdated"
       `);
     } catch (err) {
       if (
