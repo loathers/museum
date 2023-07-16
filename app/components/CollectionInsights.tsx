@@ -49,7 +49,6 @@ export default function CollectionInsights({ groups }: Props) {
           is the only player with one of these in their display case. Holder has{" "}
           <Link
             isExternal={true}
-            as={RemixLink}
             href="https://www.reddit.com/r/kol/comments/o3nzo4/holderofsecretss_collection_how_does_he_do_that/h2czvsv/"
           >
             special rights
