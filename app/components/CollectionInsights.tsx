@@ -41,7 +41,7 @@ export default function CollectionInsights({ groups }: Props) {
     const holder = group[0].player;
     return (
       <Alert status="warning">
-        <AlertDescription>
+        <AlertDescription textAlign="center">
           Looks like{" "}
           <Link as={RemixLink} to={`/player/${holder.id}`}>
             {holder.name}

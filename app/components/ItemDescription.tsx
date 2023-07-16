@@ -1,8 +1,19 @@
-import { Alert } from "@chakra-ui/react";
+import { chakra, Alert, Stack } from "@chakra-ui/react";
 import ShowItem from "./ShowItem";
 
-function DescriptionParagraph({ value }: { value: string }) {
-  return <p dangerouslySetInnerHTML={{ __html: value }} />;
+function DescriptionParagraph({
+  value,
+  spacing,
+}: {
+  value: string;
+  spacing: number;
+}) {
+  return (
+    <chakra.div
+      sx={{ display: "flex", flexDirection: "column", gap: spacing }}
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
+  );
 }
 
 function DescriptionMacro({ type, value }: { type: string; value: number }) {
@@ -23,16 +34,19 @@ function DescriptionMacro({ type, value }: { type: string; value: number }) {
 
 type Props = {
   description: string;
+  spacing?: number;
 };
 
-export default function ItemDescription({ description }: Props) {
+export default function ItemDescription({ description, spacing = 2 }: Props) {
   const contents = description
     .replace(/\\[rn]/g, "")
     .split(/(showitem): ?(\d+)/)
     .map((value, i, arr) => {
       switch (i % 3) {
         case 0:
-          return <DescriptionParagraph key={i} value={value} />;
+          return (
+            <DescriptionParagraph key={i} spacing={spacing} value={value} />
+          );
         case 1:
           return (
             <DescriptionMacro key={i} type={value} value={Number(arr[i + 1])} />
@@ -44,7 +58,9 @@ export default function ItemDescription({ description }: Props) {
 
   return (
     <Alert flexDirection="column" textAlign="center">
-      {contents}
+      <Stack alignItems="center" spacing={spacing}>
+        {contents}
+      </Stack>
     </Alert>
   );
 }
