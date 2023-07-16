@@ -1,4 +1,4 @@
-import { chakra, Button, Link as ChakraLink } from "@chakra-ui/react";
+import { Button, Link as ChakraLink } from "@chakra-ui/react";
 import {
   Link as RemixLink,
   useNavigation,
@@ -11,8 +11,6 @@ type Props = React.ComponentProps<typeof RemixLink> &
 export default function ButtonLink({ to, ...props }: Props) {
   const { state, location } = useNavigation();
   const path = useResolvedPath(to);
-
-  console.log(to);
 
   const loading = state === "loading" && location.pathname === path.pathname;
 

@@ -38,7 +38,7 @@ type Props = {
 };
 
 export default function ItemDescription({ description, spacing = 2 }: Props) {
-  const contents = description
+  const contents = ("<p>" + description)
     .replace(/\\[rn]/g, "")
     .split(/(showitem): ?(\d+)/)
     .map((value, i, arr) => {
