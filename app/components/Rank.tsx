@@ -30,7 +30,11 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <Tr backgroundColor={bg(rank)} padding={rank > 3 ? undefined : 10}>
+    <Tr
+      backgroundColor={bg(rank)}
+      padding={rank > 3 ? undefined : 10}
+      sx={{ ":hover td p": { opacity: 0.8 } }}
+    >
       <Td>
         <RankSymbol rank={rank} joint={joint} />
       </Td>
@@ -47,7 +51,8 @@ export default function Rank({
                 100
               ).toPrecision(3)}%)`}
               cursor="help"
-              filter="grayscale(1) opacity(0.5)"
+              filter="grayscale(1)"
+              opacity={0}
               fontSize={10}
             >
               ⤴️
