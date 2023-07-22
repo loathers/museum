@@ -30,11 +30,7 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <Tr
-      backgroundColor={bg(rank)}
-      padding={rank > 3 ? undefined : 10}
-      sx={{ ":hover td p": { opacity: 0.8 } }}
-    >
+    <Tr backgroundColor={bg(rank)} sx={{ ":hover td p": { opacity: 0.8 } }}>
       <Td>
         <RankSymbol rank={rank} joint={joint} />
       </Td>
@@ -43,7 +39,7 @@ export default function Rank({
         {quantity.toLocaleString()}
       </Td>
       {difference !== undefined && (
-        <Td p={0}>
+        <Td width="20px" p={0}>
           {difference > 0 && (
             <Text
               title={`${difference.toLocaleString()} more needed to advance rank (+${(

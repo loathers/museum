@@ -47,13 +47,13 @@ export default function ItemPageRanking({ collections }: Props) {
 
       {collections.length > 0 && (
         <TableContainer whiteSpace="normal">
-          <Table layout="fixed">
+          <Table>
             <Thead>
               <Tr>
                 <Th>Rank</Th>
                 <Th>Item</Th>
-                <Th>Quantity</Th>
-                <Th p={0} width="20px"></Th>
+                <Th isNumeric>Quantity</Th>
+                <Th p={0}></Th>
               </Tr>
             </Thead>
 
