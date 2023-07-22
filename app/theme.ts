@@ -11,7 +11,7 @@ const Link = defineStyleConfig({
       ":hover": {
         filter: "opacity(0.6)",
         textDecoration: "none",
-      }
+      },
     },
   },
 });

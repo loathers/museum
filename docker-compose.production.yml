@@ -3,4 +3,3 @@ version: "3.9"
 services:
   web:
     image: "ghcr.io/loathers/museum:main"
-

@@ -20,11 +20,11 @@ export type SlimItem = { id: number; name: string; ambiguous: boolean };
 export function itemToString(
   item: SlimItem | null | undefined,
   disambiguate = false,
-  usePlural = false
+  usePlural = false,
 ) {
   return item
     ? `${item.ambiguous && disambiguate ? `[${item.id}]` : ""}${decodeHTML(
-        usePlural ? plural(item) : item.name
+        usePlural ? plural(item) : item.name,
       ).replace(/(<([^>]+)>)/gi, "")}`
     : "";
 }
@@ -48,7 +48,7 @@ export class HttpError {
 
 export const ITEM_NOT_FOUND_ERROR = new HttpError(
   404,
-  "That item, if it exists at all, has no collections."
+  "That item, if it exists at all, has no collections.",
 );
 
 const HTTP_ERROR_TYPES: { [key: number]: string } = {

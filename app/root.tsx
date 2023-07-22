@@ -10,9 +10,7 @@ import {
 } from "@remix-run/react";
 import { theme } from "./theme";
 
-export const meta: V2_MetaFunction = () => [
-  { title: "Museum" },
-];
+export const meta: V2_MetaFunction = () => [{ title: "Museum" }];
 
 export const links: LinksFunction = () => [
   {

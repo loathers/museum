@@ -14,7 +14,7 @@ function hydrate() {
         <CacheProvider value={emotionCache}>
           <RemixBrowser />
         </CacheProvider>
-      </StrictMode>
+      </StrictMode>,
     );
   });
 }
