@@ -4,7 +4,7 @@ import RankSymbol from "./RankSymbol";
 type Props = {
   rank: number;
   quantity: number;
-  difference?: number | null;
+  difference?: number;
   joint: boolean;
   children: React.ReactNode;
 };
@@ -30,20 +30,19 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <>
-      <Tr backgroundColor={bg(rank)} padding={rank > 3 ? undefined : 10}>
-        <Td>
-          <RankSymbol rank={rank} joint={joint} />
-        </Td>
-        <Td>{children}</Td>
-        <Td isNumeric>{quantity.toLocaleString()}</Td>
-      </Tr>
-      {difference && (
-        <Tr>
-          <Td paddingY={1} colSpan={2}></Td>
-          <Td paddingY={1} isNumeric>
+    <Tr backgroundColor={bg(rank)} padding={rank > 3 ? undefined : 10}>
+      <Td>
+        <RankSymbol rank={rank} joint={joint} />
+      </Td>
+      <Td>{children}</Td>
+      <Td pr={3} isNumeric>
+        {quantity.toLocaleString()}
+      </Td>
+      {difference !== undefined && (
+        <Td p={0}>
+          {difference > 0 && (
             <Text
-              title={`${difference.toLocaleString()} (+${(
+              title={`${difference.toLocaleString()} more needed to advance rank (+${(
                 (difference / (quantity - difference)) *
                 100
               ).toPrecision(3)}%)`}
@@ -51,11 +50,11 @@ export default function Rank({
               filter="grayscale(1) opacity(0.5)"
               fontSize={10}
             >
-              ↕️
+              ⤴️
             </Text>
-          </Td>
-        </Tr>
+          )}
+        </Td>
       )}
-    </>
+    </Tr>
   );
 }

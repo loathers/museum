@@ -52,7 +52,8 @@ export default function ItemPageRanking({ collections }: Props) {
               <Tr>
                 <Th>Rank</Th>
                 <Th>Item</Th>
-                <Th isNumeric>Quantity</Th>
+                <Th>Quantity</Th>
+                <Th p={0} width="20px"></Th>
               </Tr>
             </Thead>
 
@@ -65,9 +66,7 @@ export default function ItemPageRanking({ collections }: Props) {
                     key={c[0].rank}
                     rank={c[0].rank}
                     difference={
-                      a.length > i + 1
-                        ? c[0].quantity - a[i + 1][0].quantity
-                        : null
+                      i > 0 ? a[i - 1][0].quantity - c[0].quantity : 0
                     }
                     quantity={c[0].quantity}
                     joint={c.length > 1}
