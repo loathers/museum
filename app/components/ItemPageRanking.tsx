@@ -39,7 +39,9 @@ function groupToMap<K, V>(
 
 export default function ItemPageRanking({ collections }: Props) {
   const grouped = groupToMap(collections, (c) => c.rank);
-  const keys = [...grouped.keys()].sort((a, b) => a - b);
+  const groups = [...grouped.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([, g]) => g);
 
   return (
     <>
@@ -58,34 +60,29 @@ export default function ItemPageRanking({ collections }: Props) {
             </Thead>
 
             <Tbody>
-              {keys
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                .map((k) => grouped.get(k)!)
-                .map((c, i, a) => (
-                  <Rank
-                    key={c[0].rank}
-                    rank={c[0].rank}
-                    difference={
-                      i > 0 ? a[i - 1][0].quantity - c[0].quantity : 0
-                    }
-                    quantity={c[0].quantity}
-                    joint={c.length > 1}
-                  >
-                    {englishJoin(
-                      c.map(({ player }) => (
-                        <Link
-                          as={RemixLink}
-                          key={player.id}
-                          title={`${player.name} #${player.id}`}
-                          to={`/player/${player.id}`}
-                          sx={{ wordWrap: "normal" }}
-                        >
-                          {player.name}
-                        </Link>
-                      )),
-                    )}
-                  </Rank>
-                ))}
+              {groups.map((c, i, a) => (
+                <Rank
+                  key={c[0].rank}
+                  rank={c[0].rank}
+                  difference={i > 0 ? a[i - 1][0].quantity - c[0].quantity : 0}
+                  quantity={c[0].quantity}
+                  joint={c.length > 1}
+                >
+                  {englishJoin(
+                    c.map(({ player }) => (
+                      <Link
+                        as={RemixLink}
+                        key={player.id}
+                        title={`${player.name} #${player.id}`}
+                        to={`/player/${player.id}`}
+                        sx={{ wordWrap: "normal" }}
+                      >
+                        {player.name}
+                      </Link>
+                    )),
+                  )}
+                </Rank>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
