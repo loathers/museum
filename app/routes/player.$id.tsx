@@ -8,6 +8,7 @@ import PlayerPageRanking from "~/components/PlayerPageRanking";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
+import type { Prisma } from "@prisma/client";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -19,14 +20,16 @@ const normalizeSort = (sort: string | null) => {
   }
 };
 
-const sortToOrderByQuery = (sort: ReturnType<typeof normalizeSort>) => {
+const sortToOrderByQuery = (
+  sort: ReturnType<typeof normalizeSort>,
+): Prisma.CollectionOrderByWithRelationInput => {
   switch (sort) {
     case "rank":
-      return { rank: "asc" as const };
+      return { rank: "asc" };
     case "quantity":
-      return { quantity: "desc" as const };
+      return { quantity: "desc" };
     default:
-      return { item: { name: "asc" as const } };
+      return { item: { name: "asc" } };
   }
 };
 
@@ -53,7 +56,7 @@ export async function loader({ params, request }: LoaderArgs) {
           rank: true,
           item: true,
         },
-        orderBy: [orderBy, { item: { id: "asc" as const } }],
+        orderBy: [orderBy, { item: { id: "asc" } }],
       },
       playerNameChange: {
         orderBy: { when: "desc" },

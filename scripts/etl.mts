@@ -365,7 +365,7 @@ async function rankCollections() {
         "quantity", 
         RANK () OVER (PARTITION BY "itemId" ORDER BY quantity DESC) rank_number
       FROM "Collection"
-    ) as ranking
+    ) AS ranking
     WHERE "Collection"."playerId" = ranking."playerId" AND "Collection"."itemId" = ranking."itemId"
   `;
 

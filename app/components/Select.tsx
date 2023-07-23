@@ -29,7 +29,7 @@ export default function Select<T>({
   renderItem,
   loading,
 }: Props<T>) {
-  const [inputItems, setInputItems] = useState([] as T[]);
+  const [inputItems, setInputItems] = useState<T[]>([]);
 
   const {
     isOpen,

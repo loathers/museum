@@ -30,9 +30,9 @@ function groupToMap<K, V>(
   const map = new Map<K, V[]>();
   for (let i = 0; i < array.length; i++) {
     const key = callbackFn(array[i], i, array);
-    if (!map.has(key)) map.set(key, [] as V[]);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    map.get(key)!.push(array[i]);
+    const group = map.get(key) || [];
+    group.push(array[i]);
+    if (!map.has(key)) map.set(key, group);
   }
   return map;
 }
