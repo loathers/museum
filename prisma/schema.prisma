@@ -32,6 +32,7 @@ model Item {
   plural      String?
   picture     String
   description String
+  quest       Boolean      @default(false)
   missing     Boolean      @default(false)
   ambiguous   Boolean      @default(false)
   collection  Collection[]
@@ -47,4 +48,11 @@ model Collection {
   lastUpdated DateTime @default(now())
 
   @@unique([playerId, itemId])
+}
+
+model DailyCollection {
+  itemId     Int     @unique
+  itemName   String
+  itemPlural String?
+  players    Json
 }
