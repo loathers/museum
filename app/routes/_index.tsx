@@ -1,67 +1,18 @@
-import { ButtonGroup, Heading, Image, Link, Stack } from "@chakra-ui/react";
-import type { Player } from "@prisma/client";
+import { ButtonGroup, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
 import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
-import {
-  Await,
-  Link as RemixLink,
-  useLoaderData,
-  useNavigate,
-} from "@remix-run/react";
-import { decodeHTML } from "entities";
+import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import ButtonLink from "~/components/ButtonLink";
 
 import ItemSelect from "~/components/ItemSelect";
 import Layout from "~/components/Layout";
+import RandomCollection from "~/components/RandomCollection";
 import { prisma } from "~/lib/prisma.server";
-import { englishJoin, plural } from "~/utils";
-
-async function getRandomCollection(
-  retrying = false,
-): Promise<{ id: number; plural: string; players: Player[] } | null> {
-  const count = await prisma.item.count();
-
-  const [item] = await prisma.item.findMany({
-    take: 1,
-    skip: Math.floor(Math.random() * count),
-    select: {
-      name: true,
-      plural: true,
-      id: true,
-    },
-  });
-
-  if (!item) return null;
-
-  const players = await prisma.player.findMany({
-    where: {
-      collection: {
-        some: {
-          rank: 1,
-          item: item,
-        },
-      },
-    },
-    orderBy: { id: "asc" },
-  });
-
-  // If we found an item with more than three players in first place, just roll again
-  if (players.length > 3) {
-    if (retrying) return null;
-    return await getRandomCollection(true);
-  }
-
-  return {
-    id: item.id,
-    plural: plural(item),
-    players,
-  };
-}
 
 export async function loader() {
   return defer({
-    collection: getRandomCollection(),
+    collections: await prisma.dailyCollection.findMany({}),
     // Though we're set up for deferring this, prisma currently can't be deferred
     // https://github.com/remix-run/remix/issues/5153
     items: await prisma.item
@@ -92,7 +43,7 @@ export const meta: V2_MetaFunction = () => [
 ];
 
 export default function Index() {
-  const { collection, items } = useLoaderData<typeof loader>();
+  const { collections, items } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -140,33 +91,9 @@ export default function Index() {
           )}
         </Await>
       </Suspense>
-      <Suspense fallback={<p>Loading a random collection...</p>}>
-        <Await resolve={collection}>
-          {(data) =>
-            data && data.players ? (
-              <p>
-                For example, you can see how{" "}
-                <Link as={RemixLink} to={`/item/${data.id}`} prefetch="intent">
-                  {englishJoin(
-                    data.players.map((p) => (
-                      <b key={p.id} title={`#${p.id}`}>
-                        {p.name}
-                      </b>
-                    )),
-                  )}{" "}
-                  {data.players.length === 1 ? "has" : "jointly have"} the most{" "}
-                  <b
-                    dangerouslySetInnerHTML={{
-                      __html: decodeHTML(data.plural),
-                    }}
-                  ></b>
-                </Link>
-                .
-              </p>
-            ) : (
-              <div />
-            )
-          }
+      <Suspense fallback={<Spinner />}>
+        <Await resolve={collections}>
+          {(data) => <RandomCollection collections={data} />}
         </Await>
       </Suspense>
     </Layout>

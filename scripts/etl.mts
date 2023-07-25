@@ -1,10 +1,20 @@
-import { Prisma, PrismaClient, PrismaPromise } from "@prisma/client";
+import {
+  Item,
+  Player,
+  Prisma,
+  PrismaClient,
+  PrismaPromise,
+} from "@prisma/client";
 import progress from "cli-progress";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 
 // Load environment from .env
 dotenv.config();
+
+function notNull<T>(value: T | null): value is T {
+  return value !== null;
+}
 
 const prisma = new PrismaClient();
 
@@ -75,6 +85,7 @@ async function updateItems() {
       plural: parts[21] || null,
       picture: parts[2],
       description: parts[4],
+      quest: parts[9] === "1",
     };
   });
 
@@ -97,6 +108,7 @@ async function updateItems() {
         plural: item.plural,
         picture: item.picture,
         description: item.description,
+        quest: item.quest,
       },
       create: item,
     });
@@ -375,6 +387,63 @@ async function rankCollections() {
   console.log(`Ranked ${results} collections`);
 }
 
+async function pickDailyRandomCollections() {
+  async function pickRandomCollection(
+    tries = 0,
+  ): Promise<{ item: Item; players: Player[] } | null> {
+    // This is really quite unlikely
+    if (tries > 10) return null;
+
+    const count = await prisma.item.count();
+
+    const [item] = await prisma.item.findMany({
+      take: 1,
+      skip: Math.floor(Math.random() * count),
+      where: {
+        quest: false,
+      },
+    });
+
+    if (!item) return await pickRandomCollection(tries++);
+
+    const players = await prisma.player.findMany({
+      where: {
+        collection: {
+          some: {
+            rank: 1,
+            item: item,
+          },
+        },
+      },
+      orderBy: { id: "asc" },
+    });
+
+    // If we found an item with more than three players in first place, just roll again
+    if (players.length > 3) return await pickRandomCollection(tries++);
+
+    return { item, players };
+  }
+
+  const collections = (
+    await Promise.all(
+      Array(10)
+        .fill(0)
+        .map(() => pickRandomCollection()),
+    )
+  ).filter(notNull);
+
+  await prisma.dailyCollection.deleteMany({});
+  await prisma.dailyCollection.createMany({
+    data: collections.map(({ item, players }) => ({
+      itemId: item.id,
+      itemName: item.name,
+      itemPlural: item.plural,
+      players,
+    })),
+    skipDuplicates: true,
+  });
+}
+
 async function main() {
   await prisma.$queryRaw`SELECT 1`;
   await updateItems();
@@ -383,6 +452,7 @@ async function main() {
   await updateCollections();
   await removeEmptiedCollections();
   await rankCollections();
+  await pickDailyRandomCollections();
 }
 
 main();
