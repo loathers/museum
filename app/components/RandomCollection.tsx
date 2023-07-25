@@ -22,6 +22,8 @@ export default function RandomCollection({ collections }: Props) {
     [collections],
   );
 
+  if (collections.length === 0) return null;
+
   if (!collection) return <Spinner />;
 
   const { itemId, itemName, itemPlural } = collection;
