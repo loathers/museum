@@ -109,6 +109,7 @@ async function updateItems() {
         picture: item.picture,
         description: item.description,
         quest: item.quest,
+        missing: false,
       },
       create: item,
     });
@@ -122,15 +123,16 @@ async function markAmbiguousItems() {
   process.stdout.write(`Marking ambiguous item names`);
   process.stdout.write("\x1B[?25l");
 
-  const results = await prisma.$executeRaw`
-    UPDATE "Item"
-    SET "ambiguous" = TRUE
-    WHERE "name" IN (
-      SELECT "name" FROM "Item"
+  await prisma.$executeRaw`
+    UPDATE "Item" as "x"
+    SET "ambiguous" = (
+      SELECT COUNT(*) > 1 FROM "Item" as "y"
+      WHERE "x"."name" = "y"."name"
       GROUP BY "name"
-      HAVING COUNT(*) > 1
     )
   `;
+
+  const results = await prisma.item.count({ where: { ambiguous: true }});
 
   process.stdout.clearLine(0);
   process.stdout.cursorTo(0);
