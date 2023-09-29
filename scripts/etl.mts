@@ -123,16 +123,18 @@ async function markAmbiguousItems() {
   process.stdout.write(`Marking ambiguous item names`);
   process.stdout.write("\x1B[?25l");
 
-  await prisma.$executeRaw`
-    UPDATE "Item" as "x"
-    SET "ambiguous" = (
-      SELECT COUNT(*) > 1 FROM "Item" as "y"
-      WHERE "x"."name" = "y"."name"
-      GROUP BY "name"
-    )
-  `;
-
-  const results = await prisma.item.count({ where: { ambiguous: true }});
+  const [, results] = await prisma.$transaction([
+    prisma.item.updateMany({ data: { "ambiguous": false } }),
+    prisma.$executeRaw`
+      UPDATE "Item"
+      SET "ambiguous" = true
+      FROM (
+        SELECT "name", COUNT(*) as "count" FROM "Item"
+        GROUP BY "name"
+      ) as "s"
+      WHERE "s"."count" > 1 AND "s"."name" = "Item"."name";
+    `
+  ]);
 
   process.stdout.clearLine(0);
   process.stdout.cursorTo(0);
