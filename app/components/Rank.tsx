@@ -43,7 +43,7 @@ export default function Rank({
           {difference > 0 && (
             <Text
               title={`${difference.toLocaleString()} more needed to advance rank (+${(
-                (difference / (quantity - difference)) *
+                (difference / quantity) *
                 100
               ).toPrecision(3)}%)`}
               cursor="help"
