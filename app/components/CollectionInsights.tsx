@@ -67,7 +67,13 @@ export default function CollectionInsights({ groups }: Props) {
         <AlertTitle>
           <HStack>
             <Text>🥳</Text>
-            <Text sx={{ animation: "rainbow 1s linear infinite" }}>
+            <Text
+              sx={{
+                animation: "rainbow 1s linear infinite",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
               Everyone's a winner
             </Text>
             <Text>🍾</Text>
