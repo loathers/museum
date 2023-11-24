@@ -80,15 +80,6 @@ model DailyCollection {
   players Json
 }
 
-model CollectionRanked {
-  id          Int      @id @default(autoincrement())
-  playerid    Int
-  itemid      Int
-  quantity    Int
-  rank        Int      @default(0)
-  lastUpdated DateTime @default(now())
-}
-
 model UnrankedCollection {
   id          Int      @id @default(autoincrement())
   playerid    Int
