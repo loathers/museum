@@ -12,9 +12,9 @@ const auth = Buffer.from(
 ).toString("base64");
 
 async function importPlayers() {
-  await sql`DROP TABLE IF EXISTS "PlayersNew" CASCADE`;
+  await sql`DROP TABLE IF EXISTS "PlayerNew" CASCADE`;
   await sql.unsafe(`
-    CREATE TABLE "PlayersNew" (
+    CREATE TABLE "PlayerNew" (
       "playerid" INTEGER PRIMARY KEY,
       "name" TEXT NOT NULL,
       "clan" INTEGER,
@@ -43,7 +43,7 @@ async function importPlayers() {
 
   const source = Readable.from(text);
   const sink =
-    await sql`COPY "PlayersNew" ("playerid", "name", "clan", "description") FROM STDIN WITH (HEADER MATCH, NULL 'NULL') WHERE "name" is not null`.writable();
+    await sql`COPY "PlayerNew" ("playerid", "name", "clan", "description") FROM STDIN WITH (HEADER MATCH, NULL 'NULL') WHERE "name" is not null`.writable();
 
   await pipeline(source, sink);
 
@@ -51,25 +51,28 @@ async function importPlayers() {
   await sql`
     CREATE TABLE IF NOT EXISTS "PlayerNameChange" (
       "id" SERIAL PRIMARY KEY,
-      "playerid" INTEGER NOT NULL REFERENCES "Player"("playerid"),
+      "playerid" INTEGER NOT NULL REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED,
       "oldname" TEXT NOT NULL,
-      "when" TIMESTAMP(3) NOT NULL DEFAULT NOW()
+      "when" DATE NOT NULL DEFAULT CURRENT_DATE,
+      UNIQUE("playerid", "when")
     )
   `;
+
   const nameChanges = await sql`
     INSERT INTO "PlayerNameChange" ("playerid", "oldname")
     SELECT
-      "PlayersNew"."playerid", "Player"."name"
-      FROM "PlayersNew"
-      LEFT JOIN "Player" ON "PlayersNew"."playerid" = "Player"."playerid"
-      WHERE lower("PlayersNew"."name") != lower("Player"."name")
+      "PlayerNew"."playerid", "Player"."name"
+      FROM "PlayerNew"
+      LEFT JOIN "Player" ON "PlayerNew"."playerid" = "Player"."playerid"
+      WHERE lower("PlayerNew"."name") != lower("Player"."name")
+    ON CONFLICT DO NOTHING
   `;
 
   // And rotate out the player db
   await sql.begin((sql) => [
     sql`DELETE FROM "Player"`,
-    sql`INSERT INTO "Player" SELECT * FROM "PlayersNew"`,
-    sql`TRUNCATE "PlayersNew"`,
+    sql`INSERT INTO "Player" SELECT * FROM "PlayerNew"`,
+    sql`TRUNCATE "PlayerNew"`,
   ]);
 
   // In v4 we can get this from the COPY query
@@ -237,7 +240,11 @@ async function normaliseData() {
   );
 
   // Add foreign key relations
-  await sql`ALTER TABLE "Collection" ADD FOREIGN KEY ("itemid") REFERENCES "Item"("itemid") DEFERRABLE INITIALLY DEFERRED, ADD FOREIGN KEY ("playerid") REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED`;
+  await sql`
+    ALTER TABLE "Collection"
+      ADD FOREIGN KEY ("itemid") REFERENCES "Item"("itemid") DEFERRABLE INITIALLY DEFERRED,
+      ADD FOREIGN KEY ("playerid") REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED
+  `;
 }
 
 async function pickDailyRandomCollections() {
@@ -287,9 +294,11 @@ async function pickDailyRandomCollections() {
 }
 
 export async function handler() {
+  console.time("etl");
   await importData();
   await normaliseData();
   await pickDailyRandomCollections();
+  console.timeEnd("etl");
 }
 
 await handler();

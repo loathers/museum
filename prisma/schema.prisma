@@ -60,17 +60,10 @@ model PlayerNameChange {
   id       Int      @id @default(autoincrement())
   playerid Int
   oldname  String
-  when     DateTime @default(now())
+  when     DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
   player   Player   @relation(fields: [playerid], references: [playerid], onDelete: NoAction, onUpdate: NoAction)
-}
 
-model PlayersNew {
-  playerid    Int     @id
-  name        String
-  clan        Int?
-  description String?
-
-  @@ignore
+  @@unique([playerid, when])
 }
 
 model DailyCollection {
@@ -86,4 +79,13 @@ model UnrankedCollection {
   itemid      Int
   quantity    Int
   lastupdated DateTime @default(now())
+}
+
+model PlayerNew {
+  playerid    Int     @id
+  name        String
+  clan        Int?
+  description String?
+
+  @@ignore
 }
