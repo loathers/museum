@@ -20,7 +20,7 @@ function DescriptionMacro({ type, value }: { type: string; value: number }) {
   const contents = (() => {
     switch (type) {
       case "showitem":
-        return <ShowItem id={value} />;
+        return <ShowItem itemid={value} />;
       default:
         return `${type}:${value}`;
     }
@@ -33,12 +33,12 @@ function DescriptionMacro({ type, value }: { type: string; value: number }) {
 }
 
 type Props = {
-  description: string;
+  description: string | null;
   spacing?: number;
 };
 
 export default function ItemDescription({ description, spacing = 2 }: Props) {
-  const contents = ("<p>" + description)
+  const contents = ("<p>" + (description || ""))
     .replace(/\\[rn]/g, "")
     .split(/(showitem): ?(\d+)/)
     .map((value, i, arr) => {

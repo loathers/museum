@@ -7,7 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
@@ -27,11 +27,11 @@ import {
 } from "~/utils";
 import ButtonLink from "~/components/ButtonLink";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const id = Number(params.id);
   try {
     const collections = await loadCollections(id);
-    if (collections.collection.length === 0) throw ITEM_NOT_FOUND_ERROR;
+    if (collections.collections.length === 0) throw ITEM_NOT_FOUND_ERROR;
     return json(collections);
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
@@ -39,7 +39,7 @@ export async function loader({ params }: LoaderArgs) {
   }
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data: item }) => [
+export const meta: MetaFunction<typeof loader> = ({ data: item }) => [
   { title: `Museum :: ${itemToString(item)}` },
 ];
 
@@ -97,7 +97,7 @@ export default function Item() {
   return (
     <ItemLayout wiki={true} item={item}>
       <ItemDescription description={item.description} />
-      <ItemPageRanking collections={item.collection} />
+      <ItemPageRanking collections={item.collections} />
     </ItemLayout>
   );
 }
@@ -108,7 +108,7 @@ export function ErrorBoundary() {
   if (!isRouteErrorResponse(error)) return "Unexpected error";
 
   const item = {
-    id: -1,
+    itemid: -1,
     name: "Not Found",
     picture: "nopic",
     ambiguous: false,

@@ -1,5 +1,5 @@
 import { ButtonGroup, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
-import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
@@ -20,13 +20,13 @@ export async function loader() {
         where: { missing: false },
         select: {
           name: true,
-          id: true,
+          itemid: true,
           ambiguous: true,
-          _count: { select: { collection: true } },
+          _count: { select: { collections: true } },
         },
-        orderBy: [{ name: "asc" }, { id: "asc" }],
+        orderBy: [{ name: "asc" }, { itemid: "asc" }],
       })
-      .then((items) => items.filter((i) => i._count.collection > 0)),
+      .then((items) => items.filter((i) => i._count.collections > 0)),
   });
 }
 
@@ -38,7 +38,7 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: "Museum :: Welcome to the musuem" },
 ];
 
@@ -49,10 +49,10 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
 
   const browseItem = useCallback(
-    (item?: { id: number } | null) => {
+    (item?: { itemid: number } | null) => {
       if (!item) return;
       setLoading(true);
-      navigate(`/item/${item.id}`);
+      navigate(`/item/${item.itemid}`);
     },
     [navigate],
   );

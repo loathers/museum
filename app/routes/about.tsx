@@ -15,12 +15,10 @@ import RankSymbol from "~/components/RankSymbol";
 import { prisma } from "~/lib/prisma.server";
 
 export const loader = async () => {
-  const { rank, quantity } = (await prisma.collection.findUnique({
+  const { rank, quantity } = (await prisma.collection.findFirst({
     where: {
-      playerId_itemId: {
-        playerId: 1197090,
-        itemId: 641,
-      },
+      playerid: 1197090,
+      itemid: 641,
     },
   })) ?? { rank: 0, quantity: 0 };
 
@@ -28,7 +26,7 @@ export const loader = async () => {
 
   const next = await prisma.collection.findFirst({
     where: {
-      itemId: 641,
+      itemid: 641,
       rank: rank - 1,
     },
   });

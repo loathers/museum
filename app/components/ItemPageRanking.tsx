@@ -72,9 +72,9 @@ export default function ItemPageRanking({ collections }: Props) {
                     c.map(({ player }) => (
                       <Link
                         as={RemixLink}
-                        key={player.id}
-                        title={`${player.name} #${player.id}`}
-                        to={`/player/${player.id}`}
+                        key={player.playerid}
+                        title={`${player.name} #${player.playerid}`}
+                        to={`/player/${player.playerid}`}
                         sx={{ wordWrap: "normal" }}
                       >
                         {player.name}

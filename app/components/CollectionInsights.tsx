@@ -37,13 +37,13 @@ export default function CollectionInsights({ groups }: Props) {
 
   const group = groups.get(keys[0])!;
 
-  if (group.length === 1 && group[0].player.id === HOLDER_ID) {
+  if (group.length === 1 && group[0].player.playerid === HOLDER_ID) {
     const holder = group[0].player;
     return (
       <Alert status="warning">
         <AlertDescription textAlign="center">
           Looks like{" "}
-          <Link as={RemixLink} to={`/player/${holder.id}`}>
+          <Link as={RemixLink} to={`/player/${holder.playerid}`}>
             {holder.name}
           </Link>{" "}
           is the only player with one of these in their display case. Holder has{" "}

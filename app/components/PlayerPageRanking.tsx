@@ -36,8 +36,13 @@ export default function ItemPageRanking({ collections }: Props) {
         </Thead>
         <Tbody>
           {collections.map(({ item, rank, quantity }) => (
-            <Rank key={item.id} rank={rank} quantity={quantity} joint={false}>
-              <Link as={RemixLink} to={`/item/${item.id}`}>
+            <Rank
+              key={item.itemid}
+              rank={rank}
+              quantity={quantity}
+              joint={false}
+            >
+              <Link as={RemixLink} to={`/item/${item.itemid}`}>
                 <ItemName item={item} disambiguate />
               </Link>
             </Rank>

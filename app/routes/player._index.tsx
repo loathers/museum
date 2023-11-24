@@ -1,5 +1,5 @@
 import { defer } from "@remix-run/node";
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
@@ -11,12 +11,12 @@ import ButtonLink from "~/components/ButtonLink";
 export async function loader() {
   return defer({
     players: await prisma.player.findMany({
-      orderBy: { id: "asc" },
+      orderBy: { playerid: "asc" },
     }),
   });
 }
 
-export const meta: V2_MetaFunction<typeof loader> = () => [
+export const meta: MetaFunction<typeof loader> = () => [
   { title: `Museum :: Players` },
 ];
 
@@ -26,10 +26,10 @@ export default function PlayerRoot() {
   const [loading, setLoading] = useState(false);
 
   const browsePlayer = useCallback(
-    (player?: { id: number } | null) => {
+    (player?: { playerid: number } | null) => {
       if (!player) return;
       setLoading(true);
-      navigate(`/player/${player.id}`);
+      navigate(`/player/${player.playerid}`);
     },
     [navigate],
   );

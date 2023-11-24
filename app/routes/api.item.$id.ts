@@ -1,8 +1,8 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { HttpError, loadCollections } from "~/utils";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const id = Number(params.id);
 
   try {

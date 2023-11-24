@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { decodeHTML } from "entities";
 import { prisma } from "./lib/prisma.server";
 
-export const plural = (item: { plural?: string | null; name: string }) => {
+export const pluralise = (item: { plural?: string | null; name: string }) => {
   return item.plural || item.name + "s";
 };
 
@@ -15,7 +15,7 @@ export function englishJoin(elements: React.ReactNode[]) {
   ]);
 }
 
-export type SlimItem = { id: number; name: string; ambiguous: boolean };
+export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
 
 export function itemToString(
   item: SlimItem | null | undefined,
@@ -23,8 +23,8 @@ export function itemToString(
   usePlural = false,
 ) {
   return item
-    ? `${item.ambiguous && disambiguate ? `[${item.id}]` : ""}${decodeHTML(
-        usePlural ? plural(item) : item.name,
+    ? `${item.ambiguous && disambiguate ? `[${item.itemid}]` : ""}${decodeHTML(
+        usePlural ? pluralise(item) : item.name,
       ).replace(/(<([^>]+)>)/gi, "")}`
     : "";
 }
@@ -63,11 +63,11 @@ export async function loadCollections(id: number, take = 999) {
 
   const item = await prisma.item.findFirst({
     where: {
-      id,
+      itemid: id,
       missing: false,
     },
     include: {
-      collection: {
+      collections: {
         select: {
           quantity: true,
           rank: true,
