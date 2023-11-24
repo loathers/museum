@@ -2,13 +2,13 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev",
-    "start": "remix-serve build",
-    "start:prod": "yarn run start",
+    "build": "bun run remix build",
+    "dev": "bun run remix dev",
+    "start": "bun run remix-serve build",
     "typecheck": "tsc",
-    "format": "prettier --write .; prisma format",
-    "etl": "node --no-warnings --loader ts-node/esm/transpile-only scripts/etl.mts"
+    "format": "prettier --write . && prisma format",
+    "deploy": "fly deploy --remote-only",
+    "etl": "bun run scripts/etl.mts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",

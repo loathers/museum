@@ -1,6 +1,7 @@
 import postgres from "postgres";
 import { pipeline } from "stream/promises";
 import { Readable, Writable } from "stream";
+import fetch from "node-fetch";
 
 const sql = postgres("postgres://postgres:postgres@localhost:5432", {
   onnotice: () => {},
@@ -152,11 +153,10 @@ async function importCollections() {
   }
 
   const source = response.body;
-  const sink = Writable.toWeb(
-    await sql`COPY "UnrankedCollection" ("playerid", "itemid", "quantity") FROM STDIN WITH (HEADER MATCH) WHERE "playerid" != 6`.writable(),
-  );
+  const sink =
+    await sql`COPY "UnrankedCollection" ("playerid", "itemid", "quantity") FROM STDIN WITH (HEADER MATCH) WHERE "playerid" != 6`.writable();
 
-  await source.pipeTo(sink);
+  await pipeline(source, sink);
 
   // In v4 we can get this from the COPY query
   const collections =
@@ -238,10 +238,6 @@ async function normaliseData() {
 
   // Add foreign key relations
   await sql`ALTER TABLE "Collection" ADD FOREIGN KEY ("itemid") REFERENCES "Item"("itemid") DEFERRABLE INITIALLY DEFERRED, ADD FOREIGN KEY ("playerid") REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED`;
-}
-
-function notNull<T>(value: T | null): value is T {
-  return value !== null;
 }
 
 async function pickDailyRandomCollections() {
