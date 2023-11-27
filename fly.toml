@@ -8,9 +8,8 @@ primary_region = "lhr"
 
 [build]
 
-# Prisma is not handling our migrations
-# [deploy]
-#  release_command = "bunx prisma migrate deploy"
+[deploy]
+ release_command = "bun run etl"
 
 [http_service]
   internal_port = 3000
