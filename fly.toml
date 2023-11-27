@@ -30,4 +30,4 @@ primary_region = "lhr"
   cron = "supercronic /app/crontab"
 
 [[services]]
-  processes = ["web"]
+  processes = ["app"]
