@@ -1,15 +1,7 @@
-import postgres from "postgres";
 import { pipeline } from "stream/promises";
-import { Readable, Writable } from "stream";
+import { Readable } from "stream";
 import fetch from "node-fetch";
-
-const { DATABASE_URL } = process.env;
-
-if (!DATABASE_URL) throw Error("Must specify a database URL");
-
-const sql = postgres(DATABASE_URL, {
-  onnotice: () => {},
-});
+import { sql, CREATE_COLLECTION_TABLE, CREATE_DAILY_COLLECTION_TABLE, CREATE_ITEM_TABLE, CREATE_PLAYER_NAME_CHANGE_TABLE, CREATE_PLAYER_TABLE } from "./db.mts";
 
 const auth = Buffer.from(
   `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`,
@@ -17,24 +9,17 @@ const auth = Buffer.from(
 
 async function importPlayers() {
   await sql`DROP TABLE IF EXISTS "PlayerNew" CASCADE`;
-  await sql.unsafe(`
+  await sql`
     CREATE TABLE "PlayerNew" (
       "playerid" INTEGER PRIMARY KEY,
       "name" TEXT NOT NULL,
       "clan" INTEGER,
       "description" TEXT
     )
-  `);
+  `;
 
   // Ensure the Player table
-  await sql.unsafe(`
-  CREATE TABLE IF NOT EXISTS "Player" (
-      "playerid" INTEGER PRIMARY KEY,
-      "name" TEXT NOT NULL,
-      "clan" INTEGER,
-      "description" TEXT
-    )
-  `);
+  await sql.unsafe(CREATE_PLAYER_TABLE);
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/player.txt`,
@@ -52,15 +37,7 @@ async function importPlayers() {
   await pipeline(source, sink);
 
   // Now let's see who's changed their name
-  await sql`
-    CREATE TABLE IF NOT EXISTS "PlayerNameChange" (
-      "id" SERIAL PRIMARY KEY,
-      "playerid" INTEGER NOT NULL REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED,
-      "oldname" TEXT NOT NULL,
-      "when" DATE NOT NULL DEFAULT CURRENT_DATE,
-      UNIQUE("playerid", "when")
-    )
-  `;
+  await sql.unsafe(CREATE_PLAYER_NAME_CHANGE_TABLE);
 
   const nameChanges = await sql`
     INSERT INTO "PlayerNameChange" ("playerid", "oldname")
@@ -88,34 +65,7 @@ async function importPlayers() {
 
 async function importItems() {
   await sql`DROP TABLE IF EXISTS "Item" CASCADE`;
-  await sql.unsafe(`
-    CREATE TABLE "Item" (
-      "itemid" INTEGER PRIMARY KEY,
-      "name" TEXT NOT NULL,
-      "picture" TEXT NOT NULL DEFAULT('nopic'),
-      "descid" INTEGER,
-      "description" TEXT,
-      "type" TEXT,
-      "itemclass" TEXT,
-      "candiscard" BOOLEAN NOT NULL DEFAULT(false),
-      "cantransfer" BOOLEAN NOT NULL DEFAULT(false),
-      "quest" BOOLEAN NOT NULL DEFAULT(false),
-      "gift" BOOLEAN NOT NULL DEFAULT(false),
-      "smith" BOOLEAN NOT NULL DEFAULT(false),
-      "cook" BOOLEAN NOT NULL DEFAULT(false),
-      "cocktail" BOOLEAN NOT NULL DEFAULT(false),
-      "jewelry" BOOLEAN NOT NULL DEFAULT(false),
-      "hands" INTEGER NOT NULL DEFAULT(1),
-      "multiuse" BOOLEAN NOT NULL DEFAULT(false),
-      "sellvalue" INTEGER NOT NULL DEFAULT(0),
-      "power" INTEGER NOT NULL DEFAULT(0),
-      "quest2" BOOLEAN NOT NULL DEFAULT(false),
-      "mrstore" BOOLEAN NOT NULL DEFAULT(false),
-      "plural" TEXT,
-      "ambiguous" BOOLEAN NOT NULL DEFAULT(false),
-      "missing" BOOLEAN NOT NULL DEFAULT(false)
-    )
-  `);
+  await sql.unsafe(CREATE_ITEM_TABLE);
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/items.txt`,
@@ -139,7 +89,7 @@ async function importItems() {
 
 async function importCollections() {
   await sql`DROP TABLE IF EXISTS "UnrankedCollection" CASCADE`;
-  await sql.unsafe(`
+  await sql`
     CREATE TABLE "UnrankedCollection" (
       "id" SERIAL PRIMARY KEY,
       "playerid" INTEGER NOT NULL,
@@ -147,7 +97,7 @@ async function importCollections() {
       "quantity" INTEGER NOT NULL,
       "lastupdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
-  `);
+  `;
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/collections.txt`,
@@ -171,16 +121,7 @@ async function importCollections() {
   console.log(`Imported ${collections[0].count} collections`);
 
   await sql`DROP TABLE IF EXISTS "Collection" CASCADE`;
-  await sql.unsafe(`
-    CREATE TABLE "Collection" (
-      "id" SERIAL PRIMARY KEY,
-      "playerid" INTEGER NOT NULL,
-      "itemid" INTEGER NOT NULL,
-      "quantity" INTEGER NOT NULL,
-      "rank" INTEGER NOT NULL,
-      "lastupdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  await sql.unsafe(CREATE_COLLECTION_TABLE);
   await sql`
     INSERT INTO "Collection"
     SELECT
@@ -254,14 +195,7 @@ async function normaliseData() {
 
 async function pickDailyRandomCollections() {
   await sql`DROP TABLE IF EXISTS "DailyCollection" CASCADE`;
-  await sql.unsafe(`
-    CREATE TABLE "DailyCollection" (
-      "itemid" INTEGER NOT NULL UNIQUE,
-      "name" TEXT NOT NULL,
-      "plural" TEXT NOT NULL,
-      "players" JSONB NOT NULL
-    )
-  `);
+  await sql.unsafe(CREATE_DAILY_COLLECTION_TABLE);
 
   // Pick the items to include
   await sql`

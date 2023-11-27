@@ -9,7 +9,7 @@ primary_region = "lhr"
 [build]
 
 [deploy]
- release_command = "bun run etl"
+ release_command = "bun run db-init"
 
 [http_service]
   internal_port = 3000

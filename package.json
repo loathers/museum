@@ -7,7 +7,8 @@
     "start": "bun run remix-serve build/index.js",
     "format": "prettier --write . && prisma format",
     "deploy": "fly deploy --remote-only",
-    "etl": "bun run scripts/etl.mts"
+    "etl": "bun run scripts/etl.mts",
+    "db-init": "bun run scripts/init.mts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
