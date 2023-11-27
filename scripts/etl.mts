@@ -195,7 +195,8 @@ async function importCollections() {
 }
 
 async function importData() {
-  await Promise.all([importItems(), importPlayers()]);
+  await importItems();
+  await importPlayers();
   await importCollections();
 }
 
