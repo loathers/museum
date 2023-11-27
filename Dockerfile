@@ -44,7 +44,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl curl && \
+    apt-get install --no-install-recommends -y ca-certificates curl git openssh-client openssl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built application
@@ -54,7 +54,7 @@ COPY --from=build /app /app
 # Latest releases available at https://github.com/aptible/supercronic/releases
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.28/supercronic-linux-amd64 \
     SUPERCRONIC=supercronic-linux-amd64 \
-    SUPERCRONIC_SHA1SUM=c646d115c152545765b7eea0f5c3591849f6d7c6
+    SUPERCRONIC_SHA1SUM=fe1a81a8a5809deebebbd7a209a3b97e542e2bcd
 
 RUN curl -fsSLO "$SUPERCRONIC_URL" \
  && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \

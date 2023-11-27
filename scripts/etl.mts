@@ -3,7 +3,11 @@ import { pipeline } from "stream/promises";
 import { Readable, Writable } from "stream";
 import fetch from "node-fetch";
 
-const sql = postgres("postgres://postgres:postgres@localhost:5432", {
+const { DATABASE_URL } = process.env;
+
+if (!DATABASE_URL) throw Error("Must specify a database URL");
+
+const sql = postgres(DATABASE_URL, {
   onnotice: () => {},
 });
 
