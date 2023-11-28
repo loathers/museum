@@ -68,7 +68,7 @@ export const CREATE_DAILY_COLLECTION_TABLE = `
   CREATE TABLE IF NOT EXISTS "DailyCollection" (
     "itemid" INTEGER NOT NULL UNIQUE,
     "name" TEXT NOT NULL,
-    "plural" TEXT NOT NULL,
+    "plural" TEXT,
     "players" JSONB NOT NULL
   )
 `;
