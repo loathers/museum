@@ -5,16 +5,16 @@ import type { loader } from "~/routes/api.item.$id";
 import { itemToString } from "~/utils";
 import ItemName from "./ItemName";
 
-type Props = { id: number };
+type Props = { itemid: number };
 
-export default function ShowItem({ id }: Props) {
+export default function ShowItem({ itemid }: Props) {
   const fetcher = useFetcher<typeof loader>();
 
   useEffect(() => {
     if (fetcher.state === "idle" && !fetcher.data) {
-      fetcher.load(`/api/item/${id}`);
+      fetcher.load(`/api/item/${itemid}`);
     }
-  }, [id, fetcher]);
+  }, [itemid, fetcher]);
 
   if (!fetcher.data) {
     return <>Loading...</>;
@@ -23,8 +23,8 @@ export default function ShowItem({ id }: Props) {
   const item = fetcher.data;
 
   const OptionalLink = ({ children }: React.PropsWithChildren<object>) =>
-    item.collection.length > 0 ? (
-      <Link to={`/item/${item.id}`}>{children}</Link>
+    item.collections.length > 0 ? (
+      <Link to={`/item/${item.itemid}`}>{children}</Link>
     ) : (
       <>{children}</>
     );

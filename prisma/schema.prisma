@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,49 +7,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Player {
-  id               Int                @id
-  name             String
-  missing          Boolean            @default(false)
-  collection       Collection[]
-  playerNameChange PlayerNameChange[]
-}
-
-model PlayerNameChange {
-  id       String   @id @default(uuid())
-  playerId Int
-  player   Player   @relation(fields: [playerId], references: [id])
-  oldName  String
-  when     DateTime
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model Collection {
+  id          Int      @id @default(autoincrement())
+  playerid    Int
+  itemid      Int
+  quantity    Int
+  rank        Int
+  lastupdated DateTime @default(now())
+  item        Item     @relation(fields: [itemid], references: [itemid], onDelete: NoAction, onUpdate: NoAction)
+  player      Player   @relation(fields: [playerid], references: [playerid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Item {
-  id          Int          @id
+  itemid      Int          @id
   name        String
-  plural      String?
-  picture     String
-  description String
+  picture     String       @default("nopic")
+  descid      Int?
+  description String?
+  type        String?
+  itemclass   String?
+  candiscard  Boolean      @default(false)
+  cantransfer Boolean      @default(false)
   quest       Boolean      @default(false)
-  missing     Boolean      @default(false)
+  gift        Boolean      @default(false)
+  smith       Boolean      @default(false)
+  cook        Boolean      @default(false)
+  cocktail    Boolean      @default(false)
+  jewelry     Boolean      @default(false)
+  hands       Int          @default(1)
+  multiuse    Boolean      @default(false)
+  sellvalue   Int          @default(0)
+  power       Int          @default(0)
+  quest2      Boolean      @default(false)
+  mrstore     Boolean      @default(false)
+  plural      String?
   ambiguous   Boolean      @default(false)
-  collection  Collection[]
+  missing     Boolean      @default(false)
+  collections Collection[]
 }
 
-model Collection {
-  playerId    Int
-  player      Player   @relation(fields: [playerId], references: [id])
-  itemId      Int
-  item        Item     @relation(fields: [itemId], references: [id])
-  quantity    Int
-  rank        Int      @default(0)
-  lastUpdated DateTime @default(now())
+model Player {
+  playerid    Int                @id
+  name        String
+  clan        Int?
+  description String?
+  collections Collection[]
+  nameChanges PlayerNameChange[]
+}
 
-  @@unique([playerId, itemId])
+model PlayerNameChange {
+  id       Int      @id @default(autoincrement())
+  playerid Int
+  oldname  String
+  when     DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  player   Player   @relation(fields: [playerid], references: [playerid], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([playerid, when])
 }
 
 model DailyCollection {
-  itemId     Int     @unique
-  itemName   String
-  itemPlural String?
-  players    Json
+  itemid  Int    @unique
+  name    String
+  plural  String
+  players Json
+}
+
+model UnrankedCollection {
+  id          Int      @id @default(autoincrement())
+  playerid    Int
+  itemid      Int
+  quantity    Int
+  lastupdated DateTime @default(now())
+}
+
+model PlayerNew {
+  playerid    Int     @id
+  name        String
+  clan        Int?
+  description String?
+
+  @@ignore
 }

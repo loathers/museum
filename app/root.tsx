@@ -1,5 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -10,7 +10,7 @@ import {
 } from "@remix-run/react";
 import { theme } from "./theme";
 
-export const meta: V2_MetaFunction = () => [{ title: "Museum" }];
+export const meta: MetaFunction = () => [{ title: "Museum" }];
 
 export const links: LinksFunction = () => [
   {

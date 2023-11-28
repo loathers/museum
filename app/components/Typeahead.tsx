@@ -8,7 +8,6 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
-import { useState } from "react";
 
 interface Props<T> {
   label?: string;
@@ -31,8 +30,6 @@ export default function Select<T>({
   renderItem,
   loading,
 }: Props<T>) {
-  const [inputItems, setInputItems] = useState<T[]>([]);
-
   const {
     isOpen,
     getToggleButtonProps,
@@ -42,19 +39,10 @@ export default function Select<T>({
     getItemProps,
     getInputProps,
   } = useCombobox({
-    items: inputItems,
+    items,
     itemToString,
     onInputValueChange: ({ inputValue }) => {
       onInputChange?.(inputValue);
-      setInputItems(
-        inputValue
-          ? items.filter((item) =>
-              itemToString(item)
-                .toLowerCase()
-                .includes(inputValue.toLowerCase()),
-            )
-          : [],
-      );
     },
     onSelectedItemChange: (p) => onChange?.(p.selectedItem),
   });
@@ -69,18 +57,18 @@ export default function Select<T>({
             <Button
               borderRadius={0}
               {...getToggleButtonProps({
-                disabled: inputItems.length === 0,
+                disabled: items.length === 0,
               })}
               aria-label="toggle menu"
               isLoading={loading}
             >
-              {isOpen && inputItems.length > 0 ? <>&#8593;</> : <>&#8595;</>}
+              {isOpen && items.length > 0 ? <>&#8593;</> : <>&#8595;</>}
             </Button>
           </InputRightAddon>
         </InputGroup>
         <List
           {...getMenuProps()}
-          display={isOpen && inputItems.length > 0 ? "block" : "none"}
+          display={isOpen && items.length > 0 ? "block" : "none"}
           backgroundColor="chakra-body-bg"
           borderStyle="solid"
           borderWidth={1}
@@ -97,7 +85,7 @@ export default function Select<T>({
           paddingY={2}
         >
           {isOpen &&
-            inputItems.map((item, index) => (
+            items.map((item, index) => (
               <ListItem
                 paddingX={3}
                 paddingY="6px"

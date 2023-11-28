@@ -1,5 +1,5 @@
 import { ButtonGroup, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
-import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
@@ -13,20 +13,6 @@ import { prisma } from "~/lib/prisma.server";
 export async function loader() {
   return defer({
     collections: await prisma.dailyCollection.findMany({}),
-    // Though we're set up for deferring this, prisma currently can't be deferred
-    // https://github.com/remix-run/remix/issues/5153
-    items: await prisma.item
-      .findMany({
-        where: { missing: false },
-        select: {
-          name: true,
-          id: true,
-          ambiguous: true,
-          _count: { select: { collection: true } },
-        },
-        orderBy: [{ name: "asc" }, { id: "asc" }],
-      })
-      .then((items) => items.filter((i) => i._count.collection > 0)),
   });
 }
 
@@ -38,21 +24,21 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: "Museum :: Welcome to the musuem" },
 ];
 
 export default function Index() {
-  const { collections, items } = useLoaderData<typeof loader>();
+  const { collections } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
   const browseItem = useCallback(
-    (item?: { id: number } | null) => {
+    (item?: { itemid: number } | null) => {
       if (!item) return;
       setLoading(true);
-      navigate(`/item/${item.id}`);
+      navigate(`/item/${item.itemid}`);
     },
     [navigate],
   );
@@ -75,22 +61,11 @@ export default function Index() {
         alt="The museum that can be found in KoL"
         margin={8}
       />
-      <Suspense
-        fallback={
-          <ItemSelect label="Item list loading..." items={[]} loading={true} />
-        }
-      >
-        <Await resolve={items}>
-          {(data) => (
-            <ItemSelect
-              label="Check the leaderboard for an item"
-              items={data}
-              loading={loading}
-              onChange={browseItem}
-            />
-          )}
-        </Await>
-      </Suspense>
+      <ItemSelect
+        label="Check the leaderboard for an item"
+        loading={loading}
+        onChange={browseItem}
+      />
       <Suspense fallback={<Spinner />}>
         <Await resolve={collections}>
           {(data) => <RandomCollection collections={data} />}

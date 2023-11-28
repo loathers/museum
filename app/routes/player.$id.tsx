@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import { ButtonGroup, Heading, IconButton, Stack } from "@chakra-ui/react";
@@ -33,11 +33,11 @@ const sortToOrderByQuery = (
   }
 };
 
-export async function loader({ params, request }: LoaderArgs) {
-  const id = Number(params.id);
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const playerid = Number(params.id);
 
-  if (!id) throw json("A player id must be specified", { status: 400 });
-  if (id >= 2 ** 31)
+  if (!playerid) throw json("A player id must be specified", { status: 400 });
+  if (playerid >= 2 ** 31)
     throw json("Player not found with that id", { status: 404 });
 
   const url = new URL(request.url);
@@ -46,19 +46,19 @@ export async function loader({ params, request }: LoaderArgs) {
   const orderBy = sortToOrderByQuery(sort);
 
   const player = await prisma.player.findUnique({
-    where: { id },
+    where: { playerid },
     select: {
-      id: true,
+      playerid: true,
       name: true,
-      collection: {
+      collections: {
         select: {
           quantity: true,
           rank: true,
           item: true,
         },
-        orderBy: [orderBy, { item: { id: "asc" } }],
+        orderBy: [orderBy, { item: { itemid: "asc" } }],
       },
-      playerNameChange: {
+      nameChanges: {
         orderBy: { when: "desc" },
       },
     },
@@ -69,7 +69,7 @@ export async function loader({ params, request }: LoaderArgs) {
   return { player, sort };
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [
+export const meta: MetaFunction<typeof loader> = ({ data }) => [
   { title: `Museum :: ${data?.player.name}` },
 ];
 
@@ -80,7 +80,7 @@ export default function Player() {
     <Layout>
       <Stack>
         <Heading textAlign="center">
-          {player.name} <Formerly names={player.playerNameChange} />
+          {player.name} <Formerly names={player.nameChanges} />
         </Heading>
         <ButtonGroup justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
@@ -92,7 +92,7 @@ export default function Player() {
               aria-label="Sort by item name"
               title="Sort by item name"
               variant={sort === "name" ? "solid" : "outline"}
-              to={`/player/${player.id}`}
+              to={`/player/${player.playerid}`}
               icon={<>🔡</>}
             />
             <IconButton
@@ -100,7 +100,7 @@ export default function Player() {
               aria-label="Sort by collection rank"
               title="Sort by collection rank"
               variant={sort === "rank" ? "solid" : "outline"}
-              to={`/player/${player.id}?sort=rank`}
+              to={`/player/${player.playerid}?sort=rank`}
               icon={<>🏅</>}
             />
             <IconButton
@@ -108,14 +108,14 @@ export default function Player() {
               aria-label="Sort by quantity of item"
               title="Sort by quantity of item"
               variant={sort === "quantity" ? "solid" : "outline"}
-              to={`/player/${player.id}?sort=quantity`}
+              to={`/player/${player.playerid}?sort=quantity`}
               icon={<>🔢</>}
             />
           </ButtonGroup>
         </ButtonGroup>
       </Stack>
 
-      <PlayerPageRanking collections={player.collection} />
+      <PlayerPageRanking collections={player.collections} />
     </Layout>
   );
 }

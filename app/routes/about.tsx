@@ -15,12 +15,10 @@ import RankSymbol from "~/components/RankSymbol";
 import { prisma } from "~/lib/prisma.server";
 
 export const loader = async () => {
-  const { rank, quantity } = (await prisma.collection.findUnique({
+  const { rank, quantity } = (await prisma.collection.findFirst({
     where: {
-      playerId_itemId: {
-        playerId: 1197090,
-        itemId: 641,
-      },
+      playerid: 1197090,
+      itemid: 641,
     },
   })) ?? { rank: 0, quantity: 0 };
 
@@ -28,7 +26,7 @@ export const loader = async () => {
 
   const next = await prisma.collection.findFirst({
     where: {
-      itemId: 641,
+      itemid: 641,
       rank: rank - 1,
     },
   });
@@ -68,11 +66,19 @@ export default function About() {
         </AlertDescription>
       </Alert>
       <Text>
-        The site is generously hosted by{" "}
+        This site is supported by financial contributors to the{" "}
+        <a href="https://opencollective.com/loathers">
+          Loathers community via Open Collective
+        </a>
+        , a tool for transparent handling of funds within open source
+        organisations.
+      </Text>
+      <Text>
+        It was formerly hosted by{" "}
         <Link as={RemixLink} to="/player/2485157">
           Joe the Sauceror
         </Link>
-        .
+        , whom we would like to continue to thank.
       </Text>
       <Text>
         It is inspired by the (currently much more powerful) service provided by

@@ -3,7 +3,7 @@ import { Box, Link, Spinner, Text } from "@chakra-ui/react";
 import { Link as RemixLink } from "@remix-run/react";
 import type { DailyCollection, Player } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { englishJoin, plural } from "~/utils";
+import { englishJoin, pluralise } from "~/utils";
 import { decodeHTML } from "entities";
 
 type Props = {
@@ -24,15 +24,15 @@ export default function RandomCollection({ collections }: Props) {
 
   if (!collection) return <Spinner />;
 
-  const { itemId, itemName, itemPlural } = collection;
-  const players = collection.players as Player[];
+  const { itemid, name, plural } = collection;
+  const players = collection.players as Pick<Player, "playerid" | "name">[];
   return (
     <Box>
       For example, you can see how{" "}
-      <Link as={RemixLink} to={`/item/${itemId}`} prefetch="intent">
+      <Link as={RemixLink} to={`/item/${itemid}`} prefetch="intent">
         {englishJoin(
           players.map((p) => (
-            <Highlighted key={p.id} title={`#${p.id}`}>
+            <Highlighted key={p.playerid} title={`#${p.playerid}`}>
               {p.name}
             </Highlighted>
           )),
@@ -40,7 +40,7 @@ export default function RandomCollection({ collections }: Props) {
         {players.length === 1 ? "has" : "jointly have"} the most{" "}
         <Highlighted
           dangerouslySetInnerHTML={{
-            __html: decodeHTML(plural({ name: itemName, plural: itemPlural })),
+            __html: decodeHTML(pluralise({ name, plural })),
           }}
         />
       </Link>
