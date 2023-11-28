@@ -85,6 +85,8 @@ async function importItems() {
 
   await pipeline(source, sink);
 
+  await sql`UPDATE "Item" SET "plural" = NULL WHERE "plural" = ''`;
+
   // In v4 we can get this from the COPY query
   const collections = await sql`SELECT COUNT(*) as "count" FROM "Item"`;
   console.timeLog("etl", `Imported ${collections[0].count} items`);
