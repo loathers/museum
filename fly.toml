@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for loathers-museum on 2023-11-28T09:39:01Z
+# fly.toml app configuration file generated for loathers-museum on 2023-11-28T14:32:10Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -34,4 +34,4 @@ primary_region = "lhr"
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 1024
-  processes = ["app", "cron"]
+  processes = ["cron", "app"]

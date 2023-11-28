@@ -66,11 +66,19 @@ export default function About() {
         </AlertDescription>
       </Alert>
       <Text>
-        The site is generously hosted by{" "}
+        This site is supported by financial contributors to the{" "}
+        <a href="https://opencollective.com/loathers">
+          Loathers community via Open Collective
+        </a>
+        , a tool for transparent handling of funds within open source
+        organisations.
+      </Text>
+      <Text>
+        It was formerly hosted by{" "}
         <Link as={RemixLink} to="/player/2485157">
           Joe the Sauceror
         </Link>
-        .
+        , whom we would like to continue to thank.
       </Text>
       <Text>
         It is inspired by the (currently much more powerful) service provided by
