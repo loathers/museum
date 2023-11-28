@@ -1,8 +1,8 @@
 # syntax = docker/dockerfile:1
 
-# Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.0.6
-FROM oven/bun:${BUN_VERSION} as base
+# Adjust NODE_VERSION as desired
+ARG NODE_VERSION=18.18.2
+FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Remix/Prisma"
 
@@ -11,6 +11,8 @@ WORKDIR /app
 
 # Set production environment
 ENV NODE_ENV="production"
+ARG YARN_VERSION=1.22.19
+RUN npm install -g yarn@$YARN_VERSION --force
 
 
 # Throw-away build stage to reduce size of final image
@@ -21,22 +23,21 @@ RUN apt-get update -qq && \
     apt-get install -y build-essential openssl pkg-config python-is-python3
 
 # Install node modules
-COPY --link bun.lockb package.json ./
-RUN bun install
+COPY --link package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production=false
 
 # Generate Prisma Client
 COPY --link prisma .
-RUN bunx prisma generate
+RUN npx prisma generate
 
 # Copy application code
 COPY --link . .
 
 # Build application
-RUN bun run build
+RUN yarn run build
 
 # Remove development dependencies
-RUN rm -rf node_modules && \
-    bun install --ci
+RUN yarn install --production=true
 
 
 # Final stage for app image
@@ -46,9 +47,6 @@ FROM base
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y ca-certificates curl git openssh-client openssl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
-# Copy built application
-COPY --from=build /app /app
 
 # Install supercronic
 # Latest releases available at https://github.com/aptible/supercronic/releases
@@ -62,6 +60,9 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
  && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
  && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
 
+# Copy built application
+COPY --from=build /app /app
+
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD [ "yarn", "run", "start" ]

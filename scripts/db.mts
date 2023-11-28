@@ -7,14 +7,18 @@ export const sql = postgres(DATABASE_URL, {
   onnotice: () => {},
 });
 
-export const CREATE_PLAYER_TABLE = `
-  CREATE TABLE IF NOT EXISTS "Player" (
+const createPlayerTable = (name: string) => `
+  CREATE TABLE IF NOT EXISTS "${name}" (
     "playerid" INTEGER PRIMARY KEY,
     "name" TEXT NOT NULL,
     "clan" INTEGER,
     "description" TEXT
   )
 `;
+
+export const CREATE_PLAYER_TABLE = createPlayerTable("Player");
+
+export const CREATE_PLAYER_NEW_TABLE = createPlayerTable("PlayerNew");
 
 export const CREATE_ITEM_TABLE = `
   CREATE TABLE IF NOT EXISTS "Item" (
@@ -45,16 +49,20 @@ export const CREATE_ITEM_TABLE = `
   )
 `;
 
-export const CREATE_COLLECTION_TABLE = `
-  CREATE TABLE IF NOT EXISTS "Collection" (
-    "id" SERIAL PRIMARY KEY,
-    "playerid" INTEGER NOT NULL,
-    "itemid" INTEGER NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "rank" INTEGER NOT NULL,
-    "lastupdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )
+const createCollectionTable = (name: string) => `
+CREATE TABLE IF NOT EXISTS "${name}" (
+  "id" SERIAL PRIMARY KEY,
+  "playerid" INTEGER NOT NULL,
+  "itemid" INTEGER NOT NULL,
+  "quantity" INTEGER NOT NULL,
+  "rank" INTEGER NOT NULL DEFAULT 0,
+  "lastupdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
 `;
+
+export const CREATE_COLLECTION_TABLE = createCollectionTable("Collection");
+export const CREATE_UNRANKED_COLLECTION_TABLE =
+  createCollectionTable("UnrankedCollection");
 
 export const CREATE_DAILY_COLLECTION_TABLE = `
   CREATE TABLE IF NOT EXISTS "DailyCollection" (

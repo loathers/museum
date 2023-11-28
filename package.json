@@ -2,13 +2,13 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "build": "bun run remix build",
-    "dev": "bun run remix dev",
-    "start": "bun run remix-serve build/index.js",
+    "build": "yarn run remix build",
+    "dev": "yarn run remix dev",
+    "start": "yarn run remix-serve build/index.js",
     "format": "prettier --write . && prisma format",
     "deploy": "fly deploy --remote-only",
-    "etl": "bun run scripts/etl.mts",
-    "db-init": "bun run scripts/init.mts"
+    "etl": "node --loader ts-node/esm/transpile-only scripts/etl.mts",
+    "db-init": "node --loader ts-node/esm/transpile-only scripts/init.mts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -28,8 +28,10 @@
     "node-fetch": "^3.3.2",
     "postgres": "^3.4.3",
     "prisma": "^5.6.0",
+    "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react": "^18.2.0"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "latest",
@@ -40,7 +42,6 @@
     "@types/node": "^20.9.4",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
-    "bun-types": "^1.0.14",
     "eslint": "^8.54.0",
     "prettier": "^3.1.0"
   },
