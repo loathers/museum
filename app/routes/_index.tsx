@@ -13,20 +13,6 @@ import { prisma } from "~/lib/prisma.server";
 export async function loader() {
   return defer({
     collections: await prisma.dailyCollection.findMany({}),
-    // Though we're set up for deferring this, prisma currently can't be deferred
-    // https://github.com/remix-run/remix/issues/5153
-    items: await prisma.item
-      .findMany({
-        where: { missing: false },
-        select: {
-          name: true,
-          itemid: true,
-          ambiguous: true,
-          _count: { select: { collections: true } },
-        },
-        orderBy: [{ name: "asc" }, { itemid: "asc" }],
-      })
-      .then((items) => items.filter((i) => i._count.collections > 0)),
   });
 }
 
@@ -43,7 +29,7 @@ export const meta: MetaFunction = () => [
 ];
 
 export default function Index() {
-  const { collections, items } = useLoaderData<typeof loader>();
+  const { collections } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -75,22 +61,11 @@ export default function Index() {
         alt="The museum that can be found in KoL"
         margin={8}
       />
-      <Suspense
-        fallback={
-          <ItemSelect label="Item list loading..." items={[]} loading={true} />
-        }
-      >
-        <Await resolve={items}>
-          {(data) => (
-            <ItemSelect
-              label="Check the leaderboard for an item"
-              items={data}
-              loading={loading}
-              onChange={browseItem}
-            />
-          )}
-        </Await>
-      </Suspense>
+      <ItemSelect
+        label="Check the leaderboard for an item"
+        loading={loading}
+        onChange={browseItem}
+      />
       <Suspense fallback={<Spinner />}>
         <Await resolve={collections}>
           {(data) => <RandomCollection collections={data} />}
