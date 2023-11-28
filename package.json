@@ -6,7 +6,6 @@
     "dev": "yarn run remix dev",
     "start": "yarn run remix-serve build/index.js",
     "format": "prettier --write . && prisma format",
-    "deploy": "fly deploy --remote-only",
     "etl": "node --loader ts-node/esm/transpile-only scripts/etl.mts",
     "db-init": "node --loader ts-node/esm/transpile-only scripts/init.mts"
   },
