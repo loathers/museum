@@ -11,7 +11,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const items = await prisma.item.findMany({
     where: {
       missing: false,
-      name: { contains: q },
+      name: {
+        contains: q,
+        mode: "insensitive",
+      },
     },
     select: {
       name: true,
