@@ -40,7 +40,7 @@ export const loader = async () => {
 export default function About() {
   const { gausieRank, gausieNeeded } = useLoaderData<typeof loader>();
   return (
-    <Layout>
+    <Layout alignment="stretch">
       <Stack>
         <Heading>About</Heading>
         <ButtonGroup justifyContent="center">
@@ -67,9 +67,9 @@ export default function About() {
       </Alert>
       <Text>
         This site is supported by financial contributors to the{" "}
-        <a href="https://opencollective.com/loathers">
+        <Link isExternal href="https://opencollective.com/loathers">
           Loathers community via Open Collective
-        </a>
+        </Link>
         , a tool for transparent handling of funds within open source
         organisations.
       </Text>
@@ -82,12 +82,18 @@ export default function About() {
       </Text>
       <Text>
         It is inspired by the (currently much more powerful) service provided by
-        the <a href="http://dcdb.coldfront.net">Display Case Database</a> hosted
-        by Coldfront for many years.
+        the{" "}
+        <Link isExternal href="http://dcdb.coldfront.net">
+          Display Case Database
+        </Link>{" "}
+        hosted by Coldfront for many years.
       </Text>
       <Text>
         The source for the website itself is hosted on{" "}
-        <a href="https://github.com/loathers/museum">GitHub</a>.
+        <Link isExternal href="https://github.com/loathers/museum">
+          GitHub
+        </Link>
+        .
       </Text>
     </Layout>
   );
