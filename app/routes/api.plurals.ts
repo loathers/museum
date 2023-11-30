@@ -7,5 +7,5 @@ export async function loader() {
     orderBy: { itemid: "asc" },
   });
 
-  return items.map(i => i.plural ? i : ({ ...i, plural: undefined }));
+  return items.map((i) => (i.plural ? i : { ...i, plural: undefined }));
 }

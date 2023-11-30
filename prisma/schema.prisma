@@ -67,7 +67,7 @@ model PlayerNameChange {
 }
 
 model DailyCollection {
-  itemid  Int    @unique
+  itemid  Int     @unique
   name    String
   plural  String?
   players Json

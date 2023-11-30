@@ -13,10 +13,12 @@ import { englishJoin } from "~/utils";
 import CollectionInsights from "./CollectionInsights";
 import Rank from "./Rank";
 
+type SlimPlayer = Pick<Player, "playerid" | "name">;
+
 export type Collection = {
   quantity: number;
   rank: number;
-  player: Player;
+  player: SlimPlayer;
 };
 
 type Props = {

@@ -66,12 +66,22 @@ export async function loadCollections(id: number, take = 999) {
       itemid: id,
       missing: false,
     },
-    include: {
+    select: {
+      name: true,
+      description: true,
+      picture: true,
+      itemid: true,
+      ambiguous: true,
       collections: {
         select: {
           quantity: true,
           rank: true,
-          player: true,
+          player: {
+            select: {
+              playerid: true,
+              name: true,
+            },
+          },
         },
         orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
         take,
