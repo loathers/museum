@@ -9,12 +9,11 @@ import {
 import { Link as RemixLink } from "@remix-run/react";
 
 import type { Collection } from "./ItemPageRanking";
+import { HOLDER_ID } from "~/utils";
 
 type Props = {
   groups: Map<number, Collection[]>;
 };
-
-const HOLDER_ID = 216194;
 
 export default function CollectionInsights({ groups }: Props) {
   const keys = [...groups.keys()];

@@ -2,6 +2,8 @@ import { json } from "@remix-run/node";
 import { decodeHTML } from "entities";
 import { prisma } from "./lib/prisma.server";
 
+export const HOLDER_ID = 216194;
+
 export const pluralise = (item: { plural?: string | null; name: string }) => {
   return item.plural || item.name + "s";
 };
