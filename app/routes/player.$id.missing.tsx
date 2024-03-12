@@ -36,7 +36,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const missing = await prisma.item.findMany({
     where: {
-      quest: playerid === HOLDER_ID,
+      quest: playerid === HOLDER_ID ? undefined : false,
       missing: false,
       collections: { none: { playerid } },
     },
