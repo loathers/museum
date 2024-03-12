@@ -20,6 +20,7 @@ const normalizeSort = (sort: string | null) => {
   switch (sort) {
     case "rank":
     case "quantity":
+    case "itemid":
       return sort;
     default:
       return "name";
@@ -34,6 +35,8 @@ const sortToOrderByQuery = (
       return { rank: "asc" };
     case "quantity":
       return { quantity: "desc" };
+    case "itemid":
+      return { item: { itemid: "desc" } };
     default:
       return { item: { name: "asc" } };
   }
@@ -116,6 +119,14 @@ export default function Player() {
               variant={sort === "quantity" ? "solid" : "outline"}
               to={`/player/${player.playerid}?sort=quantity`}
               icon={<>🔢</>}
+            />
+            <IconButton
+              as={RemixLink}
+              aria-label="Sort by item id"
+              title="Sort by item id"
+              variant={sort === "itemid" ? "solid" : "outline"}
+              to={`/player/${player.playerid}?sort=itemid`}
+              icon={<>🏷️</>}
             />
           </ButtonGroup>
         </ButtonGroup>
