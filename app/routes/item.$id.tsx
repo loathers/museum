@@ -18,13 +18,13 @@ import {
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
 import Layout from "~/components/Layout";
-import type { SlimItem } from "~/utils";
 import {
+  type SlimItem,
   HttpError,
-  itemToString,
   ITEM_NOT_FOUND_ERROR,
   loadCollections,
-} from "~/utils";
+} from "~/utils.server";
+import { itemToString } from "~/utils"
 import ButtonLink from "~/components/ButtonLink";
 
 export async function loader({ params }: LoaderFunctionArgs) {

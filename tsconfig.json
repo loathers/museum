@@ -1,12 +1,12 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ES2021"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "target": "ES2019",
     "strict": true,
@@ -16,7 +16,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-
+    "skipLibCheck": true,
     // Remix takes care of building everything in `remix build`.
     "noEmit": true
   }

@@ -2,13 +2,14 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "build": "yarn run remix build",
-    "dev": "yarn run remix dev",
-    "start": "yarn run remix-serve build/index.js",
+    "build": "remix vite:build",
+    "dev": "remix vite:dev",
+    "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write . && prisma format",
     "etl": "node --loader ts-node/esm/transpile-only scripts/etl.mts",
     "db-init": "node --loader ts-node/esm/transpile-only scripts/init.mts"
   },
+  "type": "module",
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
@@ -41,7 +42,9 @@
     "@types/react-dom": "^18.3.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "vite": "^5.2.11",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
     "node": ">=18"
