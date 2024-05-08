@@ -1,26 +1,11 @@
-import type { SlimItem } from "~/utils";
+import type { SlimItem } from "~/utils.server";
 import { itemToString } from "~/utils";
 
 import ItemName from "./ItemName";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import Typeahead from "./Typeahead";
-
-function useDebounce<T>(value: T, delay: number) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+import { useDebounce } from "~/hooks";
 
 type Props = {
   label: string;
@@ -31,15 +16,15 @@ type Props = {
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
 export default function ItemSelect({ label, onChange, loading }: Props) {
-  const fetcher = useFetcher();
+  const { load, ...fetcher } = useFetcher();
 
   const [query, setQuery] = useState<string | undefined>(undefined);
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
     if (!debouncedQuery) return;
-    fetcher.load(`/api/items?q=${debouncedQuery}`);
-  }, [debouncedQuery]);
+    load(`/api/items?q=${debouncedQuery}`);
+  }, [debouncedQuery, load]);
 
   return (
     <Typeahead<SlimItem>

@@ -10,7 +10,7 @@ import {
   CREATE_PLAYER_TABLE,
   CREATE_PLAYER_NEW_TABLE,
   CREATE_UNRANKED_COLLECTION_TABLE,
-} from "./db.mts";
+} from "./db";
 
 const auth = Buffer.from(
   `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`,

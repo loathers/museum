@@ -2,7 +2,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -32,7 +31,6 @@ export function Document({ children }: React.PropsWithChildren) {
         {children}
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

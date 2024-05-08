@@ -1,4 +1,7 @@
 import postgres from "postgres";
+
+import "dotenv/config";
+
 const { DATABASE_URL } = process.env;
 
 if (!DATABASE_URL) throw Error("Must specify a database URL");
