@@ -6,8 +6,8 @@
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write . && prisma format",
-    "etl": "node --loader ts-node/esm/transpile-only scripts/etl.mts",
-    "db-init": "node --loader ts-node/esm/transpile-only scripts/init.mts"
+    "etl": "node --loader tsm scripts/etl.mts",
+    "db-init": "node --loader tsm scripts/init.mts"
   },
   "type": "module",
   "dependencies": {
@@ -31,7 +31,6 @@
     "prisma": "^5.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
@@ -43,6 +42,7 @@
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
+    "tsm": "^2.3.0",
     "vite": "^5.2.11",
     "vite-tsconfig-paths": "^4.3.2"
   },
