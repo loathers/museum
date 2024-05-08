@@ -5,22 +5,7 @@ import ItemName from "./ItemName";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import Typeahead from "./Typeahead";
-
-function useDebounce<T>(value: T, delay: number) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+import { useDebounce } from "~/hooks";
 
 type Props = {
   label: string;

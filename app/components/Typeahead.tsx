@@ -8,14 +8,15 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
+import { useCallback } from "react";
 
 interface Props<T> {
-  label?: string;
   items: T[];
-  onChange?: (item?: T | null) => unknown;
-  onInputChange?: (inputValue: string | undefined) => unknown;
   itemToString: (item: T | null) => string;
+  label?: string;
   loading?: boolean;
+  onChange?: (item: T | null) => unknown;
+  onInputChange?: (inputValue: string | undefined) => unknown;
   renderItem: (item: T) => React.ReactNode;
 }
 
@@ -23,8 +24,8 @@ export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
 export default function Select<T>({
   items,
-  label,
   itemToString,
+  label,
   onChange,
   onInputChange,
   renderItem,
@@ -47,12 +48,19 @@ export default function Select<T>({
     onSelectedItemChange: (p) => onChange?.(p.selectedItem),
   });
 
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+    const item = items.find(i => itemToString(i).toLowerCase() === event.currentTarget.value.toLowerCase());
+    if (!item) return;
+    onChange?.(item);
+  }, [itemToString, items, onChange]);
+
   return (
     <Stack align="center">
       {label && <label {...getLabelProps()}>{label}</label>}
       <div style={{ display: "inline-block", position: "relative" }}>
         <InputGroup>
-          <Input {...getInputProps()} />
+          <Input {...getInputProps()} onKeyDown={handleKeyDown} />
           <InputRightAddon width="40px" padding={0} overflow="hidden">
             <Button
               borderRadius={0}

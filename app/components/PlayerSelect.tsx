@@ -1,43 +1,40 @@
 import type { Player } from "@prisma/client";
 
-import Select from "./Select";
+import { useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import Typeahead from "./Typeahead";
+import { useDebounce } from "~/hooks";
 
 type Props = {
   label: string;
-  players: Player[];
   onChange?: (player: Player | null) => unknown;
   loading?: boolean;
 };
 
-export const menuStyles = (isOpen: boolean) => ({
-  maxHeight: "180px",
-  overflowY: "auto",
-  width: "300px",
-  margin: 0,
-  border: isOpen ? "1px solid black" : 0,
-  background: "white",
-  position: "absolute",
-  zIndex: 1000,
-  listStyle: "none",
-  padding: 0,
-});
-
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
-export default function PlayerSelect({
-  players,
-  label,
-  onChange,
-  loading,
-}: Props) {
+const playerToString = (player: Player | null) => player?.name ?? "";
+
+export default function ItemSelect({ label, onChange, loading }: Props) {
+  const fetcher = useFetcher();
+
+  const [query, setQuery] = useState<string | undefined>(undefined);
+  const debouncedQuery = useDebounce(query, 300);
+
+  useEffect(() => {
+    if (!debouncedQuery) return;
+    fetcher.load(`/api/players?q=${debouncedQuery}`);
+  }, [debouncedQuery]);
+
   return (
-    <Select<Player>
-      items={players}
-      itemToString={(player) => player?.name ?? ""}
-      loading={loading}
-      onChange={onChange}
+    <Typeahead<Player>
       label={label}
-      renderItem={(player) => player?.name ?? ""}
+      items={(fetcher.data as Player[]) ?? []}
+      onChange={onChange}
+      onInputChange={setQuery}
+      itemToString={playerToString}
+      loading={loading || fetcher.state !== "idle"}
+      renderItem={playerToString}
     />
   );
 }

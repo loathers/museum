@@ -1,27 +1,18 @@
-import { defer } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/node";
-import { Await, useLoaderData, useNavigate } from "@remix-run/react";
-import { Suspense, useCallback, useState } from "react";
+import { useNavigate } from "@remix-run/react";
+import { useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
-import { prisma } from "~/lib/prisma.server";
 import { ButtonGroup, Heading, Stack } from "@chakra-ui/react";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
 
-export async function loader() {
-  return defer({
-    players: await prisma.player.findMany({
-      orderBy: { playerid: "asc" },
-    }),
-  });
-}
 
-export const meta: MetaFunction<typeof loader> = () => [
+
+export const meta: MetaFunction = () => [
   { title: `Museum :: Players` },
 ];
 
 export default function PlayerRoot() {
-  const data = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -44,26 +35,11 @@ export default function PlayerRoot() {
           </ButtonLink>
         </ButtonGroup>
       </Stack>
-      <Suspense
-        fallback={
-          <PlayerSelect
-            label="Player list loading..."
-            players={[]}
-            loading={true}
-          />
-        }
-      >
-        <Await resolve={data.players}>
-          {(players) => (
-            <PlayerSelect
-              label="Check a player's collection"
-              players={players}
-              loading={loading}
-              onChange={browsePlayer}
-            />
-          )}
-        </Await>
-      </Suspense>
+      <PlayerSelect
+        label="Check a player's collection"
+        loading={loading}
+        onChange={browsePlayer}
+      />
     </Layout>
   );
 }
