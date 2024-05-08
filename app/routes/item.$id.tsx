@@ -24,7 +24,7 @@ import {
   ITEM_NOT_FOUND_ERROR,
   loadCollections,
 } from "~/utils.server";
-import { itemToString } from "~/utils"
+import { itemToString } from "~/utils";
 import ButtonLink from "~/components/ButtonLink";
 
 export async function loader({ params }: LoaderFunctionArgs) {

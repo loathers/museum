@@ -28,4 +28,3 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return json(player);
 }
-

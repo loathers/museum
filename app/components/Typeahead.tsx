@@ -48,21 +48,30 @@ export default function Select<T>({
     onSelectedItemChange: (p) => onChange?.(p.selectedItem),
   });
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter") return;
-    const item = items.find(i => itemToString(i).toLowerCase() === event.currentTarget.value.toLowerCase());
-    if (!item) return;
-    onChange?.(item);
-  }, [itemToString, items, onChange]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== "Enter") return;
+      const item = items.find(
+        (i) =>
+          itemToString(i).toLowerCase() ===
+          event.currentTarget.value.toLowerCase(),
+      );
+      if (!item) return;
+      onChange?.(item);
+    },
+    [itemToString, items, onChange],
+  );
 
   return (
     <Stack align="center">
       {label && <label {...getLabelProps()}>{label}</label>}
       <div style={{ display: "inline-block", position: "relative" }}>
         <InputGroup>
-          <Input {...getInputProps({
-            onKeyDown: handleKeyDown
-          })} />
+          <Input
+            {...getInputProps({
+              onKeyDown: handleKeyDown,
+            })}
+          />
           <InputRightAddon width="40px" padding={0} overflow="hidden">
             <Button
               borderRadius={0}

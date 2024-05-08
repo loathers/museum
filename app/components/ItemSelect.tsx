@@ -16,7 +16,7 @@ type Props = {
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
 export default function ItemSelect({ label, onChange, loading }: Props) {
-  const { load, ...fetcher} = useFetcher();
+  const { load, ...fetcher } = useFetcher();
 
   const [query, setQuery] = useState<string | undefined>(undefined);
   const debouncedQuery = useDebounce(query, 300);

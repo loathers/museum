@@ -6,11 +6,7 @@ import { ButtonGroup, Heading, Stack } from "@chakra-ui/react";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
 
-
-
-export const meta: MetaFunction = () => [
-  { title: `Museum :: Players` },
-];
+export const meta: MetaFunction = () => [{ title: `Museum :: Players` }];
 
 export default function PlayerRoot() {
   const navigate = useNavigate();

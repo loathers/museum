@@ -6,7 +6,10 @@ import { defineConfig } from "vite";
 installGlobals();
 
 export default defineConfig({
-  plugins: [remix({
-    ignoredRouteFiles: ["**/.*"]
-  }), tsconfigPaths()],
+  plugins: [
+    remix({
+      ignoredRouteFiles: ["**/.*"],
+    }),
+    tsconfigPaths(),
+  ],
 });
