@@ -13,7 +13,7 @@ import { useState } from "react";
 interface Props<T> {
   label?: string;
   items: T[];
-  onChange?: (item?: T | null) => unknown;
+  onChange?: (item: T | null) => unknown;
   onInputChange?: (inputValue: string | undefined) => unknown;
   itemToString: (item: T | null) => string;
   loading?: boolean;

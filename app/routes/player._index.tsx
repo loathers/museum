@@ -26,7 +26,7 @@ export default function PlayerRoot() {
   const [loading, setLoading] = useState(false);
 
   const browsePlayer = useCallback(
-    (player?: { playerid: number } | null) => {
+    (player: { playerid: number } | null) => {
       if (!player) return;
       setLoading(true);
       navigate(`/player/${player.playerid}`);

@@ -5,7 +5,7 @@ import Select from "./Select";
 type Props = {
   label: string;
   players: Player[];
-  onChange?: (player?: Player | null) => unknown;
+  onChange?: (player: Player | null) => unknown;
   loading?: boolean;
 };
 
