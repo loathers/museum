@@ -6,8 +6,8 @@
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "format": "prettier --write . && prisma format",
-    "etl": "node --loader tsm scripts/etl.mts",
-    "db-init": "node --loader tsm scripts/init.mts"
+    "etl": "node --loader tsm scripts/etl.ts",
+    "db-init": "node --loader tsm scripts/init.ts"
   },
   "type": "module",
   "dependencies": {
