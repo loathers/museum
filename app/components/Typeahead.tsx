@@ -60,7 +60,9 @@ export default function Select<T>({
       {label && <label {...getLabelProps()}>{label}</label>}
       <div style={{ display: "inline-block", position: "relative" }}>
         <InputGroup>
-          <Input {...getInputProps()} onKeyDown={handleKeyDown} />
+          <Input {...getInputProps({
+            onKeyDown: handleKeyDown
+          })} />
           <InputRightAddon width="40px" padding={0} overflow="hidden">
             <Button
               borderRadius={0}
