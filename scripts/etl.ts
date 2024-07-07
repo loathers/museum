@@ -53,8 +53,12 @@ async function importPlayers() {
 
   // And rotate out the player db
   await sql.begin((sql) => [
+    sql`ALTER TABLE "Player" DISABLE TRIGGER ALL`,
+    sql`ALTER TABLE "Collection" DISABLE TRIGGER ALL`,
     sql`DELETE FROM "Player"`,
     sql`INSERT INTO "Player" SELECT * FROM "PlayerNew"`,
+    sql`ALTER TABLE "Player" ENABLE TRIGGER ALL`,
+    sql`ALTER TABLE "Collection" ENABLE TRIGGER ALL`,
     sql`TRUNCATE "PlayerNew"`,
   ]);
 
