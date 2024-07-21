@@ -121,6 +121,17 @@ async function importCollections() {
     await sql`SELECT COUNT(*) as "count" FROM "UnrankedCollection"`;
   console.timeLog("etl", `Imported ${collections[0].count} collections`);
 
+  const unknownPlayers = await sql`
+    DELETE FROM "UnrankedCollection"
+    WHERE NOT EXISTS (
+      SELECT NULL FROM "Player"
+      WHERE "Player"."playerid" = "UnrankedCollection"."playerid"
+    )`;
+  console.timeLog(
+    "etl",
+    `Deleted ${unknownPlayers.count} collections from unknown players`,
+  );
+
   await sql`DROP TABLE IF EXISTS "Collection" CASCADE`;
   await sql.unsafe(CREATE_COLLECTION_TABLE);
   await sql`
@@ -158,18 +169,6 @@ async function normaliseData() {
   console.timeLog(
     "etl",
     `Marked ${ambiguous.count} items as ambiguously named`,
-  );
-
-  // Delete collections from unknown players
-  const unknownPlayers = await sql`
-    DELETE FROM "Collection"
-    WHERE NOT EXISTS (
-      SELECT NULL FROM "Player"
-      WHERE "Player"."playerid" = "Collection"."playerid"
-    )`;
-  console.timeLog(
-    "etl",
-    `Deleted ${unknownPlayers.count} collections from unknown players`,
   );
 
   // Add filler items
