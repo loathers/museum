@@ -7,6 +7,7 @@ import {
   IconButton,
   Link,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 
 import { prisma } from "~/lib/prisma.server";
@@ -75,7 +76,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   if (!player) throw json("Player not found with that id", { status: 404 });
 
-  return { player, sort };
+  const totalItems = player.collections
+    .map((c) => c.quantity)
+    .reduce((a, b) => a + b, 0);
+
+  return { player, sort, totalItems };
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
@@ -83,7 +88,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 ];
 
 export default function Player() {
-  const { player, sort } = useLoaderData<typeof loader>();
+  const { player, sort, totalItems } = useLoaderData<typeof loader>();
 
   return (
     <Layout>
@@ -133,6 +138,12 @@ export default function Player() {
       </Stack>
 
       <PlayerPageRanking collections={player.collections} />
+
+      <Text>
+        Wow, that's{" "}
+        {totalItems === 1 ? "1 item" : `${totalItems.toLocaleString()} items`}{" "}
+        total!
+      </Text>
 
       <Link as={RemixLink} to={`/player/${player.playerid}/missing`}>
         what items are this player missing?
