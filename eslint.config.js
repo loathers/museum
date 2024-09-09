@@ -9,5 +9,5 @@ export default tseslint.config(
   react.configs.flat["jsx-runtime"],
   {
     ignores: ["public/build", "build"],
-  }
+  },
 );

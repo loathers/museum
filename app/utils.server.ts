@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { unstable_data as data } from "@remix-run/node";
 import { prisma } from "./lib/prisma.server";
 
 export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
@@ -13,7 +13,7 @@ export class HttpError {
   }
 
   toRouteError() {
-    return json(this.message, {
+    return data(this.message, {
       status: this.status,
       statusText: HTTP_ERROR_TYPES[this.status] || "Unknown Error",
     });

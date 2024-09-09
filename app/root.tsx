@@ -1,5 +1,10 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type {
+  HeadersFunction,
+  LinksFunction,
+  MetaFunction,
+} from "@remix-run/node";
+import { unstable_data as data } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -8,6 +13,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { theme } from "./theme";
+import { getMaxAge } from "./lib/prisma.server";
 
 export const meta: MetaFunction = () => [{ title: "Museum" }];
 
@@ -17,6 +23,21 @@ export const links: LinksFunction = () => [
     href: "/style.css",
   },
 ];
+
+export const loader = async () => {
+  return data(
+    {},
+    {
+      headers: {
+        "Cache-Control": `public, max-age=${await getMaxAge()}`,
+      },
+    },
+  );
+};
+
+export const headers: HeadersFunction = ({ loaderHeaders }) => {
+  return loaderHeaders;
+};
 
 export function Document({ children }: React.PropsWithChildren) {
   return (

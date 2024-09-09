@@ -1,6 +1,6 @@
 import { ButtonGroup, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
-import { defer } from "@remix-run/node";
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
 import ButtonLink from "~/components/ButtonLink";
@@ -10,11 +10,11 @@ import Layout from "~/components/Layout";
 import RandomCollection from "~/components/RandomCollection";
 import { prisma } from "~/lib/prisma.server";
 
-export async function loader() {
-  return defer({
+export const loader = defineLoader(async () => {
+  return {
     collections: await prisma.dailyCollection.findMany({}),
-  });
-}
+  };
+});
 
 export const links: LinksFunction = () => [
   {

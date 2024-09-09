@@ -1,7 +1,7 @@
-import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 import { prisma } from "~/lib/prisma.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export const loader = defineLoader(async ({ request }) => {
   const url = new URL(request.url);
 
   const q = url.searchParams.get("q");
@@ -25,5 +25,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     orderBy: [{ name: "asc" }, { itemid: "asc" }],
   });
 
-  return json(items.filter((i) => i._count.collections > 0));
-}
+  return items.filter((i) => i._count.collections > 0);
+});

@@ -1,5 +1,8 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/node";
+import {
+  unstable_data as data,
+  unstable_defineLoader as defineLoader,
+} from "@remix-run/node";
 import { useLoaderData, Link as RemixLink } from "@remix-run/react";
 import {
   ButtonGroup,
@@ -39,12 +42,12 @@ const sortToOrderByQuery = (
   }
 };
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export const loader = defineLoader(async ({ params, request }) => {
   const playerid = Number(params.id);
 
-  if (!playerid) throw json("A player id must be specified", { status: 400 });
+  if (!playerid) throw data("A player id must be specified", { status: 400 });
   if (playerid >= 2 ** 31)
-    throw json("Player not found with that id", { status: 404 });
+    throw data("Player not found with that id", { status: 404 });
 
   const player = await prisma.player.findUnique({
     where: { playerid },
@@ -54,7 +57,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     },
   });
 
-  if (!player) throw json("Player not found with that id", { status: 404 });
+  if (!player) throw data("Player not found with that id", { status: 404 });
 
   const url = new URL(request.url);
   const sort = normalizeSort(url.searchParams.get("sort"));
@@ -71,7 +74,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   });
 
   return { player, missing, sort };
-}
+});
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
   { title: `Museum :: ${data?.player.name} missing items` },

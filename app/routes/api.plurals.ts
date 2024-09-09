@@ -1,6 +1,7 @@
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 import { prisma } from "~/lib/prisma.server";
 
-export async function loader() {
+export const loader = defineLoader(async () => {
   const items = await prisma.item.findMany({
     select: { itemid: true, name: true, plural: true },
     where: { missing: false },
@@ -8,4 +9,4 @@ export async function loader() {
   });
 
   return items.map((i) => (i.plural ? i : { ...i, plural: undefined }));
-}
+});

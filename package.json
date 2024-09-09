@@ -49,6 +49,9 @@
     "vite": "^5.4.3",
     "vite-tsconfig-paths": "^5.0.1"
   },
+  "resolutions": {
+    "@emotion/utils": "1.4.0"
+  },
   "engines": {
     "node": ">=18"
   },

@@ -31,3 +31,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export { prisma };
+
+export async function getMaxAge() {
+  const { value } =
+    (await prisma.setting.findFirst({
+      where: { key: "nextUpdate" },
+    })) ?? {};
+  if (!value) return 1800;
+
+  const secondsLeft = Math.ceil((Number(value) - Date.now()) / 1000);
+  return Math.max(0, secondsLeft);
+}

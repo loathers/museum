@@ -1,8 +1,8 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 
 import { prisma } from "~/lib/prisma.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = defineLoader(async ({ request }) => {
   const host =
     request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
 
@@ -21,4 +21,4 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     console.log("healthcheck ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
-};
+});

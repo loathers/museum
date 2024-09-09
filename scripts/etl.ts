@@ -237,11 +237,19 @@ async function pickDailyRandomCollections() {
   console.timeLog("etl", "Picked daily collections");
 }
 
+async function nextUpdateIn(seconds: number) {
+  const timestamp = Date.now() + seconds * 1000;
+  await sql`
+    INSERT INTO "Setting" ("key", "value") VALUES ('nextUpdate', ${timestamp}) ON CONFLICT ("key") DO UPDATE SET "value" = ${timestamp}
+  `;
+}
+
 export async function handler() {
   console.time("etl");
   await importData();
   await normaliseData();
   await pickDailyRandomCollections();
+  await nextUpdateIn(Number(process.env.SCHEDULE) || 86400);
   console.timeEnd("etl");
 }
 

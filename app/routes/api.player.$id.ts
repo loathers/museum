@@ -1,8 +1,10 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import {
+  unstable_defineLoader as defineLoader,
+  unstable_data as data,
+} from "@remix-run/node";
 import { prisma } from "~/lib/prisma.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export const loader = defineLoader(async ({ params }) => {
   const id = Number(params.id);
 
   const player = await prisma.player.findUnique({
@@ -24,7 +26,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     },
   });
 
-  if (!player) throw json("Player not found with that id", { status: 404 });
+  if (!player) return data("Player not found with that id", { status: 404 });
 
-  return json(player);
-}
+  return player;
+});
