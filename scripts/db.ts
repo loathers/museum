@@ -85,3 +85,12 @@ export const CREATE_PLAYER_NAME_CHANGE_TABLE = `
     UNIQUE("playerid", "when")
   )
 `;
+
+export const CREATE_SETTING_TABLE = `
+  CREATE TABLE IF NOT EXISTS "Setting" (
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+
+    CONSTRAINT "Setting_pkey" PRIMARY KEY ("key")
+  );
+`;

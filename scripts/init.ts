@@ -5,8 +5,10 @@ import {
   CREATE_ITEM_TABLE,
   CREATE_PLAYER_NAME_CHANGE_TABLE,
   CREATE_PLAYER_TABLE,
+  CREATE_SETTING_TABLE,
 } from "./db";
 
+await sql.unsafe(CREATE_SETTING_TABLE);
 await sql.unsafe(CREATE_ITEM_TABLE);
 await sql.unsafe(CREATE_PLAYER_TABLE);
 await sql.unsafe(CREATE_PLAYER_NAME_CHANGE_TABLE);
