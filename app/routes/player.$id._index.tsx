@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { unstable_data as data } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import {
@@ -43,7 +43,7 @@ const sortToOrderByQuery = (
   }
 };
 
-export const loader = defineLoader(async ({ params, request }) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const playerid = Number(params.id);
 
   if (!playerid) throw data("A player id must be specified", { status: 400 });
@@ -81,7 +81,7 @@ export const loader = defineLoader(async ({ params, request }) => {
     .reduce((a, b) => a + b, 0);
 
   return { player, sort, totalItems };
-});
+};
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
   { title: `Museum :: ${data?.player.name}` },
