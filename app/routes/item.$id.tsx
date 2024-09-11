@@ -7,8 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import type { MetaFunction } from "@remix-run/node";
-import { unstable_defineLoader as defineLoader } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -27,7 +26,7 @@ import {
 import { itemToString } from "~/utils";
 import ButtonLink from "~/components/ButtonLink";
 
-export const loader = defineLoader(async ({ params }) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
   try {
     const collections = await loadCollections(id);
@@ -37,7 +36,7 @@ export const loader = defineLoader(async ({ params }) => {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;
   }
-});
+};
 
 export const meta: MetaFunction<typeof loader> = ({ data: item }) => [
   { title: `Museum :: ${itemToString(item)}` },

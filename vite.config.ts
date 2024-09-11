@@ -5,6 +5,12 @@ import { defineConfig } from "vite";
 
 installGlobals();
 
+declare module "@remix-run/server-runtime" {
+  interface Future {
+    unstable_singleFetch: true;
+  }
+}
+
 export default defineConfig({
   plugins: [
     remix({

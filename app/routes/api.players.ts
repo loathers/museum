@@ -1,7 +1,7 @@
-import { unstable_defineLoader as defineLoader } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/lib/prisma.server";
 
-export const loader = defineLoader(async ({ request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
   const q = url.searchParams.get("q");
@@ -23,4 +23,4 @@ export const loader = defineLoader(async ({ request }) => {
   });
 
   return players;
-});
+};

@@ -1,7 +1,7 @@
-import { unstable_defineLoader as defineLoader } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { HttpError, loadCollections } from "~/utils.server";
 
-export const loader = defineLoader(async ({ params }) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
 
   try {
@@ -11,4 +11,4 @@ export const loader = defineLoader(async ({ params }) => {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;
   }
-});
+};

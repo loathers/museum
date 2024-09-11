@@ -1,5 +1,5 @@
 type Props = {
-  names: { oldname: string; when: string }[];
+  names: { oldname: string; when: Date }[];
 };
 
 export default function Formerly({ names }: Props) {
@@ -10,7 +10,7 @@ export default function Formerly({ names }: Props) {
       formerly{" "}
       {names.map((n, i) => (
         <>
-          <b title={n.when.substring(0, 10)}>{n.oldname}</b>
+          <b title={n.when.toLocaleDateString()}>{n.oldname}</b>
           {i < names.length - 2 ? ", " : i < names.length - 1 ? " and " : ""}
         </>
       ))}
