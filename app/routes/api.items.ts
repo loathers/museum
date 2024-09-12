@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
@@ -8,7 +8,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   if (!q) return [];
 
-  const items = await prisma.item.findMany({
+  const items = await db.item.findMany({
     where: {
       missing: false,
       name: {

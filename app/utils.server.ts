@@ -1,5 +1,5 @@
 import { unstable_data as data } from "@remix-run/node";
-import { prisma } from "./lib/prisma.server";
+import { db } from "./db.server";
 
 export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
 
@@ -35,7 +35,7 @@ export async function loadCollections(id: number, take = 999) {
   if (!id) throw new HttpError(400, "An item id must be specified");
   if (id >= 2 ** 31) throw ITEM_NOT_FOUND_ERROR;
 
-  const item = await prisma.item.findFirst({
+  const item = await db.item.findFirst({
     where: {
       itemid: id,
       missing: false,

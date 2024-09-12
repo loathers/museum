@@ -1,7 +1,7 @@
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 
 export const loader = async () => {
-  const items = await prisma.item.findMany({
+  const items = await db.item.findMany({
     select: { itemid: true, name: true, plural: true },
     where: { missing: false },
     orderBy: { itemid: "asc" },

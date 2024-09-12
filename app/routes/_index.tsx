@@ -7,11 +7,11 @@ import ButtonLink from "~/components/ButtonLink";
 import ItemSelect from "~/components/ItemSelect";
 import Layout from "~/components/Layout";
 import RandomCollection from "~/components/RandomCollection";
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 
 export const loader = async () => {
   return {
-    collections: await prisma.dailyCollection.findMany({}),
+    collections: await db.dailyCollection.findMany({}),
   };
 };
 

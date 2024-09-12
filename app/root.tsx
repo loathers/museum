@@ -13,7 +13,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { theme } from "./theme";
-import { getMaxAge } from "./lib/prisma.server";
+import { getMaxAge } from "./db.server";
 
 export const meta: MetaFunction = () => [{ title: "Museum" }];
 

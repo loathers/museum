@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
 import ItemName from "~/components/ItemName";
@@ -46,7 +46,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   if (playerid >= 2 ** 31)
     throw data("Player not found with that id", { status: 404 });
 
-  const player = await prisma.player.findUnique({
+  const player = await db.player.findUnique({
     where: { playerid },
     select: {
       playerid: true,
@@ -60,7 +60,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const sort = normalizeSort(url.searchParams.get("sort"));
   const orderBy = sortToOrderByQuery(sort);
 
-  const missing = await prisma.item.findMany({
+  const missing = await db.item.findMany({
     where: {
       quest: playerid === HOLDER_ID ? undefined : false,
       missing: false,

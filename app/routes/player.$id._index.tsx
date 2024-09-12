@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
@@ -55,7 +55,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const orderBy = sortToOrderByQuery(sort);
 
-  const player = await prisma.player.findUnique({
+  const player = await db.player.findUnique({
     where: { playerid },
     select: {
       playerid: true,

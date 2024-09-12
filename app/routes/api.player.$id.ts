@@ -1,10 +1,10 @@
 import { unstable_data as data, LoaderFunctionArgs } from "@remix-run/node";
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
 
-  const player = await prisma.player.findUnique({
+  const player = await db.player.findUnique({
     where: { playerid: id },
     select: {
       playerid: true,

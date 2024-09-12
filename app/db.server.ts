@@ -1,18 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 
-let prisma: PrismaClient;
-
 declare global {
   // eslint-disable-next-line no-var
-  var __db: PrismaClient | undefined;
+  var globalPrisma: PrismaClient;
 }
+
+let prisma: PrismaClient<object, "query">;
 
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
   prisma.$connect();
 } else {
-  if (!global.__db) {
-    const client = new PrismaClient({
+  if (!global.globalPrisma) {
+    global.globalPrisma = new PrismaClient({
       log: [
         {
           emit: "event",
@@ -20,17 +20,15 @@ if (process.env.NODE_ENV === "production") {
         },
       ],
     });
-    client.$connect();
-
-    client.$on("query", async (e) => {
-      console.log(`${e.query} ${e.params}`);
-    });
-    global.__db = client;
   }
-  prisma = global.__db;
+  prisma = global.globalPrisma;
+
+  prisma.$on("query", async (e) => {
+    console.log(`${e.query} ${e.params}`);
+  });
 }
 
-export { prisma };
+export const db = prisma;
 
 export async function getMaxAge() {
   const { value } =

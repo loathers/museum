@@ -12,10 +12,10 @@ import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";
-import { prisma } from "~/lib/prisma.server";
+import { db } from "~/db.server";
 
 export const loader = async () => {
-  const { rank, quantity } = (await prisma.collection.findFirst({
+  const { rank, quantity } = (await db.collection.findFirst({
     where: {
       playerid: 1197090,
       itemid: 641,
@@ -24,7 +24,7 @@ export const loader = async () => {
 
   if (rank <= 1) return json({ gausieRank: rank, gausieNeeded: 0 });
 
-  const next = await prisma.collection.findFirst({
+  const next = await db.collection.findFirst({
     where: {
       itemid: 641,
       rank: rank - 1,
