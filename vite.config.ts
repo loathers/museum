@@ -7,7 +7,7 @@ installGlobals();
 
 declare module "@remix-run/server-runtime" {
   interface Future {
-    unstable_singleFetch: true;
+    v3_singleFetch: true;
   }
 }
 
@@ -16,7 +16,7 @@ export default defineConfig({
     remix({
       ignoredRouteFiles: ["**/.*"],
       future: {
-        unstable_singleFetch: true,
+        v3_singleFetch: true,
       },
     }),
     tsconfigPaths(),

@@ -4,7 +4,7 @@ import type {
   LinksFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { unstable_data as data } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import {
   Links,
   Meta,

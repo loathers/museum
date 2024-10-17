@@ -1,4 +1,4 @@
-import { unstable_data as data, LoaderFunctionArgs } from "@remix-run/node";
+import { data, LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "~/db.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

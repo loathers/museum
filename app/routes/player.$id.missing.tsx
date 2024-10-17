@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { unstable_data as data } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { useLoaderData, Link as RemixLink } from "@remix-run/react";
 import {
   ButtonGroup,

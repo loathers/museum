@@ -1,4 +1,4 @@
-import { unstable_data as data } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { db } from "./db.server";
 
 export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
