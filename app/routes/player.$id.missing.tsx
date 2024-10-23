@@ -2,12 +2,11 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { data } from "@remix-run/node";
 import { useLoaderData, Link as RemixLink } from "@remix-run/react";
 import {
-  ButtonGroup,
+  Group,
   Heading,
   IconButton,
   Link,
   List,
-  ListItem,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -84,32 +83,36 @@ export default function Missing() {
     <Layout>
       <Stack>
         <Heading textAlign="center">{player.name} missing items</Heading>
-        <ButtonGroup justifyContent="center">
+        <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home
           </ButtonLink>
           <ButtonLink leftIcon={<>👤</>} to={`/player/${player.playerid}`}>
             back to player
           </ButtonLink>
-          <ButtonGroup isAttached>
+          <Group attached>
             <IconButton
               as={RemixLink}
               aria-label="Sort by item name"
               title="Sort by item name"
-              variant={sort === "name" ? "solid" : "outline"}
-              to={`/player/${player.playerid}/missing`}
-              icon={<>🔡</>}
-            />
+              variant={sort === "name" ? "surface" : "outline"}
+            >
+              <RemixLink to={`/player/${player.playerid}/missing`}>
+                🔡
+              </RemixLink>
+            </IconButton>
             <IconButton
               as={RemixLink}
               aria-label="Sort by item id"
               title="Sort by item id"
-              variant={sort === "itemid" ? "solid" : "outline"}
-              to={`/player/${player.playerid}/missing?sort=itemid`}
-              icon={<>🏷️</>}
-            />
-          </ButtonGroup>
-        </ButtonGroup>
+              variant={sort === "itemid" ? "surface" : "outline"}
+            >
+              <RemixLink to={`/player/${player.playerid}/missing?sort=itemid`}>
+                🏷️
+              </RemixLink>
+            </IconButton>
+          </Group>
+        </Group>
       </Stack>
 
       <Text>
@@ -117,15 +120,17 @@ export default function Missing() {
         {missing.length.toLocaleString()} short.
       </Text>
 
-      <List>
+      <List.Root>
         {missing.map((item) => (
-          <ListItem key={item.itemid}>
-            <Link as={RemixLink} to={`/item/${item.itemid}`}>
-              <ItemName item={item} disambiguate />
+          <List.Item key={item.itemid}>
+            <Link asChild>
+              <RemixLink to={`/item/${item.itemid}`}>
+                <ItemName item={item} disambiguate />
+              </RemixLink>
             </Link>
-          </ListItem>
+          </List.Item>
         ))}
-      </List>
+      </List.Root>
     </Layout>
   );
 }

@@ -12,6 +12,9 @@ declare module "@remix-run/server-runtime" {
 }
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],

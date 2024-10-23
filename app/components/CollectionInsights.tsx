@@ -1,11 +1,4 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  HStack,
-  Link,
-  Text,
-} from "@chakra-ui/react";
+import { Alert, HStack, Link, Text } from "@chakra-ui/react";
 import { Link as RemixLink } from "@remix-run/react";
 
 import type { Collection } from "./ItemPageRanking";
@@ -22,16 +15,18 @@ export default function CollectionInsights({ groups }: Props) {
 
   if (keys.length === 0)
     return (
-      <Alert status="warning" flexDirection="column">
-        <AlertTitle>No-one has this item in their display case</AlertTitle>
-        <AlertDescription textAlign="center">
+      <Alert.Root status="warning" flexDirection="column">
+        <Alert.Title alignSelf="center">
+          No-one has this item in their display case
+        </Alert.Title>
+        <Alert.Description textAlign="center">
           Not even{" "}
-          <Link as={RemixLink} to={`/player/${HOLDER_ID}`}>
-            HOldeRofSecrEts
+          <Link asChild>
+            <RemixLink to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</RemixLink>
           </Link>
           !
-        </AlertDescription>
-      </Alert>
+        </Alert.Description>
+      </Alert.Root>
     );
 
   const group = groups.get(keys[0])!;
@@ -39,35 +34,38 @@ export default function CollectionInsights({ groups }: Props) {
   if (group.length === 1 && group[0].player.playerid === HOLDER_ID) {
     const holder = group[0].player;
     return (
-      <Alert status="warning">
-        <AlertDescription textAlign="center">
+      <Alert.Root status="warning">
+        <Alert.Description textAlign="center">
           Looks like{" "}
-          <Link as={RemixLink} to={`/player/${holder.playerid}`}>
-            {holder.name}
+          <Link asChild>
+            <RemixLink to={`/player/${holder.playerid}`}>
+              {holder.name}
+            </RemixLink>
           </Link>{" "}
           is the only player with one of these in their display case. Holder has{" "}
           <Link
-            isExternal={true}
+            target="_blank"
+            rel="noopener noreferrer"
             href="https://www.reddit.com/r/kol/comments/o3nzo4/holderofsecretss_collection_how_does_he_do_that/h2czvsv/"
           >
             special rights
           </Link>{" "}
           to put quest items and the like in his DC. So he wins by default.
           DEFAULT! DEFAULT!
-        </AlertDescription>
-      </Alert>
+        </Alert.Description>
+      </Alert.Root>
     );
   }
 
   // If more than one person has this item but the top collections only have 1...
   if (group.length > 1 && group[0].quantity === 1) {
     return (
-      <Alert bg="#FFEAED" flexDirection="column">
-        <AlertTitle>
+      <Alert.Root bg="#FFEAED" flexDirection="column">
+        <Alert.Title alignSelf="center">
           <HStack>
             <Text>🥳</Text>
             <Text
-              sx={{
+              css={{
                 animation: "rainbow 1s linear infinite",
                 backgroundClip: "text",
                 color: "transparent",
@@ -77,13 +75,13 @@ export default function CollectionInsights({ groups }: Props) {
             </Text>
             <Text>🍾</Text>
           </HStack>
-        </AlertTitle>
-        <AlertDescription textAlign="center">
+        </Alert.Title>
+        <Alert.Description textAlign="center">
           Looks like everyone just has one of this item in their display case,
           so you can probably only get one per account. Nevertheless, well done
           them.
-        </AlertDescription>
-      </Alert>
+        </Alert.Description>
+      </Alert.Root>
     );
   }
 

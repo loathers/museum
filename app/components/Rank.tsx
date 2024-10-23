@@ -1,4 +1,4 @@
-import { Td, Tr, Text } from "@chakra-ui/react";
+import { Table, Text } from "@chakra-ui/react";
 import RankSymbol from "./RankSymbol";
 
 type Props = {
@@ -30,16 +30,19 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <Tr backgroundColor={bg(rank)} sx={{ ":hover td p": { opacity: 0.8 } }}>
-      <Td>
+    <Table.Row
+      backgroundColor={bg(rank)}
+      css={{ ":hover td p": { opacity: 0.8 } }}
+    >
+      <Table.Cell>
         <RankSymbol rank={rank} joint={joint} />
-      </Td>
-      <Td>{children}</Td>
-      <Td pr={3} isNumeric>
+      </Table.Cell>
+      <Table.Cell>{children}</Table.Cell>
+      <Table.Cell pr={3} textAlign="end">
         {quantity.toLocaleString()}
-      </Td>
+      </Table.Cell>
       {difference !== undefined && (
-        <Td width="20px" p={0}>
+        <Table.Cell width="20px" p={0}>
           {difference > 0 && (
             <Text
               title={`${difference.toLocaleString()} more needed to advance rank (+${(
@@ -54,8 +57,8 @@ export default function Rank({
               ⤴️
             </Text>
           )}
-        </Td>
+        </Table.Cell>
       )}
-    </Tr>
+    </Table.Row>
   );
 }

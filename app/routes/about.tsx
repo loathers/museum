@@ -1,12 +1,4 @@
-import {
-  Alert,
-  AlertDescription,
-  ButtonGroup,
-  Heading,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import ButtonLink from "~/components/ButtonLink";
@@ -43,31 +35,35 @@ export default function About() {
     <Layout alignment="stretch">
       <Stack>
         <Heading>About</Heading>
-        <ButtonGroup justifyContent="center">
+        <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home
           </ButtonLink>
-        </ButtonGroup>
+        </Group>
       </Stack>
-      <Alert status="info" variant="subtle">
-        <AlertDescription>
+      <Alert.Root status="info" variant="subtle">
+        <Alert.Description>
           <b>Museum</b> is made by{" "}
-          <Link as={RemixLink} to="/player/1197090">
-            gausie
+          <Link asChild>
+            <RemixLink to="/player/1197090">gausie</RemixLink>
           </Link>{" "}
           from a closed data feed provided by TPTB. He collects{" "}
-          <Link as={RemixLink} to="/item/641">
-            toast
+          <Link asChild>
+            <RemixLink to="/item/641">toast</RemixLink>
           </Link>{" "}
           and is currently ranked <RankSymbol rank={gausieRank} />
           {gausieRank === 1
             ? "! Thanks for your generous help!"
             : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
-        </AlertDescription>
-      </Alert>
+        </Alert.Description>
+      </Alert.Root>
       <Text>
         This site is supported by financial contributors to the{" "}
-        <Link isExternal href="https://opencollective.com/loathers">
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://opencollective.com/loathers"
+        >
           Loathers community via Open Collective
         </Link>
         , a tool for transparent handling of funds within open source
@@ -75,22 +71,30 @@ export default function About() {
       </Text>
       <Text>
         It was formerly hosted by{" "}
-        <Link as={RemixLink} to="/player/2485157">
-          Joe the Sauceror
+        <Link asChild>
+          <RemixLink to="/player/2485157">Joe the Sauceror</RemixLink>
         </Link>
         , whom we would like to continue to thank.
       </Text>
       <Text>
         It is inspired by the (currently much more powerful) service provided by
         the{" "}
-        <Link isExternal href="http://dcdb.coldfront.net">
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href="http://dcdb.coldfront.net"
+        >
           Display Case Database
         </Link>{" "}
         hosted by Coldfront for many years.
       </Text>
       <Text>
         The source for the website itself is hosted on{" "}
-        <Link isExternal href="https://github.com/loathers/museum">
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/loathers/museum"
+        >
           GitHub
         </Link>
         .

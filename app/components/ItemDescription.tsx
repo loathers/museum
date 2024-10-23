@@ -1,4 +1,4 @@
-import { chakra, Alert, Stack } from "@chakra-ui/react";
+import { Box, Alert, Stack } from "@chakra-ui/react";
 import ShowItem from "./ShowItem";
 
 function DescriptionParagraph({
@@ -9,8 +9,8 @@ function DescriptionParagraph({
   spacing: number;
 }) {
   return (
-    <chakra.div
-      sx={{ display: "flex", flexDirection: "column", gap: spacing }}
+    <Box
+      css={{ display: "flex", flexDirection: "column", gap: spacing }}
       dangerouslySetInnerHTML={{ __html: value }}
     />
   );
@@ -26,9 +26,9 @@ function DescriptionMacro({ type, value }: { type: string; value: number }) {
     }
   })();
   return (
-    <Alert bg="white" display="inline-flex" width="auto">
+    <Alert.Root bg="white" display="inline-flex" width="auto">
       {contents}
-    </Alert>
+    </Alert.Root>
   );
 }
 
@@ -57,10 +57,10 @@ export default function ItemDescription({ description, spacing = 2 }: Props) {
     });
 
   return (
-    <Alert flexDirection="column" textAlign="center">
-      <Stack alignItems="center" spacing={spacing}>
+    <Alert.Root flexDirection="column" textAlign="center">
+      <Stack alignItems="center" gap={spacing}>
         {contents}
       </Stack>
-    </Alert>
+    </Alert.Root>
   );
 }

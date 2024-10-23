@@ -1,23 +1,22 @@
-import { defineStyleConfig, extendTheme } from "@chakra-ui/react";
+import {
+  createSystem,
+  defaultConfig,
+  defineRecipe,
+  SystemStyleObject,
+} from "@chakra-ui/react";
 
-const Link = defineStyleConfig({
-  // The styles all button have in common
-  baseStyle: {
-    ":hover": {
-      textDecoration: "none",
-    },
-    ":not(.chakra-button)": {
-      textDecoration: "underline",
-      ":hover": {
-        filter: "opacity(0.6)",
-        textDecoration: "none",
-      },
-    },
+const linkRecipe = defineRecipe<{
+  variant: { underline: SystemStyleObject; plain: SystemStyleObject };
+}>({
+  defaultVariants: {
+    variant: "underline",
   },
 });
 
-export const theme = extendTheme({
-  components: {
-    Link,
+export const theme = createSystem(defaultConfig, {
+  theme: {
+    recipes: {
+      link: linkRecipe,
+    },
   },
 });

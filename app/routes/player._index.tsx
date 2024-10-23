@@ -2,7 +2,7 @@ import type { MetaFunction } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
 import { useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
-import { ButtonGroup, Heading, Stack } from "@chakra-ui/react";
+import { Group, Heading, Stack } from "@chakra-ui/react";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
 
@@ -25,11 +25,11 @@ export default function PlayerRoot() {
     <Layout>
       <Stack>
         <Heading>Players</Heading>
-        <ButtonGroup justifyContent="center">
+        <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home
           </ButtonLink>
-        </ButtonGroup>
+        </Group>
       </Stack>
       <PlayerSelect
         label="Check a player's collection"

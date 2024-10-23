@@ -1,4 +1,4 @@
-import { ButtonGroup, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
+import { Group, Heading, Image, Spinner, Stack } from "@chakra-ui/react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useCallback, useState } from "react";
@@ -46,14 +46,14 @@ export default function Index() {
     <Layout>
       <Stack>
         <Heading as="h1">Welcome to the Museum</Heading>
-        <ButtonGroup justifyContent="center">
+        <Group justifyContent="center">
           <ButtonLink leftIcon={<>❓</>} to="/about">
             about
           </ButtonLink>
           <ButtonLink leftIcon={<>🔎</>} to="/player">
             player search
           </ButtonLink>
-        </ButtonGroup>
+        </Group>
       </Stack>
       <Image
         src="/museum.webp"

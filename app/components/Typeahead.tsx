@@ -1,14 +1,7 @@
-import {
-  Button,
-  Input,
-  InputGroup,
-  InputRightAddon,
-  List,
-  ListItem,
-  Stack,
-} from "@chakra-ui/react";
+import { Group, Input, List, Stack } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
 import { useCallback } from "react";
+import { Button } from "./Button";
 
 interface Props<T> {
   items: T[];
@@ -22,7 +15,7 @@ interface Props<T> {
 
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
-export default function Select<T>({
+export default function Typeahead<T>({
   items,
   itemToString,
   label,
@@ -66,32 +59,30 @@ export default function Select<T>({
     <Stack align="center">
       {label && <label {...getLabelProps()}>{label}</label>}
       <div style={{ display: "inline-block", position: "relative" }}>
-        <InputGroup>
+        <Group attached>
           <Input
             {...getInputProps({
               onKeyDown: handleKeyDown,
             })}
           />
-          <InputRightAddon width="40px" padding={0} overflow="hidden">
-            <Button
-              borderRadius={0}
-              {...getToggleButtonProps({
-                disabled: items.length === 0,
-              })}
-              aria-label="toggle menu"
-              isLoading={loading}
-            >
-              {isOpen && items.length > 0 ? <>&#8593;</> : <>&#8595;</>}
-            </Button>
-          </InputRightAddon>
-        </InputGroup>
-        <List
+          <Button
+            borderLeftRadius={0}
+            {...getToggleButtonProps({
+              disabled: items.length === 0,
+            })}
+            aria-label="toggle menu"
+            loading={loading}
+          >
+            {isOpen && items.length > 0 ? <>&#8593;</> : <>&#8595;</>}
+          </Button>
+        </Group>
+        <List.Root
           {...getMenuProps()}
           display={isOpen && items.length > 0 ? "block" : "none"}
-          backgroundColor="chakra-body-bg"
+          bg="bg"
           borderStyle="solid"
           borderWidth={1}
-          borderColor="chakra-border-color"
+          borderColor="border"
           borderRadius="md"
           maxHeight="180px"
           overflowY="auto"
@@ -102,22 +93,23 @@ export default function Select<T>({
           zIndex={1000}
           paddingX={0}
           paddingY={2}
+          listStyleType="none"
         >
           {isOpen &&
             items.map((item, index) => (
-              <ListItem
+              <List.Item
                 paddingX={3}
                 paddingY="6px"
                 backgroundColor={
-                  highlightedIndex === index ? "gray.100" : undefined
+                  highlightedIndex === index ? "bg.emphasized" : undefined
                 }
                 key={`${item}${index}`}
                 {...getItemProps({ item, index })}
               >
                 {renderItem(item)}
-              </ListItem>
+              </List.Item>
             ))}
-        </List>
+        </List.Root>
       </div>
     </Stack>
   );

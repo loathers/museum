@@ -1,12 +1,4 @@
-import {
-  Link,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
+import { Link, Table } from "@chakra-ui/react";
 import type { Item } from "@prisma/client";
 import { Link as RemixLink } from "@remix-run/react";
 
@@ -25,16 +17,16 @@ type Props = {
 
 export default function ItemPageRanking({ collections }: Props) {
   return (
-    <TableContainer whiteSpace="normal">
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Rank</Th>
-            <Th>Item</Th>
-            <Th isNumeric>Quantity</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+    <Table.ScrollArea whiteSpace="normal">
+      <Table.Root>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Rank</Table.ColumnHeader>
+            <Table.ColumnHeader>Item</Table.ColumnHeader>
+            <Table.ColumnHeader textAlign="end">Quantity</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {collections.map(({ item, rank, quantity }) => (
             <Rank
               key={item.itemid}
@@ -42,13 +34,15 @@ export default function ItemPageRanking({ collections }: Props) {
               quantity={quantity}
               joint={false}
             >
-              <Link as={RemixLink} to={`/item/${item.itemid}`}>
-                <ItemName item={item} disambiguate />
+              <Link asChild>
+                <RemixLink to={`/item/${item.itemid}`}>
+                  <ItemName item={item} disambiguate />
+                </RemixLink>
               </Link>
             </Rank>
           ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+        </Table.Body>
+      </Table.Root>
+    </Table.ScrollArea>
   );
 }

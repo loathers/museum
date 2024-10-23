@@ -1,12 +1,4 @@
-import {
-  Link,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
+import { Link, Table } from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
 import { Link as RemixLink } from "@remix-run/react";
 import { englishJoin } from "~/utils";
@@ -50,18 +42,20 @@ export default function ItemPageRanking({ collections }: Props) {
       <CollectionInsights groups={grouped} />
 
       {collections.length > 0 && (
-        <TableContainer whiteSpace="normal">
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Rank</Th>
-                <Th>Item</Th>
-                <Th isNumeric>Quantity</Th>
-                <Th p={0}></Th>
-              </Tr>
-            </Thead>
+        <Table.ScrollArea whiteSpace="normal">
+          <Table.Root>
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeader>Rank</Table.ColumnHeader>
+                <Table.ColumnHeader>Item</Table.ColumnHeader>
+                <Table.ColumnHeader textAlign="end">
+                  Quantity
+                </Table.ColumnHeader>
+                <Table.ColumnHeader p={0}></Table.ColumnHeader>
+              </Table.Row>
+            </Table.Header>
 
-            <Tbody>
+            <Table.Body>
               {groups.map((c, i, a) => (
                 <Rank
                   key={c[0].rank}
@@ -73,21 +67,24 @@ export default function ItemPageRanking({ collections }: Props) {
                   {englishJoin(
                     c.map(({ player }) => (
                       <Link
-                        as={RemixLink}
                         key={player.playerid}
-                        title={`${player.name} #${player.playerid}`}
-                        to={`/player/${player.playerid}`}
-                        sx={{ wordWrap: "normal" }}
+                        asChild
+                        css={{ wordWrap: "normal" }}
                       >
-                        {player.name}
+                        <RemixLink
+                          title={`${player.name} #${player.playerid}`}
+                          to={`/player/${player.playerid}`}
+                        >
+                          {player.name}
+                        </RemixLink>
                       </Link>
                     )),
                   )}
                 </Rank>
               ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+            </Table.Body>
+          </Table.Root>
+        </Table.ScrollArea>
       )}
     </>
   );

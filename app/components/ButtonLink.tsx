@@ -1,25 +1,36 @@
-import { Button, Link as ChakraLink } from "@chakra-ui/react";
+import { Link as ChakraLink } from "@chakra-ui/react";
 import {
   Link as RemixLink,
   useNavigation,
   useResolvedPath,
 } from "@remix-run/react";
+import { type To } from "@remix-run/router";
 
-type Props = React.ComponentProps<typeof RemixLink> &
-  React.ComponentProps<typeof Button>;
+import { Button } from "./Button";
 
-export default function ButtonLink({ to, ...props }: Props) {
+type Props = React.ComponentProps<typeof Button> & { to: To };
+
+export default function ButtonLink({ to, children, ...props }: Props) {
   const { state, location } = useNavigation();
   const path = useResolvedPath(to);
 
   const loading = state === "loading" && location.pathname === path.pathname;
 
-  const linkingProps = to.toString().startsWith("/")
-    ? {
-        as: RemixLink,
-        to,
-      }
-    : { as: ChakraLink, href: to, isExternal: true };
+  const external = to && !to.toString().startsWith("/");
 
-  return <Button isLoading={loading} {...linkingProps} {...props} />;
+  return (
+    <Button asChild loading={loading} {...props}>
+      {external ? (
+        <ChakraLink
+          href={to.toString()}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </ChakraLink>
+      ) : (
+        <RemixLink to={to}>{children}</RemixLink>
+      )}
+    </Button>
+  );
 }

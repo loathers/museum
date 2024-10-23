@@ -5,7 +5,7 @@ import {
 } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import {
-  ButtonGroup,
+  Group,
   Heading,
   IconButton,
   Link,
@@ -99,45 +99,51 @@ export default function Player() {
         <Heading textAlign="center">
           {player.name} <Formerly names={player.nameChanges} />
         </Heading>
-        <ButtonGroup justifyContent="center">
+        <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home
           </ButtonLink>
-          <ButtonGroup isAttached>
+          <Group attached>
             <IconButton
-              as={RemixLink}
+              asChild
               aria-label="Sort by item name"
               title="Sort by item name"
-              variant={sort === "name" ? "solid" : "outline"}
-              to={`/player/${player.playerid}`}
-              icon={<>🔡</>}
-            />
+              variant={sort === "name" ? "surface" : "outline"}
+            >
+              <RemixLink to={`/player/${player.playerid}`}>🔡</RemixLink>
+            </IconButton>
             <IconButton
-              as={RemixLink}
+              asChild
               aria-label="Sort by collection rank"
               title="Sort by collection rank"
-              variant={sort === "rank" ? "solid" : "outline"}
-              to={`/player/${player.playerid}?sort=rank`}
-              icon={<>🏅</>}
-            />
+              variant={sort === "rank" ? "surface" : "outline"}
+            >
+              <RemixLink to={`/player/${player.playerid}?sort=rank`}>
+                🏅
+              </RemixLink>
+            </IconButton>
             <IconButton
-              as={RemixLink}
+              asChild
               aria-label="Sort by quantity of item"
               title="Sort by quantity of item"
-              variant={sort === "quantity" ? "solid" : "outline"}
-              to={`/player/${player.playerid}?sort=quantity`}
-              icon={<>🔢</>}
-            />
+              variant={sort === "quantity" ? "surface" : "outline"}
+            >
+              <RemixLink to={`/player/${player.playerid}?sort=quantity`}>
+                🔢
+              </RemixLink>
+            </IconButton>
             <IconButton
-              as={RemixLink}
               aria-label="Sort by item id"
               title="Sort by item id"
-              variant={sort === "itemid" ? "solid" : "outline"}
-              to={`/player/${player.playerid}?sort=itemid`}
-              icon={<>🏷️</>}
-            />
-          </ButtonGroup>
-        </ButtonGroup>
+              variant={sort === "itemid" ? "surface" : "outline"}
+              asChild
+            >
+              <RemixLink to={`/player/${player.playerid}?sort=itemid`}>
+                🏷️
+              </RemixLink>
+            </IconButton>
+          </Group>
+        </Group>
       </Stack>
 
       <PlayerPageRanking collections={player.collections} />
@@ -148,8 +154,10 @@ export default function Player() {
         total!
       </Text>
 
-      <Link as={RemixLink} to={`/player/${player.playerid}/missing`}>
-        what items are this player missing?
+      <Link asChild>
+        <RemixLink to={`/player/${player.playerid}/missing`}>
+          what items are this player missing?
+        </RemixLink>
       </Link>
     </Layout>
   );
