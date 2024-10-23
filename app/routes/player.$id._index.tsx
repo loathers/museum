@@ -19,6 +19,13 @@ import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
 import type { Prisma } from "@prisma/client";
+import {
+  LuArrowDown10,
+  LuArrowDownAZ,
+  LuArrowDownWideNarrow,
+  LuArrowLeft,
+  LuMedal,
+} from "react-icons/lu";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -100,7 +107,7 @@ export default function Player() {
           {player.name} <Formerly names={player.nameChanges} />
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<>←</>} to="/">
+          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
             home
           </ButtonLink>
           <Group attached>
@@ -110,7 +117,9 @@ export default function Player() {
               title="Sort by item name"
               variant={sort === "name" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}`}>🔡</RemixLink>
+              <RemixLink to={`/player/${player.playerid}`}>
+                <LuArrowDownAZ />
+              </RemixLink>
             </IconButton>
             <IconButton
               asChild
@@ -119,7 +128,7 @@ export default function Player() {
               variant={sort === "rank" ? "surface" : "outline"}
             >
               <RemixLink to={`/player/${player.playerid}?sort=rank`}>
-                🏅
+                <LuMedal />
               </RemixLink>
             </IconButton>
             <IconButton
@@ -129,7 +138,7 @@ export default function Player() {
               variant={sort === "quantity" ? "surface" : "outline"}
             >
               <RemixLink to={`/player/${player.playerid}?sort=quantity`}>
-                🔢
+                <LuArrowDownWideNarrow />
               </RemixLink>
             </IconButton>
             <IconButton
@@ -139,7 +148,7 @@ export default function Player() {
               asChild
             >
               <RemixLink to={`/player/${player.playerid}?sort=itemid`}>
-                🏷️
+                <LuArrowDown10 />
               </RemixLink>
             </IconButton>
           </Group>

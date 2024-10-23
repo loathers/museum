@@ -14,6 +14,7 @@ import {
 } from "~/utils.server";
 import { itemToString } from "~/utils";
 import ButtonLink from "~/components/ButtonLink";
+import { LuArrowLeft } from "react-icons/lu";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
@@ -46,6 +47,7 @@ function ItemLayout({
           <Image
             src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
             alt={itemToString(item)}
+            filter={{ _dark: "invert(1)" }}
           />
 
           <Heading
@@ -55,7 +57,7 @@ function ItemLayout({
           />
         </HStack>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<>←</>} to="/">
+          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
             home
           </ButtonLink>
           {wiki && (

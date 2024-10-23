@@ -17,6 +17,12 @@ import ButtonLink from "~/components/ButtonLink";
 import ItemName from "~/components/ItemName";
 import { HOLDER_ID } from "~/utils";
 import type { Prisma } from "@prisma/client";
+import {
+  LuArrowDown10,
+  LuArrowDownAZ,
+  LuArrowLeft,
+  LuUserCircle,
+} from "react-icons/lu";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {
@@ -86,10 +92,13 @@ export default function Missing() {
           {player.name} missing items
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<>←</>} to="/">
+          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
             home
           </ButtonLink>
-          <ButtonLink leftIcon={<>👤</>} to={`/player/${player.playerid}`}>
+          <ButtonLink
+            leftIcon={<LuUserCircle />}
+            to={`/player/${player.playerid}`}
+          >
             back to player
           </ButtonLink>
           <Group attached>
@@ -100,7 +109,7 @@ export default function Missing() {
               variant={sort === "name" ? "surface" : "outline"}
             >
               <RemixLink to={`/player/${player.playerid}/missing`}>
-                🔡
+                <LuArrowDownAZ />
               </RemixLink>
             </IconButton>
             <IconButton
@@ -110,7 +119,7 @@ export default function Missing() {
               variant={sort === "itemid" ? "surface" : "outline"}
             >
               <RemixLink to={`/player/${player.playerid}/missing?sort=itemid`}>
-                🏷️
+                <LuArrowDown10 />
               </RemixLink>
             </IconButton>
           </Group>

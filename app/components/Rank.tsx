@@ -9,14 +9,14 @@ type Props = {
   children: React.ReactNode;
 };
 
-function bg(rank: number): React.CSSProperties["backgroundColor"] {
+function bg(rank: number) {
   switch (rank) {
     case 1:
-      return "#fad25a";
+      return "goldmedal";
     case 2:
-      return "#cbcace";
+      return "silvermedal";
     case 3:
-      return "#cea972";
+      return "bronzemedal";
     default:
       return "transparent";
   }
@@ -30,10 +30,7 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <Table.Row
-      backgroundColor={bg(rank)}
-      css={{ ":hover td p": { opacity: 0.8 } }}
-    >
+    <Table.Row bg={bg(rank)} css={{ ":hover td p": { opacity: 0.8 } }}>
       <Table.Cell>
         <RankSymbol rank={rank} joint={joint} />
       </Table.Cell>

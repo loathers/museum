@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 type Props = {
   rank: number;
   joint?: boolean;
@@ -30,14 +32,19 @@ const numberSuffix = (number: number) => {
   }
 };
 
-const style = {
-  display: "inline",
-  textShadow:
-    "-2px -2px 0 white, 2px -2px 0 white, -2px 2px white, 2px 2px white",
-  cursor: "default",
-};
-
 export default function RankSymbol({ rank, joint }: Props) {
+  const style = useMemo(
+    () => ({
+      display: "inline",
+      textShadow:
+        rank <= 3
+          ? "-2px -2px 0 white, 2px -2px 0 white, -2px 2px white, 2px 2px white"
+          : undefined,
+      cursor: "default",
+    }),
+    [rank],
+  );
+
   return (
     <span
       style={style}

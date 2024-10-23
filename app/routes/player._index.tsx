@@ -5,6 +5,7 @@ import PlayerSelect from "~/components/PlayerSelect";
 import { Group, Heading, Stack } from "@chakra-ui/react";
 import Layout from "~/components/Layout";
 import ButtonLink from "~/components/ButtonLink";
+import { LuArrowLeft } from "react-icons/lu";
 
 export const meta: MetaFunction = () => [{ title: `Museum :: Players` }];
 
@@ -28,7 +29,7 @@ export default function PlayerRoot() {
           Players
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<>←</>} to="/">
+          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
             home
           </ButtonLink>
         </Group>

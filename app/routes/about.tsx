@@ -1,6 +1,7 @@
 import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+import { LuArrowLeft } from "react-icons/lu";
 import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";
@@ -38,7 +39,7 @@ export default function About() {
           About
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<>←</>} to="/">
+          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
             home
           </ButtonLink>
         </Group>

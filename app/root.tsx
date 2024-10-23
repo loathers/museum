@@ -62,7 +62,7 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider value={theme}>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" disableTransitionOnChange>
           <Outlet />
         </ThemeProvider>
       </ChakraProvider>
