@@ -45,7 +45,9 @@ export default function Index() {
   return (
     <Layout>
       <Stack>
-        <Heading as="h1">Welcome to the Museum</Heading>
+        <Heading as="h1" size="4xl">
+          Welcome to the Museum
+        </Heading>
         <Group justifyContent="center">
           <ButtonLink leftIcon={<>❓</>} to="/about">
             about

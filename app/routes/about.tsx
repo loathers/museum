@@ -34,7 +34,9 @@ export default function About() {
   return (
     <Layout alignment="stretch">
       <Stack>
-        <Heading>About</Heading>
+        <Heading as="h2" size="4xl">
+          About
+        </Heading>
         <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home

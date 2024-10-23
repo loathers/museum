@@ -1,5 +1,4 @@
 import { Group, Heading, HStack, Image, Stack } from "@chakra-ui/react";
-import { LuExternalLink } from "react-icons/lu";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 
 import { useLoaderData } from "@remix-run/react";
@@ -49,7 +48,11 @@ function ItemLayout({
             alt={itemToString(item)}
           />
 
-          <Heading dangerouslySetInnerHTML={{ __html: item.name }} />
+          <Heading
+            as="h2"
+            size="4xl"
+            dangerouslySetInnerHTML={{ __html: item.name }}
+          />
         </HStack>
         <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
@@ -67,7 +70,6 @@ function ItemLayout({
                   style={{ width: "1em", verticalAlign: "middle" }}
                 />
               }
-              rightIcon={<LuExternalLink />}
             >
               wiki
             </ButtonLink>

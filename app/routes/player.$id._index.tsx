@@ -96,7 +96,7 @@ export default function Player() {
   return (
     <Layout>
       <Stack>
-        <Heading textAlign="center">
+        <Heading as="h2" size="4xl" textAlign="center">
           {player.name} <Formerly names={player.nameChanges} />
         </Heading>
         <Group justifyContent="center">

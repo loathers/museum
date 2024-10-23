@@ -24,7 +24,9 @@ export default function PlayerRoot() {
   return (
     <Layout>
       <Stack>
-        <Heading>Players</Heading>
+        <Heading as="h2" size="4xl">
+          Players
+        </Heading>
         <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home

@@ -10,14 +10,12 @@ type Props = React.ComponentProps<typeof ChakraButton> & {
   loading?: boolean;
   loadingText?: React.ReactNode;
   leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
 };
 
 export function Button({
   loading,
   loadingText,
   leftIcon,
-  rightIcon,
   disabled,
   children,
   ...props
@@ -42,7 +40,6 @@ export function Button({
         <HStack>
           {leftIcon && <Span>{leftIcon}</Span>}
           {children}
-          {rightIcon && <Span>{rightIcon}</Span>}
         </HStack>
       )}
     </ChakraButton>

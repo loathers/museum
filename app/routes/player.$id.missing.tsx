@@ -82,7 +82,9 @@ export default function Missing() {
   return (
     <Layout>
       <Stack>
-        <Heading textAlign="center">{player.name} missing items</Heading>
+        <Heading as="h2" size="4xl" textAlign="center">
+          {player.name} missing items
+        </Heading>
         <Group justifyContent="center">
           <ButtonLink leftIcon={<>←</>} to="/">
             home
