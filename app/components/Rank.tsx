@@ -30,7 +30,7 @@ export default function Rank({
   difference,
 }: Props) {
   return (
-    <Table.Row bg={bg(rank)} css={{ ":hover td p": { opacity: 0.8 } }}>
+    <Table.Row bg={bg(rank)} css={{ "&:hover td p": { opacity: 0.8 } }}>
       <Table.Cell>
         <RankSymbol rank={rank} joint={joint} />
       </Table.Cell>

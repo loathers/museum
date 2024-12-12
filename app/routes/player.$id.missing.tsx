@@ -21,7 +21,7 @@ import {
   LuArrowDown10,
   LuArrowDownAZ,
   LuArrowLeft,
-  LuUserCircle,
+  LuCircleUser,
 } from "react-icons/lu";
 
 const normalizeSort = (sort: string | null) => {
@@ -96,7 +96,7 @@ export default function Missing() {
             home
           </ButtonLink>
           <ButtonLink
-            leftIcon={<LuUserCircle />}
+            leftIcon={<LuCircleUser />}
             to={`/player/${player.playerid}`}
           >
             back to player
