@@ -2260,6 +2260,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@remix-run/fs-routes@npm:^2.15.2":
+  version: 2.15.2
+  resolution: "@remix-run/fs-routes@npm:2.15.2"
+  peerDependencies:
+    "@remix-run/dev": ^2.15.2
+    "@remix-run/route-config": ^2.15.2
+    typescript: ^5.1.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1f6dab9a2da2baec51bdd813832c78f0a6b9abe949cea857aaa49a4fd1b79d83e072661612bd13ee75688e5c540b90a20c03205436635956bc3f2be1edb7a57c
+  languageName: node
+  linkType: hard
+
 "@remix-run/node@npm:2.15.2, @remix-run/node@npm:^2.15.2":
   version: 2.15.2
   resolution: "@remix-run/node@npm:2.15.2"
@@ -2297,6 +2311,21 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/063825ae5eb517b13b4f89d0518f4f92f933d6c5c7eb4e8f447e29a6919c0251c33293e96ec57c5c99db766cd0041f926dfad12b1f4f858040cbcba507cea034
+  languageName: node
+  linkType: hard
+
+"@remix-run/route-config@npm:^2.15.2":
+  version: 2.15.2
+  resolution: "@remix-run/route-config@npm:2.15.2"
+  dependencies:
+    lodash: "npm:^4.17.21"
+  peerDependencies:
+    "@remix-run/dev": ^2.15.2
+    typescript: ^5.1.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/d4e9c2db2477ea5b83935610e98bd27003c40a4976706e69f9ae88b6dd9b50321b662a80fedd30d906a97f1881f4ba8d16815f5fbfbcff04918a2498c2462acf
   languageName: node
   linkType: hard
 
@@ -10166,8 +10195,10 @@ __metadata:
     "@eslint/js": "npm:^9.18.0"
     "@prisma/client": "npm:^6.2.1"
     "@remix-run/dev": "npm:^2.15.2"
+    "@remix-run/fs-routes": "npm:^2.15.2"
     "@remix-run/node": "npm:^2.15.2"
     "@remix-run/react": "npm:^2.15.2"
+    "@remix-run/route-config": "npm:^2.15.2"
     "@remix-run/serve": "npm:^2.15.2"
     "@types/node": "npm:^22.10.9"
     "@types/react": "npm:^19.0.7"

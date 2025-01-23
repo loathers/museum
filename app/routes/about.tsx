@@ -1,5 +1,4 @@
 import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { json } from "@remix-run/node";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import { LuArrowLeft } from "react-icons/lu";
 import ButtonLink from "~/components/ButtonLink";
@@ -15,7 +14,7 @@ export const loader = async () => {
     },
   })) ?? { rank: 0, quantity: 0 };
 
-  if (rank <= 1) return json({ gausieRank: rank, gausieNeeded: 0 });
+  if (rank <= 1) return { gausieRank: rank, gausieNeeded: 0 };
 
   const next = await db.collection.findFirst({
     where: {
@@ -24,10 +23,10 @@ export const loader = async () => {
     },
   });
 
-  return json({
+  return {
     gausieRank: rank,
     gausieNeeded: (next?.quantity ?? 0) - quantity,
-  });
+  };
 };
 
 export default function About() {
