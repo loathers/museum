@@ -1,5 +1,5 @@
 import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+import { Link as RRLink, useLoaderData } from "react-router";
 import { LuArrowLeft } from "react-icons/lu";
 import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
@@ -47,11 +47,11 @@ export default function About() {
         <Alert.Description>
           <b>Museum</b> is made by{" "}
           <Link asChild>
-            <RemixLink to="/player/1197090">gausie</RemixLink>
+            <RRLink to="/player/1197090">gausie</RRLink>
           </Link>{" "}
           from a closed data feed provided by TPTB. He collects{" "}
           <Link asChild>
-            <RemixLink to="/item/641">toast</RemixLink>
+            <RRLink to="/item/641">toast</RRLink>
           </Link>{" "}
           and is currently ranked <RankSymbol rank={gausieRank} />
           {gausieRank === 1
@@ -74,7 +74,7 @@ export default function About() {
       <Text>
         It was formerly hosted by{" "}
         <Link asChild>
-          <RemixLink to="/player/2485157">Joe the Sauceror</RemixLink>
+          <RRLink to="/player/2485157">Joe the Sauceror</RRLink>
         </Link>
         , whom we would like to continue to thank.
       </Text>

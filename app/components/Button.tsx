@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Button as ChakraButton,
   HStack,
   Span,
@@ -8,13 +7,11 @@ import {
 
 type Props = React.ComponentProps<typeof ChakraButton> & {
   loading?: boolean;
-  loadingText?: React.ReactNode;
   leftIcon?: React.ReactNode;
 };
 
 export function Button({
   loading,
-  loadingText,
   leftIcon,
   disabled,
   children,
@@ -22,26 +19,11 @@ export function Button({
 }: Props) {
   return (
     <ChakraButton variant="subtle" disabled={loading || disabled} {...props}>
-      {loading ? (
-        loadingText ? (
-          <span>
-            <Spinner size="inherit" color="inherit" />
-            {loadingText}
-          </span>
-        ) : (
-          <span>
-            <AbsoluteCenter display="inline-flex">
-              <Spinner size="inherit" color="inherit" />
-            </AbsoluteCenter>
-            <Span opacity={0}>{children}</Span>
-          </span>
-        )
-      ) : (
-        <HStack>
-          {leftIcon && <Span>{leftIcon}</Span>}
-          {children}
-        </HStack>
-      )}
+      <HStack>
+        {loading && <Spinner size="inherit" color="inherit" />}
+        {!loading && leftIcon && <Span>{leftIcon}</Span>}
+        {children}
+      </HStack>
     </ChakraButton>
   );
 }

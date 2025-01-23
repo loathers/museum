@@ -6,6 +6,7 @@ node_modules
 /build
 /public/build
 .env
+.react-router
 
 # Yarn (not using Zero-Installs)
 .yarn-error.log

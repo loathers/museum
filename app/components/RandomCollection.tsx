@@ -1,6 +1,5 @@
-import type { TextProps } from "@chakra-ui/react";
-import { Box, Link, Spinner, Text } from "@chakra-ui/react";
-import { Link as RemixLink } from "@remix-run/react";
+import { Box, Link, Spinner, Text, type TextProps } from "@chakra-ui/react";
+import { Link as RRLink } from "react-router";
 import type { DailyCollection, Player } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { englishJoin, pluralise } from "~/utils";
@@ -32,21 +31,21 @@ export default function RandomCollection({ collections }: Props) {
       {englishJoin(
         players.map((p) => (
           <Link key={p.playerid} asChild>
-            <RemixLink to={`/player/${p.playerid}`} prefetch="intent">
+            <RRLink to={`/player/${p.playerid}`} prefetch="intent">
               <Highlighted title={`#${p.playerid}`}>{p.name}</Highlighted>
-            </RemixLink>
+            </RRLink>
           </Link>
         )),
       )}{" "}
       {players.length === 1 ? "has" : "jointly have"} the most{" "}
       <Link asChild>
-        <RemixLink to={`/item/${itemid}`} prefetch="intent">
+        <RRLink to={`/item/${itemid}`} prefetch="intent">
           <Highlighted
             dangerouslySetInnerHTML={{
               __html: decodeHTML(pluralise({ name, plural })),
             }}
           />
-        </RemixLink>
+        </RRLink>
       </Link>
       .
     </Box>

@@ -2,7 +2,7 @@ import type { SlimItem } from "~/utils.server";
 import { itemToString } from "~/utils";
 
 import ItemName from "./ItemName";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 import { useEffect, useState } from "react";
 import Typeahead from "./Typeahead";
 import { useDebounce } from "~/hooks";

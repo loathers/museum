@@ -1,6 +1,6 @@
 import { Link, Table } from "@chakra-ui/react";
 import type { Item } from "@prisma/client";
-import { Link as RemixLink } from "@remix-run/react";
+import { Link as RRLink } from "react-router";
 
 import ItemName from "./ItemName";
 import Rank from "./Rank";
@@ -35,9 +35,9 @@ export default function ItemPageRanking({ collections }: Props) {
               joint={false}
             >
               <Link asChild>
-                <RemixLink to={`/item/${item.itemid}`}>
+                <RRLink to={`/item/${item.itemid}`}>
                   <ItemName item={item} disambiguate />
-                </RemixLink>
+                </RRLink>
               </Link>
             </Rank>
           ))}

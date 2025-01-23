@@ -1,4 +1,4 @@
-import { data, LoaderFunctionArgs } from "@remix-run/node";
+import { data, type LoaderFunctionArgs } from "react-router";
 import { db } from "~/db.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

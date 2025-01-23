@@ -6,8 +6,13 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
-import { Await, useLoaderData, useNavigate } from "@remix-run/react";
+import {
+  type LinksFunction,
+  type MetaFunction,
+  Await,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 import { useTheme } from "next-themes";
 import { Suspense, useCallback, useState } from "react";
 import { LuInfo, LuMoon, LuSearch, LuSun } from "react-icons/lu";

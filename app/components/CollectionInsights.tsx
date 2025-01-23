@@ -1,5 +1,5 @@
 import { Alert, HStack, Link, Text } from "@chakra-ui/react";
-import { Link as RemixLink } from "@remix-run/react";
+import { Link as RRLink } from "react-router";
 
 import type { Collection } from "./ItemPageRanking";
 import { HOLDER_ID } from "~/utils";
@@ -22,7 +22,7 @@ export default function CollectionInsights({ groups }: Props) {
         <Alert.Description textAlign="center">
           Not even{" "}
           <Link asChild>
-            <RemixLink to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</RemixLink>
+            <RRLink to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</RRLink>
           </Link>
           !
         </Alert.Description>
@@ -38,9 +38,7 @@ export default function CollectionInsights({ groups }: Props) {
         <Alert.Description textAlign="center">
           Looks like{" "}
           <Link asChild>
-            <RemixLink to={`/player/${holder.playerid}`}>
-              {holder.name}
-            </RemixLink>
+            <RRLink to={`/player/${holder.playerid}`}>{holder.name}</RRLink>
           </Link>{" "}
           is the only player with one of these in their display case. Holder has{" "}
           <Link

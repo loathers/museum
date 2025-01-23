@@ -1,5 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
+import { type MetaFunction, useNavigate } from "react-router";
 import { useCallback, useState } from "react";
 import PlayerSelect from "~/components/PlayerSelect";
 import { Group, Heading, Stack } from "@chakra-ui/react";

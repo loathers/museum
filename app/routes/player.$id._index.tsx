@@ -2,8 +2,9 @@ import {
   data,
   type LoaderFunctionArgs,
   type MetaFunction,
-} from "@remix-run/node";
-import { Link as RemixLink, useLoaderData } from "@remix-run/react";
+  Link as RRLink,
+  useLoaderData,
+} from "react-router";
 import {
   Group,
   Heading,
@@ -117,9 +118,9 @@ export default function Player() {
               title="Sort by item name"
               variant={sort === "name" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}`}>
+              <RRLink to={`/player/${player.playerid}`}>
                 <LuArrowDownAZ />
-              </RemixLink>
+              </RRLink>
             </IconButton>
             <IconButton
               asChild
@@ -127,9 +128,9 @@ export default function Player() {
               title="Sort by collection rank"
               variant={sort === "rank" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}?sort=rank`}>
+              <RRLink to={`/player/${player.playerid}?sort=rank`}>
                 <LuMedal />
-              </RemixLink>
+              </RRLink>
             </IconButton>
             <IconButton
               asChild
@@ -137,9 +138,9 @@ export default function Player() {
               title="Sort by quantity of item"
               variant={sort === "quantity" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}?sort=quantity`}>
+              <RRLink to={`/player/${player.playerid}?sort=quantity`}>
                 <LuArrowDownWideNarrow />
-              </RemixLink>
+              </RRLink>
             </IconButton>
             <IconButton
               aria-label="Sort by item id"
@@ -147,9 +148,9 @@ export default function Player() {
               variant={sort === "itemid" ? "surface" : "outline"}
               asChild
             >
-              <RemixLink to={`/player/${player.playerid}?sort=itemid`}>
+              <RRLink to={`/player/${player.playerid}?sort=itemid`}>
                 <LuArrowDown10 />
-              </RemixLink>
+              </RRLink>
             </IconButton>
           </Group>
         </Group>
@@ -164,9 +165,9 @@ export default function Player() {
       </Text>
 
       <Link asChild>
-        <RemixLink to={`/player/${player.playerid}/missing`}>
+        <RRLink to={`/player/${player.playerid}/missing`}>
           what items are this player missing?
-        </RemixLink>
+        </RRLink>
       </Link>
     </Layout>
   );

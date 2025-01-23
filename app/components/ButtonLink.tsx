@@ -1,10 +1,10 @@
 import { Link as ChakraLink } from "@chakra-ui/react";
 import {
-  Link as RemixLink,
+  Link as RRLink,
   useNavigation,
   useResolvedPath,
-} from "@remix-run/react";
-import { type To } from "@remix-run/router";
+  type To,
+} from "react-router";
 
 import { Button } from "./Button";
 import { LuExternalLink } from "react-icons/lu";
@@ -43,7 +43,7 @@ export default function ButtonLink({
           <LuExternalLink />
         </ChakraLink>
       ) : (
-        <RemixLink to={to}>{children}</RemixLink>
+        <RRLink to={to}>{children}</RRLink>
       )}
     </Button>
   );

@@ -1,3 +1,3 @@
 # museum
 
-- [Remix Docs](https://remix.run/docs)
+Interactive browser for the display cases of the Kingdom of Loathing. Updated daily! 🏛️

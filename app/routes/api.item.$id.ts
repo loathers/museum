@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "react-router";
 import { HttpError, loadCollections } from "~/utils.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

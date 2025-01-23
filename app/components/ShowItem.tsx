@@ -1,5 +1,5 @@
 import { Center } from "@chakra-ui/react";
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "react-router";
 import { useEffect } from "react";
 import type { loader } from "~/routes/api.item.$id";
 import { itemToString } from "~/utils";

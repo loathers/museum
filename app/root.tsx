@@ -1,17 +1,15 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import type {
-  HeadersFunction,
-  LinksFunction,
-  MetaFunction,
-} from "@remix-run/node";
-import { data } from "@remix-run/node";
 import {
+  type HeadersFunction,
+  type LinksFunction,
+  type MetaFunction,
+  data,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
+} from "react-router";
 import { ThemeProvider } from "next-themes";
 import { theme } from "./theme";
 import { getMaxAge } from "./db.server";

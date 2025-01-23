@@ -1,6 +1,10 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { data } from "@remix-run/node";
-import { useLoaderData, Link as RemixLink } from "@remix-run/react";
+import {
+  type LoaderFunctionArgs,
+  type MetaFunction,
+  data,
+  useLoaderData,
+  Link as RRLink,
+} from "react-router";
 import {
   Group,
   Heading,
@@ -103,24 +107,24 @@ export default function Missing() {
           </ButtonLink>
           <Group attached>
             <IconButton
-              as={RemixLink}
+              as={RRLink}
               aria-label="Sort by item name"
               title="Sort by item name"
               variant={sort === "name" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}/missing`}>
+              <RRLink to={`/player/${player.playerid}/missing`}>
                 <LuArrowDownAZ />
-              </RemixLink>
+              </RRLink>
             </IconButton>
             <IconButton
-              as={RemixLink}
+              as={RRLink}
               aria-label="Sort by item id"
               title="Sort by item id"
               variant={sort === "itemid" ? "surface" : "outline"}
             >
-              <RemixLink to={`/player/${player.playerid}/missing?sort=itemid`}>
+              <RRLink to={`/player/${player.playerid}/missing?sort=itemid`}>
                 <LuArrowDown10 />
-              </RemixLink>
+              </RRLink>
             </IconButton>
           </Group>
         </Group>
@@ -135,9 +139,9 @@ export default function Missing() {
         {missing.map((item) => (
           <List.Item key={item.itemid}>
             <Link asChild>
-              <RemixLink to={`/item/${item.itemid}`}>
+              <RRLink to={`/item/${item.itemid}`}>
                 <ItemName item={item} disambiguate />
-              </RemixLink>
+              </RRLink>
             </Link>
           </List.Item>
         ))}

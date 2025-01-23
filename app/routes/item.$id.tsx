@@ -1,7 +1,9 @@
 import { Group, Heading, HStack, Image, Stack } from "@chakra-ui/react";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-
-import { useLoaderData } from "@remix-run/react";
+import {
+  type LoaderFunctionArgs,
+  type MetaFunction,
+  useLoaderData,
+} from "react-router";
 
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";

@@ -1,6 +1,6 @@
 import { Link, Table } from "@chakra-ui/react";
 import type { Player } from "@prisma/client";
-import { Link as RemixLink } from "@remix-run/react";
+import { Link as RRLink } from "react-router";
 import { englishJoin } from "~/utils";
 import CollectionInsights from "./CollectionInsights";
 import Rank from "./Rank";
@@ -71,12 +71,12 @@ export default function ItemPageRanking({ collections }: Props) {
                         asChild
                         css={{ wordWrap: "normal" }}
                       >
-                        <RemixLink
+                        <RRLink
                           title={`${player.name} #${player.playerid}`}
                           to={`/player/${player.playerid}`}
                         >
                           {player.name}
-                        </RemixLink>
+                        </RRLink>
                       </Link>
                     )),
                   )}

@@ -1,6 +1,6 @@
 import type { Player } from "@prisma/client";
 
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 import { useEffect, useState } from "react";
 import Typeahead from "./Typeahead";
 import { useDebounce } from "~/hooks";

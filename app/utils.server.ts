@@ -1,4 +1,4 @@
-import { data } from "@remix-run/node";
+import { data } from "react-router";
 import { db } from "./db.server";
 
 export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
