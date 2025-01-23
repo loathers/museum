@@ -1,6 +1,7 @@
 import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { Link as RRLink, useLoaderData } from "react-router";
 import { LuArrowLeft } from "react-icons/lu";
+import { Link as RRLink, useLoaderData } from "react-router";
+
 import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";

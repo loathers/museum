@@ -1,9 +1,9 @@
 import {
+  SystemStyleObject,
   createSystem,
   defaultConfig,
   defineRecipe,
   defineSemanticTokens,
-  SystemStyleObject,
 } from "@chakra-ui/react";
 
 const linkRecipe = defineRecipe<{

@@ -6,18 +6,18 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import {
-  type LinksFunction,
-  type MetaFunction,
-  Await,
-  useLoaderData,
-  useNavigate,
-} from "react-router";
 import { useTheme } from "next-themes";
 import { Suspense, useCallback, useState } from "react";
 import { LuInfo, LuMoon, LuSearch, LuSun } from "react-icons/lu";
-import ButtonLink from "~/components/ButtonLink";
+import {
+  Await,
+  type LinksFunction,
+  type MetaFunction,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 
+import ButtonLink from "~/components/ButtonLink";
 import ItemSelect from "~/components/ItemSelect";
 import Layout from "~/components/Layout";
 import RandomCollection from "~/components/RandomCollection";

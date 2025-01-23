@@ -1,5 +1,5 @@
-import type { SlimItem } from "~/utils.server";
 import { itemToString } from "~/utils";
+import type { SlimItem } from "~/utils.server";
 
 type Props = {
   item: SlimItem;

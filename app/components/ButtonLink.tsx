@@ -1,13 +1,13 @@
 import { Link as ChakraLink } from "@chakra-ui/react";
+import { LuExternalLink } from "react-icons/lu";
 import {
   Link as RRLink,
+  type To,
   useNavigation,
   useResolvedPath,
-  type To,
 } from "react-router";
 
 import { Button } from "./Button";
-import { LuExternalLink } from "react-icons/lu";
 
 type Props = React.ComponentProps<typeof Button> & { to: To };
 

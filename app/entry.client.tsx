@@ -1,8 +1,8 @@
-import { HydratedRouter } from "react-router/dom";
-import { startTransition, StrictMode } from "react";
-import { hydrateRoot } from "react-dom/client";
 import createEmotionCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { StrictMode, startTransition } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { HydratedRouter } from "react-router/dom";
 
 function hydrate() {
   const emotionCache = createEmotionCache({ key: "css" });

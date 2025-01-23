@@ -1,15 +1,16 @@
-import { pipeline } from "stream/promises";
-import { Readable } from "stream";
 import fetch from "node-fetch";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
+
 import {
-  sql,
   CREATE_COLLECTION_TABLE,
   CREATE_DAILY_COLLECTION_TABLE,
   CREATE_ITEM_TABLE,
   CREATE_PLAYER_NAME_CHANGE_TABLE,
-  CREATE_PLAYER_TABLE,
   CREATE_PLAYER_NEW_TABLE,
+  CREATE_PLAYER_TABLE,
   CREATE_UNRANKED_COLLECTION_TABLE,
+  sql,
 } from "./db";
 
 const auth = Buffer.from(

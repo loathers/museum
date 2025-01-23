@@ -1,22 +1,22 @@
-import { Group, Heading, HStack, Image, Stack } from "@chakra-ui/react";
+import { Group, HStack, Heading, Image, Stack } from "@chakra-ui/react";
+import { LuArrowLeft } from "react-icons/lu";
 import {
   type LoaderFunctionArgs,
   type MetaFunction,
   useLoaderData,
 } from "react-router";
 
+import ButtonLink from "~/components/ButtonLink";
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
 import Layout from "~/components/Layout";
+import { itemToString } from "~/utils";
 import {
-  type SlimItem,
   HttpError,
   ITEM_NOT_FOUND_ERROR,
+  type SlimItem,
   loadCollections,
 } from "~/utils.server";
-import { itemToString } from "~/utils";
-import ButtonLink from "~/components/ButtonLink";
-import { LuArrowLeft } from "react-icons/lu";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);

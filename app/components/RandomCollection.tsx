@@ -1,9 +1,10 @@
 import { Box, Link, Spinner, Text, type TextProps } from "@chakra-ui/react";
-import { Link as RRLink } from "react-router";
 import type { DailyCollection, Player } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { englishJoin, pluralise } from "~/utils";
 import { decodeHTML } from "entities";
+import { useEffect, useState } from "react";
+import { Link as RRLink } from "react-router";
+
+import { englishJoin, pluralise } from "~/utils";
 
 type Props = {
   collections: DailyCollection[];

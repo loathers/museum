@@ -1,10 +1,11 @@
-import { type MetaFunction, useNavigate } from "react-router";
-import { useCallback, useState } from "react";
-import PlayerSelect from "~/components/PlayerSelect";
 import { Group, Heading, Stack } from "@chakra-ui/react";
-import Layout from "~/components/Layout";
-import ButtonLink from "~/components/ButtonLink";
+import { useCallback, useState } from "react";
 import { LuArrowLeft } from "react-icons/lu";
+import { type MetaFunction, useNavigate } from "react-router";
+
+import ButtonLink from "~/components/ButtonLink";
+import Layout from "~/components/Layout";
+import PlayerSelect from "~/components/PlayerSelect";
 
 export const meta: MetaFunction = () => [{ title: `Museum :: Players` }];
 

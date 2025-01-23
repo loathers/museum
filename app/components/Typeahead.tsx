@@ -1,8 +1,9 @@
 import { Group, Input, List, Stack } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
 import { useCallback } from "react";
-import { Button } from "./Button";
 import { LuArrowDown, LuArrowUp } from "react-icons/lu";
+
+import { Button } from "./Button";
 
 interface Props<T> {
   items: T[];

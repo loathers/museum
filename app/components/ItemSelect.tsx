@@ -1,11 +1,11 @@
-import type { SlimItem } from "~/utils.server";
-import { itemToString } from "~/utils";
-
-import ItemName from "./ItemName";
-import { useFetcher } from "react-router";
 import { useEffect, useState } from "react";
-import Typeahead from "./Typeahead";
+import { useFetcher } from "react-router";
+
+import ItemName from "~/components/ItemName";
+import Typeahead from "~/components/Typeahead";
 import { useDebounce } from "~/hooks";
+import { itemToString } from "~/utils";
+import type { SlimItem } from "~/utils.server";
 
 type Props = {
   label: string;

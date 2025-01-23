@@ -1,4 +1,5 @@
 import { Table, Text } from "@chakra-ui/react";
+
 import RankSymbol from "./RankSymbol";
 
 type Props = {

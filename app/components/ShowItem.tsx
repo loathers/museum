@@ -1,9 +1,10 @@
 import { Center } from "@chakra-ui/react";
-import { Link, useFetcher } from "react-router";
 import { useEffect } from "react";
-import type { loader } from "~/routes/api.item.$id";
+import { Link, useFetcher } from "react-router";
+
+import ItemName from "~/components/ItemName";
+import { type loader } from "~/routes/api.item.$id";
 import { itemToString } from "~/utils";
-import ItemName from "./ItemName";
 
 type Props = { itemid: number };
 

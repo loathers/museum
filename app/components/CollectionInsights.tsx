@@ -1,7 +1,7 @@
 import { Alert, HStack, Link, Text } from "@chakra-ui/react";
 import { Link as RRLink } from "react-router";
 
-import type { Collection } from "./ItemPageRanking";
+import type { Collection } from "~/components/ItemPageRanking";
 import { HOLDER_ID } from "~/utils";
 
 type Props = {

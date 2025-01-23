@@ -1,8 +1,8 @@
 import type { Player } from "@prisma/client";
-
-import { useFetcher } from "react-router";
 import { useEffect, useState } from "react";
-import Typeahead from "./Typeahead";
+import { useFetcher } from "react-router";
+
+import Typeahead from "~/components/Typeahead";
 import { useDebounce } from "~/hooks";
 
 type Props = {

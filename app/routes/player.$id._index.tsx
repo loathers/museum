@@ -1,11 +1,4 @@
 import {
-  data,
-  type LoaderFunctionArgs,
-  type MetaFunction,
-  Link as RRLink,
-  useLoaderData,
-} from "react-router";
-import {
   Group,
   Heading,
   IconButton,
@@ -13,12 +6,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-
-import { db } from "~/db.server";
-import PlayerPageRanking from "~/components/PlayerPageRanking";
-import Formerly from "~/components/Formerly";
-import Layout from "~/components/Layout";
-import ButtonLink from "~/components/ButtonLink";
 import type { Prisma } from "@prisma/client";
 import {
   LuArrowDown10,
@@ -27,6 +14,19 @@ import {
   LuArrowLeft,
   LuMedal,
 } from "react-icons/lu";
+import {
+  type LoaderFunctionArgs,
+  type MetaFunction,
+  Link as RRLink,
+  data,
+  useLoaderData,
+} from "react-router";
+
+import ButtonLink from "~/components/ButtonLink";
+import Formerly from "~/components/Formerly";
+import Layout from "~/components/Layout";
+import PlayerPageRanking from "~/components/PlayerPageRanking";
+import { db } from "~/db.server";
 
 const normalizeSort = (sort: string | null) => {
   switch (sort) {

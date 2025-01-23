@@ -1,18 +1,19 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import { ThemeProvider } from "next-themes";
 import {
   type HeadersFunction,
-  type LinksFunction,
-  type MetaFunction,
-  data,
   Links,
+  type LinksFunction,
   Meta,
+  type MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
+  data,
 } from "react-router";
-import { ThemeProvider } from "next-themes";
-import { theme } from "./theme";
+
 import { getMaxAge } from "./db.server";
+import { theme } from "./theme";
 
 export const meta: MetaFunction = () => [{ title: "Museum" }];
 

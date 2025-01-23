@@ -1,4 +1,5 @@
-import { data, type LoaderFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs, data } from "react-router";
+
 import { db } from "~/db.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

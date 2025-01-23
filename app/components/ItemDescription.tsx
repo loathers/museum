@@ -1,4 +1,5 @@
-import { Box, Alert, Stack } from "@chakra-ui/react";
+import { Alert, Box, Stack } from "@chakra-ui/react";
+
 import ShowItem from "./ShowItem";
 
 function DescriptionParagraph({
