@@ -1,13 +1,12 @@
-import { type LoaderFunctionArgs } from "react-router";
-
+import { Route } from "./+types/api.players";
 import { db } from "~/db.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const q = url.searchParams.get("q");
 
-  if (!q) return [];
+  if (!q) return Response.json([]);
 
   const players = await db.player.findMany({
     where: {
@@ -23,5 +22,5 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     orderBy: [{ name: "asc" }],
   });
 
-  return players;
-};
+  return Response.json(players);
+}

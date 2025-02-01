@@ -1,5 +1,3 @@
-import { data } from "react-router";
-
 import { db } from "./db.server";
 
 export type SlimItem = { itemid: number; name: string; ambiguous: boolean };
@@ -14,10 +12,13 @@ export class HttpError {
   }
 
   toRouteError() {
-    return data(this.message, {
-      status: this.status,
-      statusText: HTTP_ERROR_TYPES[this.status] || "Unknown Error",
-    });
+    return Response.json(
+      { status: this.status, message: this.message },
+      {
+        status: this.status,
+        statusText: HTTP_ERROR_TYPES[this.status] || "Unknown Error",
+      },
+    );
   }
 }
 

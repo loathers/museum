@@ -1,15 +1,13 @@
-import { type LoaderFunctionArgs } from "react-router";
-
+import { Route } from "./+types/api.item.$id";
 import { HttpError, loadCollections } from "~/utils.server";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export async function loader({ params }: Route.LoaderArgs) {
   const id = Number(params.id);
 
   try {
-    const collections = await loadCollections(id, 10);
-    return collections;
+    return Response.json(await loadCollections(id, 10));
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;
   }
-};
+}

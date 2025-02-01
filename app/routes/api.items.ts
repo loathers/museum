@@ -1,13 +1,12 @@
-import { type LoaderFunctionArgs } from "react-router";
-
+import { Route } from "./+types/api.items";
 import { db } from "~/db.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const q = url.searchParams.get("q");
 
-  if (!q) return [];
+  if (!q) return Response.json([]);
 
   const items = await db.item.findMany({
     where: {
@@ -26,5 +25,5 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     orderBy: [{ name: "asc" }, { itemid: "asc" }],
   });
 
-  return items.filter((i) => i._count.collections > 0);
-};
+  return Response.json(items.filter((i) => i._count.collections > 0));
+}

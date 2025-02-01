@@ -1,8 +1,8 @@
-import { type LoaderFunctionArgs, data } from "react-router";
-
+import { Route } from "./+types/api.player.$id";
 import { db } from "~/db.server";
+import { HttpError } from "~/utils.server";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export async function loader({ params }: Route.LoaderArgs) {
   const id = Number(params.id);
 
   const player = await db.player.findUnique({
@@ -24,7 +24,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     },
   });
 
-  if (!player) return data("Player not found with that id", { status: 404 });
+  if (!player)
+    return Response.json(
+      new HttpError(404, "Player not found with that id").toRouteError(),
+      { status: 404 },
+    );
 
-  return player;
-};
+  return Response.json(player);
+}
