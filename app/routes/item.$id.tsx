@@ -16,7 +16,7 @@ import { HttpError, type SlimItem, loadCollections } from "~/utils.server";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
   try {
-    return loadCollections(id);
+    return await loadCollections(id);
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;
