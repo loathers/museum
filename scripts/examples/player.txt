@@ -1,0 +1,17 @@
+playerid	name	clan	description
+59035	HotStuff	3486	Enjoy the collection and have a nice day!
+\n
+\n. . .[[[[[[[[[[[[[
+\n. .[[[ . . . . . [[[
+\n. [[ . . . . . . . [[
+\n.[[ . .[[[ . [[[. . [[
+\n[[ . . [[[ . [[[ . . [[
+\n[ . . . . . . . . . . [
+\n[[ . . [ . . . [ . . [[
+\n.[[ . . [[ . [[ . . [[
+\n. [[ . . [[[[[ . . [[
+\n. .[[[ . . . . . [[[
+\n. . .[[[[[[[[[[[[[
+1	Jick	2046994343	This is my collection of flyswatter.
+\n
+\nI'm so proud.

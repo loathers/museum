@@ -1,0 +1,3 @@
+itemid	name	picture	descid	description	type	itemclass	candiscard	cantransfer	quest	gift	smith	cook	cocktail	jewelry	hands	multiuse	sellvalue	power	quest	mrstore	plural
+1	seal-clubbing club	club	868780591	This is a club used to club seals.  You could probably club other things with it, too.  Just make sure to regularly seal your seal-clubbing club with seal-clubbing club seal.	weapon	club	1	1	0	0	1	0	0	0	1	0	1	10	0	0	
+2	seal tooth	tooth	617818041	This is the tooth from a baby seal.  It's like a smaller version of the tooth from an adult seal.  It's surprisingly sharp, unless you aren't surprised by things that are really sharp, in which case it's sharp, but not surprisingly so.	useboth		1	1	0	0	1	0	0	0	1	0	1	0	0	0	seal teeth
