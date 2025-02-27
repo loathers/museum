@@ -15,15 +15,15 @@ export async function loader({ request }: Route.LoaderArgs) {
         contains: q,
         mode: "insensitive",
       },
+      seen: { isNot: null },
     },
     select: {
       name: true,
       itemid: true,
       ambiguous: true,
-      _count: { select: { collections: true } },
     },
     orderBy: [{ name: "asc" }, { itemid: "asc" }],
   });
 
-  return Response.json(items.filter((i) => i._count.collections > 0));
+  return Response.json(items);
 }

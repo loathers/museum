@@ -74,7 +74,6 @@ async function importPlayers() {
 
 async function importItems() {
   // Disable referential integrity checks
-  await sql`ALTER TABLE "Item" DISABLE TRIGGER ALL`;
   await sql`ALTER TABLE IF EXISTS "ItemSeen" DISABLE TRIGGER ALL`;
 
   // Recreate the Item table
@@ -100,8 +99,7 @@ async function importItems() {
   await sql`UPDATE "Item" SET "plural" = NULL WHERE "plural" = ''`;
 
   // Re-enable referential integrity checks
-  await sql`ALTER TABLE "Item" ENABLE TRIGGER ALL`;
-  await sql`ALTER IF EXISTS TABLE "ItemSeen" ENABLE TRIGGER ALL`;
+  await sql`ALTER TABLE IF EXISTS "ItemSeen" ENABLE TRIGGER ALL`;
 
   // In v4 we can get this from the COPY query
   const items = await sql`SELECT COUNT(*) as "count" FROM "Item"`;
@@ -211,13 +209,14 @@ async function normaliseData() {
 
   // Mark new items as seen
   await sql.unsafe(CREATE_ITEM_SEEN_TABLE);
-  await sql`
+  const seen = await sql`
     INSERT INTO "ItemSeen" (itemid, "when")
       SELECT DISTINCT c.itemid, CURRENT_DATE
       FROM "Collection" c
       LEFT JOIN "ItemSeen" s ON c.itemid = s.itemid
       WHERE s.itemid IS NULL;
-  `
+  `;
+  console.timeLog("etl", `Marked ${seen.count} items seen for the first time`);
 }
 
 async function pickDailyRandomCollections() {
