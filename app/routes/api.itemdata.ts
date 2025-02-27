@@ -22,7 +22,7 @@ export async function loader() {
       power: true,
       plural: true,
     },
-    where: { missing: false },
+    where: { missing: false, seen: { isNot: null } },
     orderBy: { itemid: "asc" },
   });
 
