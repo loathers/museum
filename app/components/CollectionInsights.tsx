@@ -17,9 +17,7 @@ export default function CollectionInsights({ groups }: Props) {
     return (
       <Alert.Root status="warning">
         <Alert.Content alignItems="center">
-          <Alert.Title>
-            No-one has this item in their display case
-          </Alert.Title>
+          <Alert.Title>No-one has this item in their display case</Alert.Title>
           <Alert.Description>
             Not even{" "}
             <Link asChild>
@@ -62,26 +60,26 @@ export default function CollectionInsights({ groups }: Props) {
     return (
       <Alert.Root colorPalette="pink" flexDirection="column">
         <Alert.Content alignItems="center">
-        <Alert.Title>
-          <HStack>
-            <Text>🥳</Text>
-            <Text
-              css={{
-                animation: "rainbow 1s linear infinite",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              Everyone's a winner
-            </Text>
-            <Text>🍾</Text>
-          </HStack>
-        </Alert.Title>
-        <Alert.Description textAlign="center">
-          Looks like everyone just has one of this item in their display case,
-          so you can probably only get one per account. Nevertheless, well done
-          them.
-        </Alert.Description>
+          <Alert.Title>
+            <HStack>
+              <Text>🥳</Text>
+              <Text
+                css={{
+                  animation: "rainbow 1s linear infinite",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                Everyone's a winner
+              </Text>
+              <Text>🍾</Text>
+            </HStack>
+          </Alert.Title>
+          <Alert.Description textAlign="center">
+            Looks like everyone just has one of this item in their display case,
+            so you can probably only get one per account. Nevertheless, well
+            done them.
+          </Alert.Description>
         </Alert.Content>
       </Alert.Root>
     );
