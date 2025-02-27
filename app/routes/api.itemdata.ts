@@ -2,7 +2,26 @@ import { db } from "~/db.server";
 
 export async function loader() {
   const items = await db.item.findMany({
-    select: { itemid: true, name: true, picture: true, descid: true, type: true, itemclass: true, candiscard: true, cantransfer: true, quest: true, gift: true, smith: true, cook: true, cocktail: true, jewelry: true, multiuse: true, sellvalue: true, power: true, plural: true },
+    select: {
+      itemid: true,
+      name: true,
+      picture: true,
+      descid: true,
+      type: true,
+      itemclass: true,
+      candiscard: true,
+      cantransfer: true,
+      quest: true,
+      gift: true,
+      smith: true,
+      cook: true,
+      cocktail: true,
+      jewelry: true,
+      multiuse: true,
+      sellvalue: true,
+      power: true,
+      plural: true,
+    },
     where: { missing: false },
     orderBy: { itemid: "asc" },
   });
