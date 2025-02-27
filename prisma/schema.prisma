@@ -50,6 +50,7 @@ model Item {
   ambiguous   Boolean      @default(false)
   missing     Boolean      @default(false)
   collections Collection[]
+  seen        ItemSeen?
 }
 
 model Player {
@@ -84,6 +85,12 @@ model UnrankedCollection {
   itemid      Int
   quantity    Int
   lastupdated DateTime @default(now())
+}
+
+model ItemSeen {
+  itemid Int      @id
+  when   DateTime @default(now())
+  item   Item     @relation(fields: [itemid], references: [itemid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model PlayerNew {

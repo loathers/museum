@@ -8,7 +8,8 @@
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write . && prisma format",
     "etl": "node --import tsx scripts/etl.ts",
-    "db-init": "node --import tsx scripts/init.ts"
+    "db-init": "node --import tsx scripts/init.ts",
+    "items-seen-from-mafia": "node --import tsx scripts/itemsSeenFromMafia.ts"
   },
   "type": "module",
   "dependencies": {
@@ -42,6 +43,7 @@
     "@types/node": "^22.13.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "data-of-loathing": "^2.0.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.21.0",
     "eslint-plugin-react": "^7.37.4",

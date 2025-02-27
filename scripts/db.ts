@@ -51,6 +51,13 @@ export const CREATE_ITEM_TABLE = `
   )
 `;
 
+export const CREATE_ITEM_SEEN_TABLE = `
+  CREATE TABLE IF NOT EXISTS "ItemSeen" (
+    "itemid" INTEGER NOT NULL REFERENCES "Item"("itemid") DEFERRABLE INITIALLY DEFERRED PRIMARY KEY,
+    "when" DATE NOT NULL DEFAULT CURRENT_DATE
+  );
+`;
+
 const createCollectionTable = (name: string) => `
 CREATE TABLE IF NOT EXISTS "${name}" (
   "id" SERIAL PRIMARY KEY,

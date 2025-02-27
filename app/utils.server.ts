@@ -40,6 +40,7 @@ export async function loadCollections(id: number, take = 999) {
   const item = await db.item.findFirst({
     where: {
       itemid: id,
+      seen: { isNot: null },
       missing: false,
     },
     select: {

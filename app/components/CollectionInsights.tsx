@@ -15,17 +15,19 @@ export default function CollectionInsights({ groups }: Props) {
 
   if (keys.length === 0)
     return (
-      <Alert.Root status="warning" flexDirection="column">
-        <Alert.Title alignSelf="center">
-          No-one has this item in their display case
-        </Alert.Title>
-        <Alert.Description textAlign="center">
-          Not even{" "}
-          <Link asChild>
-            <RRLink to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</RRLink>
-          </Link>
-          !
-        </Alert.Description>
+      <Alert.Root status="warning">
+        <Alert.Content alignItems="center">
+          <Alert.Title>
+            No-one has this item in their display case
+          </Alert.Title>
+          <Alert.Description>
+            Not even{" "}
+            <Link asChild>
+              <RRLink to={`/player/${HOLDER_ID}`}>HOldeRofSecrEts</RRLink>
+            </Link>
+            !
+          </Alert.Description>
+        </Alert.Content>
       </Alert.Root>
     );
 
@@ -58,8 +60,9 @@ export default function CollectionInsights({ groups }: Props) {
   // If more than one person has this item but the top collections only have 1...
   if (group.length > 1 && group[0].quantity === 1) {
     return (
-      <Alert.Root bg="#FFEAED" flexDirection="column">
-        <Alert.Title alignSelf="center">
+      <Alert.Root colorPalette="pink" flexDirection="column">
+        <Alert.Content alignItems="center">
+        <Alert.Title>
           <HStack>
             <Text>🥳</Text>
             <Text
@@ -79,6 +82,7 @@ export default function CollectionInsights({ groups }: Props) {
           so you can probably only get one per account. Nevertheless, well done
           them.
         </Alert.Description>
+        </Alert.Content>
       </Alert.Root>
     );
   }

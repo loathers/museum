@@ -11,19 +11,12 @@ import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
 import Layout from "~/components/Layout";
 import { itemToString } from "~/utils";
-import {
-  HttpError,
-  ITEM_NOT_FOUND_ERROR,
-  type SlimItem,
-  loadCollections,
-} from "~/utils.server";
+import { HttpError, type SlimItem, loadCollections } from "~/utils.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.id);
   try {
-    const collections = await loadCollections(id);
-    if (collections.collections.length === 0) throw ITEM_NOT_FOUND_ERROR;
-    return collections;
+    return loadCollections(id);
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;

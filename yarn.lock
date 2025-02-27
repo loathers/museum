@@ -3679,6 +3679,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data-of-loathing@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "data-of-loathing@npm:2.0.0"
+  checksum: 10c0/b9badc2f17d3d14cd30de86cb8b82af8f49e774ffbe56f57d8200b1be0a24ada12f568c314c7f08f0c17a6e49e6b465402a5420a902611809ee991da13b5ad8c
+  languageName: node
+  linkType: hard
+
 "data-uri-to-buffer@npm:^4.0.0":
   version: 4.0.1
   resolution: "data-uri-to-buffer@npm:4.0.1"
@@ -7553,6 +7560,7 @@ __metadata:
     "@types/node": "npm:^22.13.5"
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
+    data-of-loathing: "npm:^2.0.0"
     dotenv: "npm:^16.4.7"
     downshift: "npm:^9.0.8"
     entities: "npm:^6.0.0"
