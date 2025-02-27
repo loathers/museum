@@ -5,6 +5,7 @@ import { pipeline } from "stream/promises";
 import {
   CREATE_COLLECTION_TABLE,
   CREATE_DAILY_COLLECTION_TABLE,
+  CREATE_ITEM_SEEN_TABLE,
   CREATE_ITEM_TABLE,
   CREATE_PLAYER_NAME_CHANGE_TABLE,
   CREATE_PLAYER_NEW_TABLE,
@@ -72,6 +73,11 @@ async function importPlayers() {
 }
 
 async function importItems() {
+  // Disable referential integrity checks
+  await sql`ALTER TABLE "Item" DISABLE TRIGGER ALL`;
+  await sql`ALTER TABLE IF EXISTS "ItemSeen" DISABLE TRIGGER ALL`;
+
+  // Recreate the Item table
   await sql`DROP TABLE IF EXISTS "Item" CASCADE`;
   await sql.unsafe(CREATE_ITEM_TABLE);
 
@@ -90,11 +96,16 @@ async function importItems() {
 
   await pipeline(source, sink);
 
+  // Normalise plurals
   await sql`UPDATE "Item" SET "plural" = NULL WHERE "plural" = ''`;
 
+  // Re-enable referential integrity checks
+  await sql`ALTER TABLE "Item" ENABLE TRIGGER ALL`;
+  await sql`ALTER IF EXISTS TABLE "ItemSeen" ENABLE TRIGGER ALL`;
+
   // In v4 we can get this from the COPY query
-  const collections = await sql`SELECT COUNT(*) as "count" FROM "Item"`;
-  console.timeLog("etl", `Imported ${collections[0].count} items`);
+  const items = await sql`SELECT COUNT(*) as "count" FROM "Item"`;
+  console.timeLog("etl", `Imported ${items[0].count} items`);
 }
 
 async function importCollections() {
@@ -197,6 +208,16 @@ async function normaliseData() {
       ADD FOREIGN KEY ("itemid") REFERENCES "Item"("itemid") DEFERRABLE INITIALLY DEFERRED,
       ADD FOREIGN KEY ("playerid") REFERENCES "Player"("playerid") DEFERRABLE INITIALLY DEFERRED
   `;
+
+  // Mark new items as seen
+  await sql.unsafe(CREATE_ITEM_SEEN_TABLE);
+  await sql`
+    INSERT INTO "ItemSeen" (itemid, "when")
+      SELECT DISTINCT c.itemid, CURRENT_DATE
+      FROM "Collection" c
+      LEFT JOIN "ItemSeen" s ON c.itemid = s.itemid
+      WHERE s.itemid IS NULL;
+  `
 }
 
 async function pickDailyRandomCollections() {
