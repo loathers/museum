@@ -1,8 +1,15 @@
-import { Alert, Group, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  Button,
+  Group,
+  Heading,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { Link as RRLink, useLoaderData } from "react-router";
 
-import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import RankSymbol from "~/components/RankSymbol";
 import { db } from "~/db.server";
@@ -39,9 +46,12 @@ export default function About() {
           About
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
-            home
-          </ButtonLink>
+          <Button asChild>
+            <RRLink to="/">
+              <LuArrowLeft />
+              home
+            </RRLink>
+          </Button>
         </Group>
       </Stack>
       <Alert.Root status="info" variant="subtle">

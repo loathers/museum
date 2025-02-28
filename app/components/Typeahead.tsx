@@ -1,9 +1,7 @@
-import { Group, Input, List, Stack } from "@chakra-ui/react";
+import { Group, IconButton, Input, List, Stack } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
 import { useCallback } from "react";
 import { LuArrowDown, LuArrowUp } from "react-icons/lu";
-
-import { Button } from "./Button";
 
 interface Props<T> {
   items: T[];
@@ -67,8 +65,7 @@ export default function Typeahead<T>({
               onKeyDown: handleKeyDown,
             })}
           />
-          <Button
-            borderLeftRadius={0}
+          <IconButton
             {...getToggleButtonProps({
               disabled: items.length === 0,
             })}
@@ -76,7 +73,7 @@ export default function Typeahead<T>({
             loading={loading}
           >
             {isOpen && items.length > 0 ? <LuArrowUp /> : <LuArrowDown />}
-          </Button>
+          </IconButton>
         </Group>
         <List.Root
           {...getMenuProps()}

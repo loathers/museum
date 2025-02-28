@@ -1,9 +1,8 @@
-import { Group, Heading, Stack } from "@chakra-ui/react";
+import { Button, Group, Heading, Stack } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
 import { LuArrowLeft } from "react-icons/lu";
-import { type MetaFunction, useNavigate } from "react-router";
+import { type MetaFunction, Link as RRLink, useNavigate } from "react-router";
 
-import ButtonLink from "~/components/ButtonLink";
 import Layout from "~/components/Layout";
 import PlayerSelect from "~/components/PlayerSelect";
 
@@ -29,9 +28,12 @@ export default function PlayerRoot() {
           Players
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
-            home
-          </ButtonLink>
+          <Button asChild>
+            <RRLink to="/">
+              <LuArrowLeft />
+              home
+            </RRLink>
+          </Button>
         </Group>
       </Stack>
       <PlayerSelect

@@ -1,23 +1,23 @@
 import {
+  Button,
   Group,
   Heading,
-  IconButton,
   Image,
   Spinner,
   Stack,
 } from "@chakra-ui/react";
-import { useTheme } from "next-themes";
 import { Suspense, useCallback, useState } from "react";
-import { LuInfo, LuMoon, LuSearch, LuSun } from "react-icons/lu";
+import { LuInfo, LuSearch } from "react-icons/lu";
 import {
   Await,
   type LinksFunction,
   type MetaFunction,
+  Link as RRLink,
   useLoaderData,
   useNavigate,
 } from "react-router";
 
-import ButtonLink from "~/components/ButtonLink";
+import { ColourModeToggle } from "~/components/ColourModeToggle";
 import ItemSelect from "~/components/ItemSelect";
 import Layout from "~/components/Layout";
 import RandomCollection from "~/components/RandomCollection";
@@ -41,24 +41,11 @@ export const meta: MetaFunction = () => [
   { title: "Museum :: Welcome to the musuem" },
 ];
 
-function useColorMode() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const toggleColorMode = () => {
-    setTheme(resolvedTheme === "light" ? "dark" : "light");
-  };
-  return {
-    colorMode: resolvedTheme,
-    setColorMode: setTheme,
-    toggleColorMode,
-  };
-}
-
 export default function Index() {
   const { collections } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const { toggleColorMode, colorMode } = useColorMode();
 
   const browseItem = useCallback(
     (item?: { itemid: number } | null) => {
@@ -76,23 +63,19 @@ export default function Index() {
           Welcome to the Museum
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuInfo />} to="/about">
-            about
-          </ButtonLink>
-          <ButtonLink leftIcon={<LuSearch />} to="/player">
-            player search
-          </ButtonLink>
-          <IconButton
-            onClick={toggleColorMode}
-            variant="subtle"
-            title={
-              colorMode === "light"
-                ? "Switch to dark mode"
-                : "Switch to light mode"
-            }
-          >
-            {colorMode === "light" ? <LuSun /> : <LuMoon />}
-          </IconButton>
+          <Button asChild>
+            <RRLink to="/about">
+              <LuInfo />
+              about
+            </RRLink>
+          </Button>
+          <Button asChild>
+            <RRLink to="/player">
+              <LuSearch />
+              player search
+            </RRLink>
+          </Button>
+          <ColourModeToggle />
         </Group>
       </Stack>
       <Image

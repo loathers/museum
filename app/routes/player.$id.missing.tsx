@@ -1,9 +1,10 @@
 import {
+  Box,
+  Button,
   Group,
   Heading,
   IconButton,
   Link,
-  List,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -21,8 +22,8 @@ import {
   data,
   useLoaderData,
 } from "react-router";
+import { Fragment } from "react/jsx-runtime";
 
-import ButtonLink from "~/components/ButtonLink";
 import ItemName from "~/components/ItemName";
 import Layout from "~/components/Layout";
 import { db } from "~/db.server";
@@ -74,6 +75,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       quest: playerid === HOLDER_ID ? undefined : false,
       missing: false,
       collections: { none: { playerid } },
+      seen: { isNot: null },
     },
     select: { name: true, itemid: true, ambiguous: true },
     orderBy,
@@ -96,31 +98,34 @@ export default function Missing() {
           {player.name} missing items
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
-            home
-          </ButtonLink>
-          <ButtonLink
-            leftIcon={<LuCircleUser />}
-            to={`/player/${player.playerid}`}
-          >
-            back to player
-          </ButtonLink>
+          <Button asChild>
+            <RRLink to="/">
+              <LuArrowLeft />
+              home
+            </RRLink>
+          </Button>
+          <Button asChild>
+            <RRLink to={`/player/${player.playerid}`}>
+              <LuCircleUser />
+              back to player
+            </RRLink>
+          </Button>
           <Group attached>
             <IconButton
-              as={RRLink}
+              asChild
               aria-label="Sort by item name"
               title="Sort by item name"
-              variant={sort === "name" ? "surface" : "outline"}
+              variant={sort === "name" ? "solid" : "outline"}
             >
               <RRLink to={`/player/${player.playerid}/missing`}>
                 <LuArrowDownAZ />
               </RRLink>
             </IconButton>
             <IconButton
-              as={RRLink}
+              asChild
               aria-label="Sort by item id"
               title="Sort by item id"
-              variant={sort === "itemid" ? "surface" : "outline"}
+              variant={sort === "itemid" ? "solid" : "outline"}
             >
               <RRLink to={`/player/${player.playerid}/missing?sort=itemid`}>
                 <LuArrowDown10 />
@@ -135,17 +140,18 @@ export default function Missing() {
         {missing.length.toLocaleString()} short.
       </Text>
 
-      <List.Root>
-        {missing.map((item) => (
-          <List.Item key={item.itemid}>
+      <Box>
+        {missing.map((item, i) => (
+          <Fragment key={item.itemid}>
+            {i > 0 && ", "}
             <Link asChild>
               <RRLink to={`/item/${item.itemid}`}>
                 <ItemName item={item} disambiguate />
               </RRLink>
             </Link>
-          </List.Item>
+          </Fragment>
         ))}
-      </List.Root>
+      </Box>
     </Layout>
   );
 }

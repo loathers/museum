@@ -1,4 +1,5 @@
 import {
+  Button,
   Group,
   Heading,
   IconButton,
@@ -22,7 +23,6 @@ import {
   useLoaderData,
 } from "react-router";
 
-import ButtonLink from "~/components/ButtonLink";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
@@ -108,15 +108,18 @@ export default function Player() {
           {player.name} <Formerly names={player.nameChanges} />
         </Heading>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
-            home
-          </ButtonLink>
+          <Button asChild>
+            <RRLink to="/">
+              <LuArrowLeft />
+              home
+            </RRLink>
+          </Button>
           <Group attached>
             <IconButton
               asChild
               aria-label="Sort by item name"
               title="Sort by item name"
-              variant={sort === "name" ? "surface" : "outline"}
+              variant={sort === "name" ? "solid" : "outline"}
             >
               <RRLink to={`/player/${player.playerid}`}>
                 <LuArrowDownAZ />
@@ -126,7 +129,7 @@ export default function Player() {
               asChild
               aria-label="Sort by collection rank"
               title="Sort by collection rank"
-              variant={sort === "rank" ? "surface" : "outline"}
+              variant={sort === "rank" ? "solid" : "outline"}
             >
               <RRLink to={`/player/${player.playerid}?sort=rank`}>
                 <LuMedal />
@@ -136,7 +139,7 @@ export default function Player() {
               asChild
               aria-label="Sort by quantity of item"
               title="Sort by quantity of item"
-              variant={sort === "quantity" ? "surface" : "outline"}
+              variant={sort === "quantity" ? "solid" : "outline"}
             >
               <RRLink to={`/player/${player.playerid}?sort=quantity`}>
                 <LuArrowDownWideNarrow />
@@ -145,7 +148,7 @@ export default function Player() {
             <IconButton
               aria-label="Sort by item id"
               title="Sort by item id"
-              variant={sort === "itemid" ? "surface" : "outline"}
+              variant={sort === "itemid" ? "solid" : "outline"}
               asChild
             >
               <RRLink to={`/player/${player.playerid}?sort=itemid`}>

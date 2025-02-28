@@ -1,12 +1,12 @@
-import { Group, HStack, Heading, Image, Stack } from "@chakra-ui/react";
+import { Button, Group, HStack, Heading, Image, Stack } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import {
   type LoaderFunctionArgs,
   type MetaFunction,
+  Link as RRLink,
   useLoaderData,
 } from "react-router";
 
-import ButtonLink from "~/components/ButtonLink";
 import ItemDescription from "~/components/ItemDescription";
 import ItemPageRanking from "~/components/ItemPageRanking";
 import Layout from "~/components/Layout";
@@ -35,6 +35,8 @@ function ItemLayout({
   item: SlimItem & { picture: string };
   wiki: boolean;
 }>) {
+  const wikiLink = `https://kol.coldfront.net/thekolwiki/index.php/${itemToString(item)}`;
+
   return (
     <Layout>
       <Stack>
@@ -52,24 +54,23 @@ function ItemLayout({
           />
         </HStack>
         <Group justifyContent="center">
-          <ButtonLink leftIcon={<LuArrowLeft />} to="/">
-            home
-          </ButtonLink>
+          <Button asChild>
+            <RRLink to="/">
+              <LuArrowLeft />
+              home
+            </RRLink>
+          </Button>
           {wiki && (
-            <ButtonLink
-              to={`https://kol.coldfront.net/thekolwiki/index.php/${itemToString(
-                item,
-              )}`}
-              leftIcon={
+            <Button asChild>
+              <RRLink to={wikiLink} target="_blank" rel="noopener noreferrer">
                 <img
                   src="/coldfront.png"
                   alt="Wiki link"
                   style={{ width: "1em", verticalAlign: "middle" }}
                 />
-              }
-            >
-              wiki
-            </ButtonLink>
+                wiki
+              </RRLink>
+            </Button>
           )}
         </Group>
       </Stack>
