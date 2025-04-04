@@ -17,11 +17,11 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
     return {
       item: await loadCollections(id),
       prev: await db.item.findFirst({
-        where: { itemid: { lt: id }, seen: { isNot: null } },
+        where: { itemid: { lt: id }, seen: { isNot: null }, missing: false },
         orderBy: { itemid: "desc" },
       }),
       next: await db.item.findFirst({
-        where: { itemid: { gt: id }, seen: { isNot: null } },
+        where: { itemid: { gt: id }, seen: { isNot: null }, missing: false },
         orderBy: { itemid: "asc" },
       }),
     };
