@@ -47,7 +47,7 @@ function ItemLayout({
   next: SlimItem | null;
   wiki: boolean;
 }>) {
-  const wikiLink = `https://kol.coldfront.net/thekolwiki/index.php/${itemToString(item)}`;
+  const wikiLink = `https://wiki.kingdomofloathing.com/${itemToString(item)}`;
 
   return (
     <Layout>
@@ -89,7 +89,7 @@ function ItemLayout({
               <Button asChild>
                 <RRLink to={wikiLink} target="_blank" rel="noopener noreferrer">
                   <img
-                    src="/coldfront.png"
+                    src="/wiki.png"
                     alt="Wiki link"
                     style={{ width: "1em", verticalAlign: "middle" }}
                   />
