@@ -12,7 +12,6 @@ import { HttpError, type SlimItem, loadCollections } from "~/utils.server";
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const id = Number(params.id);
-  console.log(params, id);
   try {
     return {
       item: await loadCollections(id),
