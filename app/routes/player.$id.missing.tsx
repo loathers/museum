@@ -50,6 +50,10 @@ const sortToOrderByQuery = (
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  throw data(
+    "This route has been disabled temporarily because it's really expensive and we seem to get hundreds of requests on it every minute.",
+    { status: 503 },
+  );
   const playerid = Number(params.id);
 
   if (!playerid) throw data("A player id must be specified", { status: 400 });
