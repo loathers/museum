@@ -1,23 +1,22 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "next-themes";
 import {
-  type HeadersFunction,
   Links,
-  type LinksFunction,
   Meta,
-  type MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
   data,
 } from "react-router";
 
+import { type Route } from "./+types/root";
 import { getMaxAge } from "./db.server";
+import { loggingMiddleware } from "./middleware/logging";
 import { theme } from "./theme";
 
-export const meta: MetaFunction = () => [{ title: "Museum" }];
+export const meta: Route.MetaFunction = () => [{ title: "Museum" }];
 
-export const links: LinksFunction = () => [
+export const links: Route.LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "/style.css",
@@ -35,7 +34,9 @@ export const loader = async () => {
   );
 };
 
-export const headers: HeadersFunction = ({ loaderHeaders }) => {
+export const middleware: Route.MiddlewareFunction[] = [loggingMiddleware];
+
+export const headers: Route.HeadersFunction = ({ loaderHeaders }) => {
   return loaderHeaders;
 };
 
