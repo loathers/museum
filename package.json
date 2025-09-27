@@ -7,9 +7,9 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write . && prisma format",
-    "etl": "node --env-file=.env --import tsx scripts/etl.ts",
-    "db-init": "node --env-file=.env --import tsx scripts/init.ts",
-    "items-seen-from-mafia": "node --env-file=.env --import tsx scripts/itemsSeenFromMafia.ts"
+    "etl": "node --env-file-if-exists=.env --import tsx scripts/etl.ts",
+    "db-init": "node --env-file-if-exists=.env --import tsx scripts/init.ts",
+    "items-seen-from-mafia": "node --env-file-if-exists=.env --import tsx scripts/itemsSeenFromMafia.ts"
   },
   "type": "module",
   "dependencies": {
