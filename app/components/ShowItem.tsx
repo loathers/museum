@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import { Link, useFetcher } from "react-router";
 
 import ItemName from "~/components/ItemName";
-import { type loader } from "~/routes/api.item.$id";
+import { type LoaderReturnType } from "~/routes/api.item.$id";
 import { itemToString } from "~/utils";
 
 type Props = { itemid: number };
 
 export default function ShowItem({ itemid }: Props) {
-  const fetcher = useFetcher<typeof loader>();
+  const fetcher = useFetcher<LoaderReturnType>();
 
   useEffect(() => {
     if (fetcher.state === "idle" && !fetcher.data) {
