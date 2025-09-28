@@ -55,6 +55,7 @@ function ItemLayout({
           <Image
             src={`https://s3.amazonaws.com/images.kingdomofloathing.com/itemimages/${item.picture}.gif`}
             alt={itemToString(item)}
+            objectFit="contain"
             filter={{ _dark: "invert(1)" }}
           />
 
