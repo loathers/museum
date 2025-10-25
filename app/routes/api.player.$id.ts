@@ -19,6 +19,10 @@ export async function loader({ params }: Route.LoaderArgs) {
         orderBy: { itemid: "asc" },
       },
       nameChanges: {
+        select: {
+          oldname: true,
+          when: true,
+        },
         orderBy: { when: "desc" },
       },
     },
