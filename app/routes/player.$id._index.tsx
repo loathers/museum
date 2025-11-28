@@ -20,6 +20,7 @@ import {
   type MetaFunction,
   Link as RRLink,
   data,
+  redirect,
   useLoaderData,
 } from "react-router";
 
@@ -55,7 +56,20 @@ const sortToOrderByQuery = (
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  const playerid = Number(params.id);
+  const { id } = params;
+
+  if (id && isNaN(parseInt(id))) {
+    const found = await db.player.findFirst({
+      where: { name: { mode: "insensitive", equals: id } },
+    });
+
+    if (found) throw redirect(`/player/${found.playerid}`);
+    throw data({ message: "Invalid player name" }, { status: 400 });
+  }
+
+  if (!id) throw data({ message: "Invalid player ID" }, { status: 400 });
+
+  const playerid = parseInt(id);
 
   if (!playerid) throw data("A player id must be specified", { status: 400 });
   if (playerid >= 2 ** 31)

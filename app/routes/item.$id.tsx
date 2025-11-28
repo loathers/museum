@@ -1,6 +1,6 @@
 import { Button, Heading, IconButton, Image, Stack } from "@chakra-ui/react";
 import { LuArrowLeft, LuArrowRight, LuHouse } from "react-icons/lu";
-import { Link as RRLink, useLoaderData } from "react-router";
+import { Link as RRLink, data, redirect, useLoaderData } from "react-router";
 
 import { Route } from "./+types/api.item.$id";
 import ItemDescription from "~/components/ItemDescription";
@@ -11,16 +11,30 @@ import { itemToString } from "~/utils";
 import { HttpError, type SlimItem, loadCollections } from "~/utils.server";
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
-  const id = Number(params.id);
+  const { id } = params;
+
+  if (id && isNaN(parseInt(id))) {
+    const found = await db.item.findFirst({
+      where: { name: { mode: "insensitive", equals: id } },
+    });
+
+    if (found) throw redirect(`/item/${found.itemid}`);
+    throw data({ message: "Invalid item name" }, { status: 400 });
+  }
+
+  if (!id) throw data({ message: "Invalid item ID" }, { status: 400 });
+
+  const itemId = parseInt(id);
+
   try {
     return {
-      item: await loadCollections(id),
+      item: await loadCollections(itemId),
       prev: await db.item.findFirst({
-        where: { itemid: { lt: id }, seen: { isNot: null } },
+        where: { itemid: { lt: itemId }, seen: { isNot: null } },
         orderBy: { itemid: "desc" },
       }),
       next: await db.item.findFirst({
-        where: { itemid: { gt: id }, seen: { isNot: null } },
+        where: { itemid: { gt: itemId }, seen: { isNot: null } },
         orderBy: { itemid: "asc" },
       }),
     };

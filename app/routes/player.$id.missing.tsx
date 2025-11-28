@@ -23,9 +23,9 @@
 //   useLoaderData,
 // } from "react-router";
 // import { Fragment } from "react/jsx-runtime";
-
 // import ItemName from "~/components/ItemName";
 import Layout from "~/components/Layout";
+
 // import { db } from "~/db.server";
 // import { HOLDER_ID } from "~/utils";
 
@@ -89,7 +89,12 @@ import Layout from "~/components/Layout";
 // ];
 
 export default function Missing() {
-  return <Layout>This route has been disabled temporarily because it's really expensive and we seem to get hundreds of requests on it every minute.</Layout>;
+  return (
+    <Layout>
+      This route has been disabled temporarily because it's really expensive and
+      we seem to get hundreds of requests on it every minute.
+    </Layout>
+  );
   // const { player, missing, sort } = useLoaderData<typeof loader>();
 
   // return (
