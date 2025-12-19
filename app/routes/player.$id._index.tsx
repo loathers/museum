@@ -24,6 +24,7 @@ import {
   useLoaderData,
 } from "react-router";
 
+import CustomTitle from "~/components/CustomTitle";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
@@ -121,6 +122,7 @@ export default function Player() {
         <Heading as="h2" size="4xl" textAlign="center">
           {player.name} <Formerly names={player.nameChanges} />
         </Heading>
+        <CustomTitle player={player} />
         <Group justifyContent="center">
           <Button asChild>
             <RRLink to="/">
