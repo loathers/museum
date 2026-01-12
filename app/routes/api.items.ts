@@ -23,6 +23,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       ambiguous: true,
     },
     orderBy: [{ name: "asc" }, { itemid: "asc" }],
+    take: 50,
   });
 
   return Response.json(items);

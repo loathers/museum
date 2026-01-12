@@ -27,17 +27,19 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   const itemId = parseInt(id);
 
   try {
-    return {
-      item: await loadCollections(itemId),
-      prev: await db.item.findFirst({
+    const [item, prev, next] = await Promise.all([
+      loadCollections(itemId),
+      db.item.findFirst({
         where: { itemid: { lt: itemId }, seen: { isNot: null } },
         orderBy: { itemid: "desc" },
       }),
-      next: await db.item.findFirst({
+      db.item.findFirst({
         where: { itemid: { gt: itemId }, seen: { isNot: null } },
         orderBy: { itemid: "asc" },
       }),
-    };
+    ]);
+
+    return { item, prev, next };
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;

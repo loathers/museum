@@ -22,6 +22,11 @@ model Collection {
   lastupdated DateTime @default(now())
   item        Item     @relation(fields: [itemid], references: [itemid], onDelete: NoAction, onUpdate: NoAction)
   player      Player   @relation(fields: [playerid], references: [playerid], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([playerid])
+  @@index([itemid])
+  @@index([rank])
+  @@index([itemid, rank])
 }
 
 model Item {
@@ -51,6 +56,8 @@ model Item {
   missing     Boolean      @default(false)
   collections Collection[]
   seen        ItemSeen?
+
+  @@index([missing])
 }
 
 model Player {

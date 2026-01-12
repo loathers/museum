@@ -20,6 +20,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       playerid: true,
     },
     orderBy: [{ name: "asc" }],
+    take: 50,
   });
 
   return Response.json(players);
