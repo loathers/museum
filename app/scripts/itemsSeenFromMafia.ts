@@ -1,6 +1,8 @@
 import { createClient } from "data-of-loathing";
 
-import { sql } from "./db";
+import { db } from "../db.server";
+
+import { pool } from "./db";
 
 const client = createClient();
 
@@ -14,19 +16,24 @@ const knownItems = await client.query({
 
 const items = (knownItems.allItems?.nodes ?? [])
   .filter((item) => item !== null)
-  .map((item) => ({ itemid: item.id }));
+  .map((item) => item.id);
 
 let inserted = 0;
 
 const CHUNK = 1000;
 
 for (let i = 0; i < items.length; i += CHUNK) {
-  const { count } =
-    await sql`INSERT INTO "ItemSeen" ${sql(items.slice(i, i + CHUNK), "itemid")} ON CONFLICT DO NOTHING`;
-  inserted += count;
+  const chunk = items.slice(i, i + CHUNK);
+  const result = await db
+    .insertInto("ItemSeen")
+    .values(chunk.map((id) => ({ itemid: id })))
+    .onConflict((oc) => oc.doNothing())
+    .executeTakeFirst();
+  inserted += Number(result.numInsertedOrUpdatedRows ?? 0);
 }
 
 console.log(
   `Inserted ${inserted} items about which mafia knows (this includes ignored inserts for items mafia knows about that the Item table doesn't)`,
 );
+await pool.end();
 process.exit();

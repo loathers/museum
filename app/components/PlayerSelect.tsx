@@ -1,19 +1,21 @@
-import type { Player } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import Typeahead from "~/components/Typeahead";
+import type { Player } from "~/db.types";
 import { useDebounce } from "~/hooks";
+
+type SlimPlayer = Pick<Player, "playerid" | "name">;
 
 type Props = {
   label: string;
-  onChange?: (player: Player | null) => unknown;
+  onChange?: (player: SlimPlayer | null) => unknown;
   loading?: boolean;
 };
 
 export const comboboxStyles = { display: "inline-block", marginLeft: "5px" };
 
-const playerToString = (player: Player | null) => player?.name ?? "";
+const playerToString = (player: SlimPlayer | null) => player?.name ?? "";
 
 export default function ItemSelect({ label, onChange, loading }: Props) {
   const { load, ...fetcher } = useFetcher();
@@ -27,9 +29,9 @@ export default function ItemSelect({ label, onChange, loading }: Props) {
   }, [debouncedQuery, load]);
 
   return (
-    <Typeahead<Player>
+    <Typeahead<SlimPlayer>
       label={label}
-      items={(fetcher.data as Player[]) ?? []}
+      items={(fetcher.data as SlimPlayer[]) ?? []}
       onChange={onChange}
       onInputChange={setQuery}
       itemToString={playerToString}

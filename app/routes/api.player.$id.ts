@@ -5,28 +5,11 @@ import { HttpError } from "~/utils.server";
 export async function loader({ params }: Route.LoaderArgs) {
   const id = Number(params.id);
 
-  const player = await db.player.findUnique({
-    where: { playerid: id },
-    select: {
-      playerid: true,
-      name: true,
-      collections: {
-        select: {
-          quantity: true,
-          rank: true,
-          itemid: true,
-        },
-        orderBy: { itemid: "asc" },
-      },
-      nameChanges: {
-        select: {
-          oldname: true,
-          when: true,
-        },
-        orderBy: { when: "desc" },
-      },
-    },
-  });
+  const player = await db
+    .selectFrom("Player")
+    .select(["playerid", "name"])
+    .where("playerid", "=", id)
+    .executeTakeFirst();
 
   if (!player)
     return Response.json(
@@ -34,5 +17,23 @@ export async function loader({ params }: Route.LoaderArgs) {
       { status: 404 },
     );
 
-  return Response.json(player);
+  const collections = await db
+    .selectFrom("Collection")
+    .select(["quantity", "rank", "itemid"])
+    .where("playerid", "=", id)
+    .orderBy("itemid", "asc")
+    .execute();
+
+  const nameChanges = await db
+    .selectFrom("PlayerNameChange")
+    .select(["oldname", "when"])
+    .where("playerid", "=", id)
+    .orderBy("when", "desc")
+    .execute();
+
+  return Response.json({
+    ...player,
+    collections,
+    nameChanges,
+  });
 }

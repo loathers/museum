@@ -1,30 +1,32 @@
 import { db } from "~/db.server";
 
 export async function loader() {
-  const items = await db.item.findMany({
-    select: {
-      itemid: true,
-      name: true,
-      picture: true,
-      descid: true,
-      type: true,
-      itemclass: true,
-      candiscard: true,
-      cantransfer: true,
-      quest: true,
-      gift: true,
-      smith: true,
-      cook: true,
-      cocktail: true,
-      jewelry: true,
-      multiuse: true,
-      sellvalue: true,
-      power: true,
-      plural: true,
-    },
-    where: { missing: false, seen: { isNot: null } },
-    orderBy: { itemid: "asc" },
-  });
+  const items = await db
+    .selectFrom("Item")
+    .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
+    .select([
+      "Item.itemid",
+      "Item.name",
+      "Item.picture",
+      "Item.descid",
+      "Item.type",
+      "Item.itemclass",
+      "Item.candiscard",
+      "Item.cantransfer",
+      "Item.quest",
+      "Item.gift",
+      "Item.smith",
+      "Item.cook",
+      "Item.cocktail",
+      "Item.jewelry",
+      "Item.multiuse",
+      "Item.sellvalue",
+      "Item.power",
+      "Item.plural",
+    ])
+    .where("Item.missing", "=", false)
+    .orderBy("Item.itemid", "asc")
+    .execute();
 
   return Response.json(
     items.map((i) => ({

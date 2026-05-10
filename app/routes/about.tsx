@@ -15,21 +15,23 @@ import RankSymbol from "~/components/RankSymbol";
 import { db } from "~/db.server";
 
 export const loader = async () => {
-  const { rank, quantity } = (await db.collection.findFirst({
-    where: {
-      playerid: 1197090,
-      itemid: 641,
-    },
-  })) ?? { rank: 0, quantity: 0 };
+  const result = await db
+    .selectFrom("Collection")
+    .select(["rank", "quantity"])
+    .where("playerid", "=", 1197090)
+    .where("itemid", "=", 641)
+    .executeTakeFirst();
+
+  const { rank, quantity } = result ?? { rank: 0, quantity: 0 };
 
   if (rank <= 1) return { gausieRank: rank, gausieNeeded: 0 };
 
-  const next = await db.collection.findFirst({
-    where: {
-      itemid: 641,
-      rank: rank - 1,
-    },
-  });
+  const next = await db
+    .selectFrom("Collection")
+    .select("quantity")
+    .where("itemid", "=", 641)
+    .where("rank", "=", rank - 1)
+    .executeTakeFirst();
 
   return {
     gausieRank: rank,

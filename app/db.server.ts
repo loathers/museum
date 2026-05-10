@@ -1,41 +1,43 @@
-import { PrismaClient } from "@prisma/client";
+import { Kysely, PostgresDialect } from "kysely";
+import pg from "pg";
+
+import type { Database } from "./db.types";
 
 declare global {
-  var globalPrisma: PrismaClient;
+  var globalDb: Kysely<Database>;
 }
 
-let prisma: PrismaClient<object, "query">;
+const dialect = new PostgresDialect({
+  pool: new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+  }),
+});
+
+let kysely: Kysely<Database>;
 
 if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-  prisma.$connect();
+  kysely = new Kysely<Database>({ dialect });
 } else {
-  if (!global.globalPrisma) {
-    global.globalPrisma = new PrismaClient({
-      log: [
-        {
-          emit: "event",
-          level: "query",
-        },
-      ],
+  if (!global.globalDb) {
+    global.globalDb = new Kysely<Database>({
+      dialect,
+      log: ["query", "error"],
     });
   }
-  prisma = global.globalPrisma;
-
-  prisma.$on("query", async (e) => {
-    console.log(`${e.query} ${e.params}`);
-  });
+  kysely = global.globalDb;
 }
 
-export const db = prisma;
+export const db = kysely;
 
 export async function getMaxAge() {
-  const { value } =
-    (await prisma.setting.findFirst({
-      where: { key: "nextUpdate" },
-    })) ?? {};
-  if (!value) return 1800;
+  const result = await db
+    .selectFrom("Setting")
+    .select("value")
+    .where("key", "=", "nextUpdate")
+    .executeTakeFirst();
 
-  const secondsLeft = Math.ceil((Number(value) - Date.now()) / 1000);
+  if (!result?.value) return 1800;
+
+  const secondsLeft = Math.ceil((Number(result.value) - Date.now()) / 1000);
   return Math.max(0, secondsLeft);
 }

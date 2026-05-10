@@ -1,3 +1,5 @@
+import { sql } from "kysely";
+
 import { Route } from "./+types/api.items";
 import { db } from "~/db.server";
 
@@ -8,23 +10,16 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   if (!q) return Response.json([]);
 
-  const items = await db.item.findMany({
-    where: {
-      missing: false,
-      name: {
-        contains: q,
-        mode: "insensitive",
-      },
-      seen: { isNot: null },
-    },
-    select: {
-      name: true,
-      itemid: true,
-      ambiguous: true,
-    },
-    orderBy: [{ name: "asc" }, { itemid: "asc" }],
-    take: 50,
-  });
+  const items = await db
+    .selectFrom("Item")
+    .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
+    .select(["Item.name", "Item.itemid", "Item.ambiguous"])
+    .where("Item.missing", "=", false)
+    .where(sql<boolean>`"Item"."name" ilike ${`%${q}%`}`)
+    .orderBy("Item.name", "asc")
+    .orderBy("Item.itemid", "asc")
+    .limit(50)
+    .execute();
 
   return Response.json(items);
 }
