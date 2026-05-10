@@ -3,9 +3,8 @@ import { Link as RRLink } from "react-router";
 
 import CollectionInsights from "~/components/CollectionInsights";
 import Rank from "~/components/Rank";
+import type { SlimPlayer } from "~/db.types";
 import { englishJoin } from "~/utils";
-
-type SlimPlayer = { playerid: number; name: string };
 
 export type Collection = {
   quantity: number;

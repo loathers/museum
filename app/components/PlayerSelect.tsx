@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import Typeahead from "~/components/Typeahead";
-import type { Player } from "~/db.types";
+import type { SlimPlayer } from "~/db.types";
 import { useDebounce } from "~/hooks";
-
-type SlimPlayer = Pick<Player, "playerid" | "name">;
 
 type Props = {
   label: string;

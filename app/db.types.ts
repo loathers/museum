@@ -107,6 +107,7 @@ export type NewItem = Insertable<ItemTable>;
 
 export type Player = Selectable<PlayerTable>;
 export type NewPlayer = Insertable<PlayerTable>;
+export type SlimPlayer = Pick<Player, "playerid" | "name">;
 
 export type PlayerNameChange = Selectable<PlayerNameChangeTable>;
 export type NewPlayerNameChange = Insertable<PlayerNameChangeTable>;

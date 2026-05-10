@@ -3,14 +3,12 @@ import { decodeHTML } from "entities";
 import { useEffect, useState } from "react";
 import { Link as RRLink } from "react-router";
 
-import type { DailyCollection } from "~/db.types";
+import type { DailyCollection, SlimPlayer } from "~/db.types";
 import { englishJoin, pluralise } from "~/utils";
 
 type Props = {
   collections: DailyCollection[];
 };
-
-type SlimPlayer = { playerid: number; name: string };
 
 const Highlighted = (props: TextProps) => <Text as="b" {...props} />;
 
