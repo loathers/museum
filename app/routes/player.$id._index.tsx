@@ -68,16 +68,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const sort = normalizeSort(url.searchParams.get("sort"));
 
-  // Query 1: Get player basic info
-  const player = await db
-    .selectFrom("Player")
-    .select(["playerid", "name"])
-    .where("playerid", "=", playerid)
-    .executeTakeFirst();
-
-  if (!player) throw data("Player not found with that id", { status: 404 });
-
-  // Query 2: Get collections with items
   let collectionsQuery = db
     .selectFrom("Collection")
     .innerJoin("Item", "Item.itemid", "Collection.itemid")
@@ -91,40 +81,45 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     ])
     .where("Collection.playerid", "=", playerid);
 
-  // Apply sorting
   switch (sort) {
     case "rank":
       collectionsQuery = collectionsQuery
         .orderBy("Collection.rank", "asc")
-        .orderBy("Item.itemid", "asc");
+        .orderBy("Item.name", "asc");
       break;
     case "quantity":
       collectionsQuery = collectionsQuery
         .orderBy("Collection.quantity", "desc")
-        .orderBy("Item.itemid", "asc");
+        .orderBy("Item.name", "asc");
       break;
     case "itemid":
       collectionsQuery = collectionsQuery
         .orderBy("Item.itemid", "desc")
-        .orderBy("Item.itemid", "asc");
+        .orderBy("Item.name", "asc");
       break;
-    default: // name
+    default:
       collectionsQuery = collectionsQuery
         .orderBy("Item.name", "asc")
         .orderBy("Item.itemid", "asc");
   }
 
-  const collectionsRaw = await collectionsQuery.execute();
+  const [player, collectionsRaw, nameChanges] = await Promise.all([
+    db
+      .selectFrom("Player")
+      .select(["playerid", "name"])
+      .where("playerid", "=", playerid)
+      .executeTakeFirst(),
+    collectionsQuery.execute(),
+    db
+      .selectFrom("PlayerNameChange")
+      .select(["oldname", "when"])
+      .where("playerid", "=", playerid)
+      .orderBy("when", "desc")
+      .execute(),
+  ]);
 
-  // Query 3: Get name changes
-  const nameChanges = await db
-    .selectFrom("PlayerNameChange")
-    .select(["oldname", "when"])
-    .where("playerid", "=", playerid)
-    .orderBy("when", "desc")
-    .execute();
+  if (!player) throw data("Player not found with that id", { status: 404 });
 
-  // Transform collections to expected format
   const collections = collectionsRaw.map((c) => ({
     quantity: c.quantity,
     rank: c.rank,
