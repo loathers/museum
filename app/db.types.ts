@@ -118,7 +118,7 @@ export interface Database {
   Item: ItemTable;
   ItemStaging: ItemStagingTable;
   Player: PlayerTable;
-  PlayerNew: PlayerTable;
+  PlayerNew: Omit<PlayerTable, "name"> & { name: string | null };
   PlayerNameChange: PlayerNameChangeTable;
   DailyCollection: DailyCollectionTable;
   UnrankedCollection: UnrankedCollectionTable;

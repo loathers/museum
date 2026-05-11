@@ -173,6 +173,37 @@ async function importCollections() {
     `Deleted ${unknownPlayers?.numDeletedRows ?? 0} collections from unknown players`,
   );
 
+  const unknownItems = await db
+    .insertInto("Item")
+    .columns(["itemid", "name", "description", "missing"])
+    .expression(
+      db
+        .selectFrom("UnrankedCollection")
+        .select([
+          "UnrankedCollection.itemid",
+          sql.lit("Unknown").as("name"),
+          sql
+            .lit("Museum heard that this item exists but doesn't know anything about it!")
+            .as("description"),
+          sql.lit(true).as("missing"),
+        ])
+        .distinctOn("UnrankedCollection.itemid")
+        .where(({ not, exists, selectFrom }) =>
+          not(
+            exists(
+              selectFrom("Item")
+                .select(sql.lit(null).as("x"))
+                .whereRef("Item.itemid", "=", "UnrankedCollection.itemid"),
+            ),
+          ),
+        ),
+    )
+    .executeTakeFirst();
+  console.timeLog(
+    "etl",
+    `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
+  );
+
   await query(`TRUNCATE "Collection"`);
   await db
     .insertInto("Collection")
@@ -217,37 +248,6 @@ async function normaliseData() {
   console.timeLog(
     "etl",
     `Marked ${ambiguous?.numUpdatedRows ?? 0} items as ambiguously named`,
-  );
-
-  const unknownItems = await db
-    .insertInto("Item")
-    .columns(["itemid", "name", "description", "missing"])
-    .expression(
-      db
-        .selectFrom("Collection")
-        .select([
-          "Collection.itemid",
-          sql.lit("Unknown").as("name"),
-          sql
-            .lit("Museum heard that this item exists but doesn't know anything about it!")
-            .as("description"),
-          sql.lit(true).as("missing"),
-        ])
-        .distinctOn("Collection.itemid")
-        .where(({ not, exists, selectFrom }) =>
-          not(
-            exists(
-              selectFrom("Item")
-                .select(sql.lit(null).as("x"))
-                .whereRef("Item.itemid", "=", "Collection.itemid"),
-            ),
-          ),
-        ),
-    )
-    .executeTakeFirst();
-  console.timeLog(
-    "etl",
-    `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
   );
 
   const seen = await db

@@ -7,7 +7,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .createTable("PlayerNew")
     .ifNotExists()
     .addColumn("playerid", "integer", (col) => col.primaryKey())
-    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("name", "text")
     .addColumn("clan", "integer")
     .addColumn("description", "text")
     .execute();
