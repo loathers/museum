@@ -46,7 +46,7 @@
     "@types/pg-copy-streams": "^1.2.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "data-of-loathing": "^2.6.2",
+    "data-of-loathing": "^3.2.2",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "kysely-ctl": "^0.20.0",

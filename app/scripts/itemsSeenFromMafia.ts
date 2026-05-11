@@ -1,20 +1,12 @@
-import { createClient } from "data-of-loathing";
+import { Item, createClient } from "data-of-loathing";
 
 import { db, pool } from "../db.server";
 
 const client = createClient();
+await client.load();
 
-const knownItems = await client.query({
-  allItems: {
-    nodes: {
-      id: true,
-    },
-  },
-});
-
-const items = (knownItems.allItems?.nodes ?? [])
-  .filter((item) => item !== null)
-  .map((item) => item.id);
+const knownItems = await client.query.find(Item, {}, { orderBy: { id: "ASC" } });
+const items = knownItems.map((item) => item.id);
 
 let inserted = 0;
 
