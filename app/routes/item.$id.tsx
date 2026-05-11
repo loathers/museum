@@ -37,6 +37,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
         .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
         .select(["Item.itemid", "Item.name", "Item.ambiguous"])
         .where("Item.itemid", "<", itemId)
+        .where("Item.missing", "=", false)
         .orderBy("Item.itemid", "desc")
         .limit(1)
         .executeTakeFirst(),
@@ -45,6 +46,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
         .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
         .select(["Item.itemid", "Item.name", "Item.ambiguous"])
         .where("Item.itemid", ">", itemId)
+        .where("Item.missing", "=", false)
         .orderBy("Item.itemid", "asc")
         .limit(1)
         .executeTakeFirst(),
