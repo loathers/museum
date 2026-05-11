@@ -2,7 +2,6 @@
   "include": [".react-router/types/**/*", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
