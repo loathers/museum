@@ -25,7 +25,7 @@ import { db } from "~/db.server";
 
 export const loader = async () => {
   return {
-    collections: await db.dailyCollection.findMany({}),
+    collections: await db.selectFrom("DailyCollection").selectAll().execute(),
   };
 };
 

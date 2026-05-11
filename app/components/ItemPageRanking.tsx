@@ -1,12 +1,10 @@
 import { Link, Table } from "@chakra-ui/react";
-import type { Player } from "@prisma/client";
 import { Link as RRLink } from "react-router";
 
 import CollectionInsights from "~/components/CollectionInsights";
 import Rank from "~/components/Rank";
+import type { SlimPlayer } from "~/db.types";
 import { englishJoin } from "~/utils";
-
-type SlimPlayer = Pick<Player, "playerid" | "name">;
 
 export type Collection = {
   quantity: number;

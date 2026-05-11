@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import type { Prisma } from "@prisma/client";
+import { sql } from "kysely";
 import {
   LuArrowDown10,
   LuArrowDownAZ,
@@ -30,7 +30,9 @@ import Layout from "~/components/Layout";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import { db } from "~/db.server";
 
-const normalizeSort = (sort: string | null) => {
+type SortType = "rank" | "quantity" | "itemid" | "name";
+
+const normalizeSort = (sort: string | null): SortType => {
   switch (sort) {
     case "rank":
     case "quantity":
@@ -41,28 +43,15 @@ const normalizeSort = (sort: string | null) => {
   }
 };
 
-const sortToOrderByQuery = (
-  sort: ReturnType<typeof normalizeSort>,
-): Prisma.CollectionOrderByWithRelationInput => {
-  switch (sort) {
-    case "rank":
-      return { rank: "asc" };
-    case "quantity":
-      return { quantity: "desc" };
-    case "itemid":
-      return { item: { itemid: "desc" } };
-    default:
-      return { item: { name: "asc" } };
-  }
-};
-
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const { id } = params;
 
   if (id && isNaN(parseInt(id))) {
-    const found = await db.player.findFirst({
-      where: { name: { mode: "insensitive", equals: id } },
-    });
+    const found = await db
+      .selectFrom("Player")
+      .select("playerid")
+      .where(sql`lower("name")`, "=", id.toLowerCase())
+      .executeTakeFirst();
 
     if (found) throw redirect(`/player/${found.playerid}`);
     throw data({ message: "Invalid player name" }, { status: 400 });
@@ -79,34 +68,76 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const sort = normalizeSort(url.searchParams.get("sort"));
 
-  const orderBy = sortToOrderByQuery(sort);
+  let collectionsQuery = db
+    .selectFrom("Collection")
+    .innerJoin("Item", "Item.itemid", "Collection.itemid")
+    .select([
+      "Collection.quantity",
+      "Collection.rank",
+      "Item.itemid",
+      "Item.name",
+      "Item.picture",
+      "Item.ambiguous",
+    ])
+    .where("Collection.playerid", "=", playerid);
 
-  const player = await db.player.findUnique({
-    where: { playerid },
-    select: {
-      playerid: true,
-      name: true,
-      collections: {
-        select: {
-          quantity: true,
-          rank: true,
-          item: true,
-        },
-        orderBy: [orderBy, { item: { itemid: "asc" } }],
-      },
-      nameChanges: {
-        orderBy: { when: "desc" },
-      },
-    },
-  });
+  switch (sort) {
+    case "rank":
+      collectionsQuery = collectionsQuery
+        .orderBy("Collection.rank", "asc")
+        .orderBy("Item.name", "asc");
+      break;
+    case "quantity":
+      collectionsQuery = collectionsQuery
+        .orderBy("Collection.quantity", "desc")
+        .orderBy("Item.name", "asc");
+      break;
+    case "itemid":
+      collectionsQuery = collectionsQuery
+        .orderBy("Item.itemid", "desc")
+        .orderBy("Item.name", "asc");
+      break;
+    default:
+      collectionsQuery = collectionsQuery
+        .orderBy("Item.name", "asc")
+        .orderBy("Item.itemid", "asc");
+  }
+
+  const [player, collectionsRaw, nameChanges] = await Promise.all([
+    db
+      .selectFrom("Player")
+      .select(["playerid", "name"])
+      .where("playerid", "=", playerid)
+      .executeTakeFirst(),
+    collectionsQuery.execute(),
+    db
+      .selectFrom("PlayerNameChange")
+      .select(["oldname", "when"])
+      .where("playerid", "=", playerid)
+      .orderBy("when", "desc")
+      .execute(),
+  ]);
 
   if (!player) throw data("Player not found with that id", { status: 404 });
 
-  const totalItems = player.collections
-    .map((c) => c.quantity)
-    .reduce((a, b) => a + b, 0);
+  const collections = collectionsRaw.map((c) => ({
+    quantity: c.quantity,
+    rank: c.rank,
+    item: {
+      itemid: c.itemid,
+      name: c.name,
+      picture: c.picture,
+      ambiguous: c.ambiguous,
+    },
+  }));
 
-  return { player, sort, totalItems };
+  const totalItems = collections.reduce((sum, c) => sum + c.quantity, 0);
+
+  return {
+    player: { ...player, collections, nameChanges },
+    sort,
+    totalItems,
+  };
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [

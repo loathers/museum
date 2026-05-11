@@ -1,9 +1,9 @@
 import { Box, Link, Spinner, Text, type TextProps } from "@chakra-ui/react";
-import type { DailyCollection, Player } from "@prisma/client";
 import { decodeHTML } from "entities";
 import { useEffect, useState } from "react";
 import { Link as RRLink } from "react-router";
 
+import type { DailyCollection, SlimPlayer } from "~/db.types";
 import { englishJoin, pluralise } from "~/utils";
 
 type Props = {
@@ -25,7 +25,7 @@ export default function RandomCollection({ collections }: Props) {
   if (!collection) return <Spinner />;
 
   const { itemid, name, plural } = collection;
-  const players = collection.players as Pick<Player, "playerid" | "name">[];
+  const players = collection.players as SlimPlayer[];
   return (
     <Box>
       For example, you can see how{" "}

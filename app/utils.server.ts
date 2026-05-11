@@ -37,38 +37,47 @@ export async function loadCollections(id: number, take = 999) {
   if (!id) throw new HttpError(400, "An item id must be specified");
   if (id >= 2 ** 31) throw ITEM_NOT_FOUND_ERROR;
 
-  const item = await db.item.findFirst({
-    where: {
-      itemid: id,
-      seen: { isNot: null },
-      missing: false,
-    },
-    select: {
-      name: true,
-      description: true,
-      picture: true,
-      itemid: true,
-      ambiguous: true,
-      collections: {
-        select: {
-          quantity: true,
-          rank: true,
-          player: {
-            select: {
-              playerid: true,
-              name: true,
-            },
-          },
-        },
-        orderBy: [{ rank: "asc" }, { player: { name: "asc" } }],
-        take,
-      },
-    },
-  });
+  // Query 1: Get item with existence check via join
+  const item = await db
+    .selectFrom("Item")
+    .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
+    .select([
+      "Item.name",
+      "Item.description",
+      "Item.picture",
+      "Item.itemid",
+      "Item.ambiguous",
+    ])
+    .where("Item.itemid", "=", id)
+    .where("Item.missing", "=", false)
+    .executeTakeFirst();
 
   if (!item) {
     throw ITEM_NOT_FOUND_ERROR;
   }
 
-  return item;
+  // Query 2: Get collections with player data via JOIN
+  const collections = await db
+    .selectFrom("Collection")
+    .innerJoin("Player", "Player.playerid", "Collection.playerid")
+    .select([
+      "Collection.quantity",
+      "Collection.rank",
+      "Player.playerid",
+      "Player.name as playerName",
+    ])
+    .where("Collection.itemid", "=", id)
+    .orderBy("Collection.rank", "asc")
+    .orderBy("Player.name", "asc")
+    .limit(take)
+    .execute();
+
+  return {
+    ...item,
+    collections: collections.map((c) => ({
+      quantity: c.quantity,
+      rank: c.rank,
+      player: { playerid: c.playerid, name: c.playerName },
+    })),
+  };
 }

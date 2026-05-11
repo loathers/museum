@@ -1,14 +1,14 @@
 import { Link, Table } from "@chakra-ui/react";
-import type { Item } from "@prisma/client";
 import { Link as RRLink } from "react-router";
 
+import type { Item } from "~/db.types";
 import ItemName from "./ItemName";
 import Rank from "./Rank";
 
 export type Collection = {
   quantity: number;
   rank: number;
-  item: Item;
+  item: Pick<Item, "itemid" | "name" | "picture" | "ambiguous">;
 };
 
 type Props = {

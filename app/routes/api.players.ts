@@ -1,3 +1,5 @@
+import { sql } from "kysely";
+
 import { Route } from "./+types/api.players";
 import { db } from "~/db.server";
 
@@ -8,20 +10,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   if (!q) return Response.json([]);
 
-  const players = await db.player.findMany({
-    where: {
-      name: {
-        contains: q,
-        mode: "insensitive",
-      },
-    },
-    select: {
-      name: true,
-      playerid: true,
-    },
-    orderBy: [{ name: "asc" }],
-    take: 50,
-  });
+  const players = await db
+    .selectFrom("Player")
+    .select(["name", "playerid"])
+    .where(sql<boolean>`"name" ilike ${`%${q}%`}`)
+    .orderBy("name", "asc")
+    .limit(50)
+    .execute();
 
   return Response.json(players);
 }

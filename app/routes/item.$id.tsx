@@ -1,4 +1,5 @@
 import { Button, Heading, IconButton, Image, Stack } from "@chakra-ui/react";
+import { sql } from "kysely";
 import { LuArrowLeft, LuArrowRight, LuHouse } from "react-icons/lu";
 import { Link as RRLink, data, redirect, useLoaderData } from "react-router";
 
@@ -14,9 +15,11 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   const { id } = params;
 
   if (id && isNaN(parseInt(id))) {
-    const found = await db.item.findFirst({
-      where: { name: { mode: "insensitive", equals: id } },
-    });
+    const found = await db
+      .selectFrom("Item")
+      .select("itemid")
+      .where(sql`lower("name")`, "=", id.toLowerCase())
+      .executeTakeFirst();
 
     if (found) throw redirect(`/item/${found.itemid}`);
     throw data({ message: "Invalid item name" }, { status: 400 });
@@ -29,17 +32,25 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   try {
     const [item, prev, next] = await Promise.all([
       loadCollections(itemId),
-      db.item.findFirst({
-        where: { itemid: { lt: itemId }, seen: { isNot: null } },
-        orderBy: { itemid: "desc" },
-      }),
-      db.item.findFirst({
-        where: { itemid: { gt: itemId }, seen: { isNot: null } },
-        orderBy: { itemid: "asc" },
-      }),
+      db
+        .selectFrom("Item")
+        .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
+        .select(["Item.itemid", "Item.name", "Item.ambiguous"])
+        .where("Item.itemid", "<", itemId)
+        .orderBy("Item.itemid", "desc")
+        .limit(1)
+        .executeTakeFirst(),
+      db
+        .selectFrom("Item")
+        .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
+        .select(["Item.itemid", "Item.name", "Item.ambiguous"])
+        .where("Item.itemid", ">", itemId)
+        .orderBy("Item.itemid", "asc")
+        .limit(1)
+        .executeTakeFirst(),
     ]);
 
-    return { item, prev, next };
+    return { item, prev: prev ?? null, next: next ?? null };
   } catch (error) {
     if (error instanceof HttpError) throw error.toRouteError();
     throw error;
