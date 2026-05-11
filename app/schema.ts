@@ -44,6 +44,37 @@ export function createItemTable(db: Kysely<Database>) {
     .addColumn("missing", "boolean", (col) => col.notNull().defaultTo(false));
 }
 
+// ItemStaging table — same columns as Item but no PK, so COPY bypasses index maintenance
+export function createItemStagingTable(db: Kysely<Database>) {
+  return db.schema
+    .createTable("ItemStaging")
+    .ifNotExists()
+    .addColumn("itemid", "integer", (col) => col.notNull())
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("picture", "text", (col) => col.notNull().defaultTo("nopic"))
+    .addColumn("descid", "integer")
+    .addColumn("description", "text")
+    .addColumn("type", "text")
+    .addColumn("itemclass", "text")
+    .addColumn("candiscard", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cantransfer", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("quest", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("gift", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("smith", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cook", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cocktail", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("jewelry", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("hands", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("multiuse", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("sellvalue", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("power", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("quest2", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("mrstore", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("plural", "text")
+    .addColumn("ambiguous", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("missing", "boolean", (col) => col.notNull().defaultTo(false));
+}
+
 // ItemSeen table
 export function createItemSeenTable(db: Kysely<Database>) {
   return db.schema

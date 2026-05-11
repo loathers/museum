@@ -8,7 +8,7 @@
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write .",
     "etl": "node --env-file-if-exists=.env --import tsx app/scripts/etl.ts",
-    "db:migrate": "node --env-file-if-exists=.env --import tsx node_modules/kysely-ctl/dist/bin.js migrate latest",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx node_modules/kysely-ctl/dist/bin.mjs migrate latest",
     "items-seen-from-mafia": "node --env-file-if-exists=.env --import tsx app/scripts/itemsSeenFromMafia.ts"
   },
   "type": "module",
