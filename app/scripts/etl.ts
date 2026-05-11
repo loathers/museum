@@ -3,16 +3,14 @@ import { pipeline } from "stream/promises";
 import copyFrom from "pg-copy-streams";
 import { sql } from "kysely";
 
-import { db } from "../db.server";
-
-import { pool, query } from "./db";
+import { db, pool } from "../db.server";
 
 const auth = Buffer.from(
   `${process.env.KOL_HTTP_USERNAME}:${process.env.KOL_HTTP_PASSWORD}`,
 ).toString("base64");
 
 async function importPlayers() {
-  await query(`TRUNCATE "PlayerNew"`);
+  await sql`TRUNCATE "PlayerNew"`.execute(db);
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/player.txt`,
@@ -50,8 +48,8 @@ async function importPlayers() {
     .onConflict((oc) => oc.doNothing())
     .executeTakeFirst();
 
-  await query(`ALTER TABLE "Player" DISABLE TRIGGER ALL`);
-  await query(`ALTER TABLE "Collection" DISABLE TRIGGER ALL`);
+  await sql`ALTER TABLE "Player" DISABLE TRIGGER ALL`.execute(db);
+  await sql`ALTER TABLE "Collection" DISABLE TRIGGER ALL`.execute(db);
   await db.deleteFrom("Player").execute();
   await db
     .insertInto("Player")
@@ -59,9 +57,9 @@ async function importPlayers() {
       db.selectFrom("PlayerNew").select(["playerid", "name", "clan", "description"]),
     )
     .execute();
-  await query(`ALTER TABLE "Player" ENABLE TRIGGER ALL`);
-  await query(`ALTER TABLE "Collection" ENABLE TRIGGER ALL`);
-  await query(`TRUNCATE "PlayerNew"`);
+  await sql`ALTER TABLE "Player" ENABLE TRIGGER ALL`.execute(db);
+  await sql`ALTER TABLE "Collection" ENABLE TRIGGER ALL`.execute(db);
+  await sql`TRUNCATE "PlayerNew"`.execute(db);
 
   const players = await db
     .selectFrom("Player")
@@ -74,7 +72,7 @@ async function importPlayers() {
 }
 
 async function importItems() {
-  await query(`TRUNCATE "ItemStaging"`);
+  await sql`TRUNCATE "ItemStaging"`.execute(db);
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/items.txt`,
@@ -103,7 +101,7 @@ async function importItems() {
     .where("plural", "=", "")
     .execute();
 
-  await query(`TRUNCATE "Item" CASCADE`);
+  await sql`TRUNCATE "Item" CASCADE`.execute(db);
   await db
     .insertInto("Item")
     .expression(
@@ -124,7 +122,7 @@ async function importItems() {
 }
 
 async function importCollections() {
-  await query(`TRUNCATE "UnrankedCollection"`);
+  await sql`TRUNCATE "UnrankedCollection"`.execute(db);
 
   const response = await fetch(
     `https://dev.kingdomofloathing.com/collections/collections.txt`,
@@ -204,7 +202,7 @@ async function importCollections() {
     `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
   );
 
-  await query(`TRUNCATE "Collection"`);
+  await sql`TRUNCATE "Collection"`.execute(db);
   await db
     .insertInto("Collection")
     .expression(
@@ -219,7 +217,7 @@ async function importCollections() {
     )
     .execute();
 
-  await query(`TRUNCATE "UnrankedCollection"`);
+  await sql`TRUNCATE "UnrankedCollection"`.execute(db);
 
   console.timeLog("etl", "Ranked collections");
 }
@@ -272,7 +270,7 @@ async function normaliseData() {
 }
 
 async function pickDailyRandomCollections() {
-  await query(`TRUNCATE "DailyCollection"`);
+  await sql`TRUNCATE "DailyCollection"`.execute(db);
 
   await db
     .insertInto("DailyCollection")

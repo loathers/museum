@@ -1,8 +1,6 @@
 import { createClient } from "data-of-loathing";
 
-import { db } from "../db.server";
-
-import { pool } from "./db";
+import { db, pool } from "../db.server";
 
 const client = createClient();
 

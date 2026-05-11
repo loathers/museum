@@ -3,31 +3,19 @@ import pg from "pg";
 
 import type { Database } from "./db.types";
 
-declare global {
-  var globalDb: Kysely<Database>;
-}
-
-const dialect = new PostgresDialect({
-  pool: new pg.Pool({
-    connectionString: process.env.DATABASE_URL,
-  }),
+export const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
-let kysely: Kysely<Database>;
+const dialect = new PostgresDialect({ pool });
 
-if (process.env.NODE_ENV === "production") {
-  kysely = new Kysely<Database>({ dialect });
-} else {
-  if (!global.globalDb) {
-    global.globalDb = new Kysely<Database>({
-      dialect,
-      log: ["query", "error"],
-    });
-  }
-  kysely = global.globalDb;
+declare global {
+  var kyselyInstance: Kysely<Database>;
 }
-
-export const db = kysely;
+export const db = global.kyselyInstance || new Kysely<Database>({ dialect });
+if (process.env.NODE_ENV !== 'production') {
+  global.kyselyInstance = db;
+}
 
 export async function getMaxAge() {
   const result = await db
