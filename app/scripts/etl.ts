@@ -1,7 +1,7 @@
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import copyFrom from "pg-copy-streams";
-import { sql, type SqlBool } from "kysely";
+import { sql } from "kysely";
 
 import { db } from "../db.server";
 
@@ -302,8 +302,8 @@ async function pickDailyRandomCollections() {
 
   await db
     .updateTable("DailyCollection")
-    .set({
-      players: db
+    .set((eb) => ({
+      players: eb
         .selectFrom("Collection")
         .leftJoin("Player", "Player.playerid", "Collection.playerid")
         .select(
@@ -312,8 +312,8 @@ async function pickDailyRandomCollections() {
           ),
         )
         .where("Collection.rank", "=", 1)
-        .where(sql<SqlBool>`"Collection"."itemid" = "DailyCollection"."itemid"`),
-    })
+        .where("Collection.itemid", "=", eb.ref("DailyCollection.itemid")),
+    }))
     .execute();
 
   console.timeLog("etl", "Picked daily collections");
