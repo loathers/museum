@@ -1,37 +1,102 @@
-import type { Kysely } from "kysely";
+import { sql, type Kysely } from "kysely";
 
 import type { Database } from "../app/db.types";
-import {
-  createCollectionTable,
-  createDailyCollectionTable,
-  createItemSeenTable,
-  createItemTable,
-  createPlayerNameChangeTable,
-  createPlayerTable,
-  createSettingTable,
-} from "../app/schema";
 
 export async function up(db: Kysely<Database>): Promise<void> {
-  // Create Setting table first (no dependencies)
-  await createSettingTable(db).execute();
+  await db.schema
+    .createTable("Setting")
+    .ifNotExists()
+    .addColumn("key", "text", (col) => col.primaryKey())
+    .addColumn("value", "text", (col) => col.notNull())
+    .execute();
 
-  // Create Item table (referenced by ItemSeen and Collection)
-  await createItemTable(db).execute();
+  await db.schema
+    .createTable("Item")
+    .ifNotExists()
+    .addColumn("itemid", "integer", (col) => col.primaryKey())
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("picture", "text", (col) => col.notNull().defaultTo("nopic"))
+    .addColumn("descid", "integer")
+    .addColumn("description", "text")
+    .addColumn("type", "text")
+    .addColumn("itemclass", "text")
+    .addColumn("candiscard", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cantransfer", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("quest", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("gift", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("smith", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cook", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("cocktail", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("jewelry", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("hands", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("multiuse", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("sellvalue", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("power", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("quest2", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("mrstore", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("plural", "text")
+    .addColumn("ambiguous", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("missing", "boolean", (col) => col.notNull().defaultTo(false))
+    .execute();
 
-  // Create ItemSeen table (references Item)
-  await createItemSeenTable(db).execute();
+  await db.schema
+    .createTable("ItemSeen")
+    .ifNotExists()
+    .addColumn("itemid", "integer", (col) =>
+      col.primaryKey().references("Item.itemid"),
+    )
+    .addColumn("when", "date", (col) =>
+      col.notNull().defaultTo(sql`CURRENT_DATE`),
+    )
+    .execute();
 
-  // Create Player table (referenced by PlayerNameChange and Collection)
-  await createPlayerTable(db, "Player").execute();
+  await db.schema
+    .createTable("Player")
+    .ifNotExists()
+    .addColumn("playerid", "integer", (col) => col.primaryKey())
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("clan", "integer")
+    .addColumn("description", "text")
+    .execute();
 
-  // Create PlayerNameChange table (references Player)
-  await createPlayerNameChangeTable(db).execute();
+  await db.schema
+    .createTable("PlayerNameChange")
+    .ifNotExists()
+    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("playerid", "integer", (col) =>
+      col.notNull().references("Player.playerid"),
+    )
+    .addColumn("oldname", "text", (col) => col.notNull())
+    .addColumn("when", "date", (col) =>
+      col.notNull().defaultTo(sql`CURRENT_DATE`),
+    )
+    .addUniqueConstraint("PlayerNameChange_playerid_when_unique", [
+      "playerid",
+      "when",
+    ])
+    .execute();
 
-  // Create Collection table (references Item and Player, but FKs added by ETL)
-  await createCollectionTable(db, "Collection").execute();
+  await db.schema
+    .createTable("Collection")
+    .ifNotExists()
+    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("playerid", "integer", (col) => col.notNull())
+    .addColumn("itemid", "integer", (col) => col.notNull())
+    .addColumn("quantity", "integer", (col) => col.notNull())
+    .addColumn("rank", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("lastupdated", "timestamp", (col) =>
+      col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`),
+    )
+    .execute();
 
-  // Create DailyCollection table
-  await createDailyCollectionTable(db).execute();
+  await db.schema
+    .createTable("DailyCollection")
+    .ifNotExists()
+    .addColumn("itemid", "integer", (col) => col.notNull().unique())
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("plural", "text")
+    .addColumn("players", "jsonb", (col) => col.notNull())
+    .execute();
 }
 
 export async function down(db: Kysely<Database>): Promise<void> {

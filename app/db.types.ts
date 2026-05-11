@@ -118,6 +118,7 @@ export interface Database {
   Item: ItemTable;
   ItemStaging: ItemStagingTable;
   Player: PlayerTable;
+  PlayerNew: PlayerTable;
   PlayerNameChange: PlayerNameChangeTable;
   DailyCollection: DailyCollectionTable;
   UnrankedCollection: UnrankedCollectionTable;
