@@ -213,7 +213,7 @@ async function importCollections() {
     `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
   );
 
-  await sql`ALTER TABLE "Collection" DROP CONSTRAINT "Collection_pkey"`.execute(db);
+  await sql`ALTER TABLE "Collection" DROP CONSTRAINT IF EXISTS "Collection_pkey"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_itemid_idx"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_itemid_rank_idx"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_playerid_idx"`.execute(db);
