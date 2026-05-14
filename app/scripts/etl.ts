@@ -220,7 +220,7 @@ async function importCollections() {
   await sql`DROP INDEX IF EXISTS "Collection_rank_idx"`.execute(db);
   console.timeLog("etl", "Dropped Collection indexes");
 
-  await sql`SET work_mem = '256MB'`.execute(db);
+  await sql`ALTER TABLE "Collection" DISABLE TRIGGER ALL`.execute(db);
   await sql`TRUNCATE "Collection"`.execute(db);
   await db
     .insertInto("Collection")
@@ -235,7 +235,7 @@ async function importCollections() {
       ]),
     )
     .execute();
-  await sql`RESET work_mem`.execute(db);
+  await sql`ALTER TABLE "Collection" ENABLE TRIGGER ALL`.execute(db);
   console.timeLog("etl", "Inserted ranked collections");
 
   await sql`ALTER TABLE "Collection" ADD PRIMARY KEY ("id")`.execute(db);
