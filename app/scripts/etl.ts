@@ -104,6 +104,10 @@ async function importItems() {
     .where("plural", "=", "")
     .execute();
 
+  await sql`DROP INDEX IF EXISTS "Item_missing_idx"`.execute(db);
+  await sql`DROP INDEX IF EXISTS "Item_name_lower_idx"`.execute(db);
+  await sql`DROP INDEX IF EXISTS "Item_name_trgm_idx"`.execute(db);
+
   await sql`TRUNCATE "Item" CASCADE`.execute(db);
   await db
     .insertInto("Item")
@@ -116,6 +120,10 @@ async function importItems() {
       ]),
     )
     .execute();
+
+  await sql`CREATE INDEX "Item_missing_idx" ON "Item" ("missing")`.execute(db);
+  await sql`CREATE INDEX "Item_name_lower_idx" ON "Item" (lower("name"))`.execute(db);
+  await sql`CREATE INDEX "Item_name_trgm_idx" ON "Item" USING GIN ("name" gin_trgm_ops)`.execute(db);
 
   const items = await db
     .selectFrom("Item")
@@ -205,6 +213,11 @@ async function importCollections() {
     `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
   );
 
+  await sql`DROP INDEX IF EXISTS "Collection_itemid_idx"`.execute(db);
+  await sql`DROP INDEX IF EXISTS "Collection_itemid_rank_idx"`.execute(db);
+  await sql`DROP INDEX IF EXISTS "Collection_playerid_idx"`.execute(db);
+  await sql`DROP INDEX IF EXISTS "Collection_rank_idx"`.execute(db);
+
   await sql`TRUNCATE "Collection"`.execute(db);
   await db
     .insertInto("Collection")
@@ -219,6 +232,11 @@ async function importCollections() {
       ]),
     )
     .execute();
+
+  await sql`CREATE INDEX "Collection_itemid_idx" ON "Collection" ("itemid")`.execute(db);
+  await sql`CREATE INDEX "Collection_itemid_rank_idx" ON "Collection" ("itemid", "rank")`.execute(db);
+  await sql`CREATE INDEX "Collection_playerid_idx" ON "Collection" ("playerid")`.execute(db);
+  await sql`CREATE INDEX "Collection_rank_idx" ON "Collection" ("rank")`.execute(db);
 
   await sql`TRUNCATE "UnrankedCollection"`.execute(db);
 
