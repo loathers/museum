@@ -213,11 +213,14 @@ async function importCollections() {
     `Created ${unknownItems?.numInsertedOrUpdatedRows ?? 0} filler items because they appear in collections`,
   );
 
+  await sql`ALTER TABLE "Collection" DROP CONSTRAINT "Collection_pkey"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_itemid_idx"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_itemid_rank_idx"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_playerid_idx"`.execute(db);
   await sql`DROP INDEX IF EXISTS "Collection_rank_idx"`.execute(db);
+  console.timeLog("etl", "Dropped Collection indexes");
 
+  await sql`SET work_mem = '256MB'`.execute(db);
   await sql`TRUNCATE "Collection"`.execute(db);
   await db
     .insertInto("Collection")
@@ -232,7 +235,11 @@ async function importCollections() {
       ]),
     )
     .execute();
+  await sql`RESET work_mem`.execute(db);
+  console.timeLog("etl", "Inserted ranked collections");
 
+  await sql`ALTER TABLE "Collection" ADD PRIMARY KEY ("id")`.execute(db);
+  console.timeLog("etl", "Recreated Collection primary key");
   await sql`CREATE INDEX "Collection_itemid_idx" ON "Collection" ("itemid")`.execute(db);
   await sql`CREATE INDEX "Collection_itemid_rank_idx" ON "Collection" ("itemid", "rank")`.execute(db);
   await sql`CREATE INDEX "Collection_playerid_idx" ON "Collection" ("playerid")`.execute(db);
