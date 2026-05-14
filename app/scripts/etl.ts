@@ -17,9 +17,14 @@ async function importPlayers() {
     { headers: { Authorization: `Basic ${auth}` } },
   );
 
-  const text = (await response.text())
+  const lines = (await response.text())
     .replace(/\n\\n/g, "\n")
-    .replace(/\r/g, "");
+    .replace(/\r/g, "")
+    .split("\n");
+
+  // Keep header, filter out rows with a NULL name (second tab-separated field)
+  const [header, ...rows] = lines;
+  const text = [header, ...rows.filter((row) => row.split("\t")[1] !== "NULL")].join("\n");
 
   const client = await pool.connect();
   try {
@@ -32,8 +37,6 @@ async function importPlayers() {
   } finally {
     client.release();
   }
-
-  await db.deleteFrom("PlayerNew").where("name", "is", null).execute();
 
   const nameChanges = await db
     .insertInto("PlayerNameChange")
