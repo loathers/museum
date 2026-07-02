@@ -22,9 +22,19 @@ export class HttpError {
   }
 }
 
+function makeNullItem(id: number) {
+  return {
+    itemid: id,
+    name: "Unknown item",
+    picture: "nopic",
+    description: "Unknown",
+    ambiguous: true
+  };
+}
+
 export const ITEM_NOT_FOUND_ERROR = new HttpError(
   404,
-  "That item, if it exists at all, has no collections.",
+  "Item data not found",
 );
 
 const HTTP_ERROR_TYPES: { [key: number]: string } = {
@@ -38,7 +48,7 @@ export async function loadCollections(id: number, take = 999) {
   if (id >= 2 ** 31) throw ITEM_NOT_FOUND_ERROR;
 
   // Query 1: Get item with existence check via join
-  const item = await db
+  let item = await db
     .selectFrom("Item")
     .innerJoin("ItemSeen", "ItemSeen.itemid", "Item.itemid")
     .select([
@@ -53,7 +63,7 @@ export async function loadCollections(id: number, take = 999) {
     .executeTakeFirst();
 
   if (!item) {
-    throw ITEM_NOT_FOUND_ERROR;
+    item = makeNullItem(id);
   }
 
   // Query 2: Get collections with player data via JOIN
