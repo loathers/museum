@@ -13,8 +13,6 @@ import {
   LuArrowDownAZ,
   LuArrowDownWideNarrow,
   LuArrowLeft,
-  LuChevronLeft,
-  LuChevronRight,
   LuMedal,
 } from "react-icons/lu";
 import {
@@ -29,6 +27,7 @@ import {
 import CustomTitle from "~/components/CustomTitle";
 import Formerly from "~/components/Formerly";
 import Layout from "~/components/Layout";
+import Pagination from "~/components/Pagination";
 import PlayerPageRanking from "~/components/PlayerPageRanking";
 import { db } from "~/db.server";
 
@@ -238,43 +237,7 @@ export default function Player() {
 
       <PlayerPageRanking collections={player.collections} />
 
-      {totalPages > 1 && (
-        <Group justifyContent="center" attached>
-          <IconButton
-            aria-label="Previous page"
-            title="Previous page"
-            variant="outline"
-            disabled={page <= 1}
-            asChild={page > 1}
-          >
-            {page > 1 ? (
-              <RRLink to={pageHref(page - 1)}>
-                <LuChevronLeft />
-              </RRLink>
-            ) : (
-              <LuChevronLeft />
-            )}
-          </IconButton>
-          <Button variant="outline" disabled>
-            Page {page} of {totalPages}
-          </Button>
-          <IconButton
-            aria-label="Next page"
-            title="Next page"
-            variant="outline"
-            disabled={page >= totalPages}
-            asChild={page < totalPages}
-          >
-            {page < totalPages ? (
-              <RRLink to={pageHref(page + 1)}>
-                <LuChevronRight />
-              </RRLink>
-            ) : (
-              <LuChevronRight />
-            )}
-          </IconButton>
-        </Group>
-      )}
+      <Pagination page={page} totalPages={totalPages} hrefForPage={pageHref} />
 
       <Text>
         Wow, that's{" "}
