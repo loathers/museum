@@ -13,6 +13,8 @@ import {
   LuArrowDownAZ,
   LuArrowDownWideNarrow,
   LuArrowLeft,
+  LuChevronLeft,
+  LuChevronRight,
   LuMedal,
 } from "react-icons/lu";
 import {
@@ -31,6 +33,8 @@ import PlayerPageRanking from "~/components/PlayerPageRanking";
 import { db } from "~/db.server";
 
 type SortType = "rank" | "quantity" | "itemid" | "name";
+
+const PAGE_SIZE = 200;
 
 const normalizeSort = (sort: string | null): SortType => {
   switch (sort) {
@@ -67,6 +71,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const url = new URL(request.url);
   const sort = normalizeSort(url.searchParams.get("sort"));
+  const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1") || 1);
 
   let collectionsQuery = db
     .selectFrom("Collection")
@@ -103,7 +108,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         .orderBy("Item.itemid", "asc");
   }
 
-  const [player, collectionsRaw, nameChanges] = await Promise.all([
+  collectionsQuery = collectionsQuery
+    .limit(PAGE_SIZE)
+    .offset((page - 1) * PAGE_SIZE);
+
+  const [player, collectionsRaw, nameChanges, totals] = await Promise.all([
     db
       .selectFrom("Player")
       .select(["playerid", "name"])
@@ -116,6 +125,14 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       .where("playerid", "=", playerid)
       .orderBy("when", "desc")
       .execute(),
+    db
+      .selectFrom("Collection")
+      .select((eb) => [
+        eb.fn.sum("quantity").as("totalItems"),
+        eb.fn.countAll().as("distinctItems"),
+      ])
+      .where("playerid", "=", playerid)
+      .executeTakeFirst(),
   ]);
 
   if (!player) throw data("Player not found with that id", { status: 404 });
@@ -131,11 +148,15 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     },
   }));
 
-  const totalItems = collections.reduce((sum, c) => sum + c.quantity, 0);
+  const totalItems = Number(totals?.totalItems ?? 0);
+  const distinctItems = Number(totals?.distinctItems ?? 0);
+  const totalPages = Math.max(1, Math.ceil(distinctItems / PAGE_SIZE));
 
   return {
     player: { ...player, collections, nameChanges },
     sort,
+    page,
+    totalPages,
     totalItems,
   };
 };
@@ -145,7 +166,16 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 ];
 
 export default function Player() {
-  const { player, sort, totalItems } = useLoaderData<typeof loader>();
+  const { player, sort, page, totalPages, totalItems } =
+    useLoaderData<typeof loader>();
+
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (sort !== "name") params.set("sort", sort);
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return `/player/${player.playerid}${qs ? `?${qs}` : ""}`;
+  };
 
   return (
     <Layout>
@@ -207,6 +237,44 @@ export default function Player() {
       </Stack>
 
       <PlayerPageRanking collections={player.collections} />
+
+      {totalPages > 1 && (
+        <Group justifyContent="center" attached>
+          <IconButton
+            aria-label="Previous page"
+            title="Previous page"
+            variant="outline"
+            disabled={page <= 1}
+            asChild={page > 1}
+          >
+            {page > 1 ? (
+              <RRLink to={pageHref(page - 1)}>
+                <LuChevronLeft />
+              </RRLink>
+            ) : (
+              <LuChevronLeft />
+            )}
+          </IconButton>
+          <Button variant="outline" disabled>
+            Page {page} of {totalPages}
+          </Button>
+          <IconButton
+            aria-label="Next page"
+            title="Next page"
+            variant="outline"
+            disabled={page >= totalPages}
+            asChild={page < totalPages}
+          >
+            {page < totalPages ? (
+              <RRLink to={pageHref(page + 1)}>
+                <LuChevronRight />
+              </RRLink>
+            ) : (
+              <LuChevronRight />
+            )}
+          </IconButton>
+        </Group>
+      )}
 
       <Text>
         Wow, that's{" "}
