@@ -56,22 +56,24 @@ export default function About() {
           </Button>
         </Group>
       </Stack>
-      <Alert.Root status="info" variant="subtle">
-        <Alert.Description>
-          <b>Museum</b> is made by{" "}
-          <Link asChild>
-            <RRLink to="/player/1197090">gausie</RRLink>
-          </Link>{" "}
-          from a closed data feed provided by TPTB. He collects{" "}
-          <Link asChild>
-            <RRLink to="/item/641">toast</RRLink>
-          </Link>{" "}
-          and is currently ranked <RankSymbol rank={gausieRank} />
-          {gausieRank === 1
-            ? "! Thanks for your generous help!"
-            : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
-        </Alert.Description>
-      </Alert.Root>
+      {gausieRank > 0 && (
+        <Alert.Root status="info" variant="subtle">
+          <Alert.Description>
+            <b>Museum</b> is made by{" "}
+            <Link asChild>
+              <RRLink to="/player/1197090">gausie</RRLink>
+            </Link>{" "}
+            from a closed data feed provided by TPTB. He collects{" "}
+            <Link asChild>
+              <RRLink to="/item/641">toast</RRLink>
+            </Link>{" "}
+            and is currently ranked <RankSymbol rank={gausieRank} />
+            {gausieRank === 1
+              ? "! Thanks for your generous help!"
+              : `. He would be very grateful if you could help him on his quest to find the ${gausieNeeded.toLocaleString()} more required to move up the leaderboard.`}
+          </Alert.Description>
+        </Alert.Root>
+      )}
       <Text>
         This site is supported by financial contributors to the{" "}
         <Link
